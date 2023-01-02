@@ -1,4 +1,6 @@
 package alps.net.api.api.util;
+import java.io.PrintWriter;
+import java.time.Duration;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -7,7 +9,7 @@ import java.util.TimerTask;
  */
 public class ConsoleProgressBar implements AutoCloseable, IProgress<Double> {
     private static final int BLOCK_COUNT = 10;
-    private static final TimeSpan animationInterval = TimeSpan.ofSeconds(1.0 / 8);
+    private static final Duration ANIMATION_INTERVAL = Duration.ofSeconds(long(1.0 / 8));
     private static final String ANIMATION = "|/-\\";
 
     private final Timer timer;
@@ -23,7 +25,8 @@ public class ConsoleProgressBar implements AutoCloseable, IProgress<Double> {
         // A progress bar is only for temporary display in a console window.
         // If the console output is redirected to a file, draw nothing.
         // Otherwise, we'll end up with a lot of garbage in the target file.
-        if (!System.console().writer().checkError()) {
+        Console console = System.console();
+        if (console != null && !console.writer().checkError()) {
             resetTimer();
         }
     }
@@ -49,7 +52,6 @@ public class ConsoleProgressBar implements AutoCloseable, IProgress<Double> {
             resetTimer();
         }
     }
-
     private void updateText(String text) {
         // Get length of common portion
         int commonPrefixLength = 0;
