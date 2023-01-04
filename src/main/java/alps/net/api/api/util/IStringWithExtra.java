@@ -35,13 +35,8 @@ public interface IStringWithExtra {
      */
     void setExtra(String extra);
 
-    /**
-     * Creates a {@link RDFNode} from the current string (a literal node)
-     * therefor it needs a model as context
-     * @param model the context in which the node is created
-     * @return the created node
-     */
-    RDFNode getNodeFromString(Model model);
+
+    RDFNode getNodeFromString(IPASSGraph graph);
 
     /**
      * Clones the current string with extra to get a new instance
