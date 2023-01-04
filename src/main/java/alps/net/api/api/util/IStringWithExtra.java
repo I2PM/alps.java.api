@@ -47,5 +47,5 @@ public interface IStringWithExtra {
      * Clones the current string with extra to get a new instance
      * @return a clone of the current string
      */
-    StringWithExtra clone();
+    IStringWithExtra clone();
 }
