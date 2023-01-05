@@ -67,4 +67,6 @@ public abstract class StringWithExtra implements IStringWithExtra {
     public int hashCode() {
         return (getContent() + getExtra()).hashCode();
     }
+
+    public abstract String ToString();
 }

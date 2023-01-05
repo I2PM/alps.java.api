@@ -1,8 +1,7 @@
 package alps.net.api.api.util;
 
 import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
+import alps.net.api.parsing;
 
 /// <summary>
 /// A class to represent a string along with a specified language identifier
@@ -41,8 +40,8 @@ public class LanguageSpecificString extends StringWithExtra {
     }
 
     @Override
-    public Literal getNodeFromString(Model model) {
-        return model.createLiteral(getContent(), getExtra());
+    public Literal getNodeFromString(IPASSGraph graph) {
+        return graph.createLiteralNode(getContent(), getExtra());
     }
 
     @Override

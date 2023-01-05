@@ -7,6 +7,9 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
+
+import java.net.URI;
+
 /// <summary>
 /// A class to represent a string along with a specified dataType
 /// This class is useful to represent an object (in a triple store context),
@@ -51,11 +54,9 @@ public class DataTypeString extends StringWithExtra {
 
     @Override
     public RDFNode getNodeFromString(IPASSGraph graph) {
-        //neu implementieren Methodendekklaration passt
-        Resource datatype = model.createResource(getExtra());
-        Literal literal = model.createTypedLiteral(getContent(), datatype);
-        model.add(literal, RDF.type, datatype);
-        return literal;
+        if (getExtra().contains("www"))
+            return graph.createLiteralNode(getContent(), new URI(getExtra()));
+        return graph.createLiteralNode(getContent(), graph.createUriNode(getExtra()).Uri);
     }
 
     @Override
