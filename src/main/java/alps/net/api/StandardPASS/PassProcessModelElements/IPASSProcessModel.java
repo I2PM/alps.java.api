@@ -1,10 +1,11 @@
 package alps.net.api.StandardPASS.PassProcessModelElements;
 
-import alps.net.api.ALPS;
+import alps.net.api.ALPS.*;
+import alps.net.api.ALPS.ALPSModelElements.IModelLayer;
 import alps.net.api.StandardPASS.IImplementingElement;
 import alps.net.api.StandardPASS.IPASSProcessModelElement;
 import alps.net.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubject;
-import alps.net.api.parsing;
+import alps.net.api.parsing.*;
 import alps.net.api.parsing.IPASSGraph;
 
 import java.util.Map;
@@ -123,13 +124,13 @@ public interface IPASSProcessModel extends IPASSProcessModelElement, IImplementi
         /// </summary>
         /// <param name="id">the model component id of the layer</param>
         /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
-        void removeLayer(String id, int removeCascadeDepth = 0);
+        void removeLayer(String id, int removeCascadeDepth);
 
         /// <summary>
         /// Returns a dictionary containing all known Model layers (in the current context) mapped with their model component id.
         /// </summary>
         /// <returns>The dict of all model layers</returns>
-        IDictionary<String, IModelLayer> getModelLayers();
+        Map<String, IModelLayer> getModelLayers();
 
         /// <summary>
         /// Returns the current base layer (the standard layer of the model)
