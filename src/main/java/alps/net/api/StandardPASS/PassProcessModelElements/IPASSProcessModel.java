@@ -2,7 +2,7 @@ package alps.net.api.StandardPASS.PassProcessModelElements;
 
 import alps.net.api.ALPS.*;
 import alps.net.api.ALPS.ALPSModelElements.IModelLayer;
-import alps.net.api.StandardPASS.IImplementingElement;
+import alps.net.api.StandardPASS.IImplementingElementT;
 import alps.net.api.StandardPASS.IPASSProcessModelElement;
 import alps.net.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubject;
 import alps.net.api.parsing.*;
@@ -15,7 +15,7 @@ import java.util.Set;
 /// <summary>
 /// Interface of the pass process model class
 /// </summary>
-public interface IPASSProcessModel extends IPASSProcessModelElement, IImplementingElement<IPASSProcessModel>
+public interface IPASSProcessModel extends IPASSProcessModelElement, IImplementingElementT<IPASSProcessModel>
     {
 
             /// <summary>

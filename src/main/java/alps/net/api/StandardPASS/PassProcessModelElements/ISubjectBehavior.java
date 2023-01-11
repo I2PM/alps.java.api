@@ -1,10 +1,7 @@
 package alps.net.api.StandardPASS.PassProcessModelElements;
 
 import alps.net.api.ALPS.ALPSModelElements.*;
-import alps.net.api.StandardPASS.IExtendingElement;
-import alps.net.api.StandardPASS.IImplementingElement;
-import alps.net.api.StandardPASS.IPASSProcessModelElement;
-import alps.net.api.StandardPASS.IPrioritizableElement;
+import alps.net.api.StandardPASS.*;
 import alps.net.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IState;
 import alps.net.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubject;
 import alps.net.api.util.*;
@@ -16,7 +13,7 @@ import java.util.Set;
 /// Interface to the Subject behavior class
 /// </summary>
 public interface ISubjectBehavior extends IPASSProcessModelElement, IContainableElement<IModelLayer>,
-        IImplementingElement<ISubjectBehavior>, IExtendingElement<ISubjectBehavior>, IPrioritizableElement
+        IImplementingElementT<ISubjectBehavior>, IExtendingElement<ISubjectBehavior>, IPrioritizableElement
         {
 
 // ######################## BehaviorDescribingComponents methods ########################

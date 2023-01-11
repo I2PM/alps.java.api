@@ -1,3 +1,5 @@
+import alps.net.api.FunctionalityCapsules.ICapsuleCallback;
+import alps.net.api.FunctionalityCapsules.IExtendsFunctionalityCapsule;
 import alps.net.api.parsing.*;
 import alps.net.api.src.*;
 import alps.net.api.StandardPASS.*;
@@ -7,84 +9,83 @@ import alps.net.api.util.*;
 /// Elements can hold this capsule and delegate methods to it
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IExtendsFunctionalityCapsule<T> extends IExtendingElement<T>, IFunctionalityCapsule<T>
-    {
-            }
 
 
-public class ExtendsFunctionalityCapsule<T> : IExtendsFunctionalityCapsule<T> where T : IPASSProcessModelElement
-        {
-protected T extendedElement;
-protected string extendedElementID;
-protected readonly ICapsuleCallback callback;
 
-public ExtendsFunctionalityCapsule(ICapsuleCallback callback)
-        {
-        this.callback = callback;
-        }
+    public class ExtendsFunctionalityCapsule<T extends  IPASSProcessModelElement> implements IExtendsFunctionalityCapsule<T>
+            {
+        protected T extendedElement;
+        protected String extendedElementID;
+        protected final ICapsuleCallback callback;
 
-public T getExtendedElement()
-        {
-        return extendedElement;
-        }
+        public ExtendsFunctionalityCapsule(ICapsuleCallback callback)
+                {
+                this.callback = callback;
+                }
 
-public string getExtendedElementID()
-        {
-        if ((extendedElement is not null) && !extendedElement.getModelComponentID().Equals(extendedElementID))
-        {
-        setExtendedElementID(extendedElement.getModelComponentID());
-        }
-        return extendedElementID;
-        }
+        public T getExtendedElement()
+                {
+                return extendedElement;
+                }
 
-public bool isExtension()
-        {
-        if (getExtendedElement() != null || getExtendedElementID() != null)
-        return true;
-        return false;
-        }
+        public String getExtendedElementID()
+                {
+                if ((extendedElement !=  null) && !extendedElement.getModelComponentID().equals(extendedElementID))
+                {
+                setExtendedElementID(extendedElement.getModelComponentID());
+                }
+                return extendedElementID;
+                }
 
-public bool parseAttribute(string predicate, string objectContent, string lang, string dataType, IParseablePASSProcessModelElement element)
-        {
-        if (predicate.Contains(OWLTags.extends))
-        {
-        if (element is T fittingElement)
-        {
-        setExtendedElement(fittingElement);
-        return true;
-        }
-        else
-        {
-        setExtendedElementID(objectContent);
-        return true;
-        }
-        }
-        return false;
-        }
+        public boolean isExtension()
+                {
+                if (getExtendedElement() != null || getExtendedElementID() != null)
+                return true;
+                return false;
+                }
 
-public void setExtendedElement(T element)
-        {
-        T oldExtends = extendedElement;
-        // Might set it to null
-        this.extendedElement = element;
+        public boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)
+                {
+                if (predicate.contains(OWLTags.extends))
+                {
+                if (element instanceof T)
+                {
+                    T fittingElement = (T) element;
+                setExtendedElement(fittingElement);
+                return true;
+                }
+                else
+                {
+                setExtendedElementID(objectContent);
+                return true;
+                }
+                }
+                return false;
+                }
+    //TODO: removeTriple und addTriple austauschen
+        public void setExtendedElement(T element)
+                {
+                T oldExtends = extendedElement;
+                // Might set it to null
+                this.extendedElement = element;
 
-        if (oldExtends is not null)
-        {
-        if (oldExtends.Equals(element)) return;
-        oldExtends.unregister(callback);
-        callback.removeTriple(new IncompleteTriple(OWLTags.abstrExtends, oldExtends.getUriModelComponentID()));
-        }
+                if (oldExtends != null)
+                {
+                if (oldExtends.equals(element)) return;
+                oldExtends.unregister(callback);
+                callback.removeTriple(new IncompleteTriple(OWLTags.abstrExtends, oldExtends.getUriModelComponentID()));
+                }
 
-        if (extendedElement is not null)
-        {
-        callback.publishElementAdded(extendedElement);
-        extendedElement.register(callback);
-        callback.addTriple(new IncompleteTriple(OWLTags.abstrExtends, extendedElement.getUriModelComponentID()));
-        }
-        }
+                if (extendedElement != null)
+                {
+                callback.publishElementAdded(extendedElement);
+                extendedElement.register(callback);
+                callback.addTriple(new IncompleteTriple(OWLTags.abstrExtends, extendedElement.getUriModelComponentID()));
+                }
+                }
 
-public void setExtendedElementID(string elementID)
-        {
-        this.extendedElementID = elementID;
-        }
-        }
+        public void setExtendedElementID(String elementID)
+                {
+                this.extendedElementID = elementID;
+                }
+                }

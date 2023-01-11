@@ -5,21 +5,24 @@ import alps.net.api.src.*;
 import alps.net.api.StandardPASS.*;
 import alps.net.api.util.*;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /// <summary>
 /// This encapsulates the functionality for handling implements relations between elements.
 /// Every element can hold a capsule, delegating all the incoming calls to this capsule.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IImplementsFunctionalityCapsule<T> extends IImplementingElement<T>, IFunctionalityCapsule<T> where T : IPASSProcessModelElement
-        {
-        }
 
 
-public class ImplementsFunctionalityCapsule<T> : IImplementsFunctionalityCapsule<T> where T : IPASSProcessModelElement
+
+public class ImplementsFunctionalityCapsule<T extends IPASSProcessModelElement> implements IImplementsFunctionalityCapsule<T>
         {
-protected readonly ICompatibilityDictionary<string, T> implementedInterfaces = new CompatibilityDictionary<string, T>();
-protected readonly ISet<string> implementedInterfacesIDs = new HashSet<string>();
-protected readonly ICapsuleCallback callback;
+protected final ICompatibilityDictionary<String, T> implementedInterfaces = new CompatibilityDictionary<String, T>();
+protected final Set<String> implementedInterfacesIDs = new HashSet<String>();
+protected final ICapsuleCallback callback;
 
 public ImplementsFunctionalityCapsule(ICapsuleCallback callback)
         {
@@ -27,12 +30,13 @@ public ImplementsFunctionalityCapsule(ICapsuleCallback callback)
         }
 
 
-public bool parseAttribute(string predicate, string objectContent, string lang, string dataType, IParseablePASSProcessModelElement element)
+public boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)
         {
-        if (predicate.Contains(OWLTags.implements))
+        if (predicate.contains(OWLTags.implements))
         {
-        if (element is T fittingElement)
+        if (element instanceof T)
         {
+            T fittingElement = (T) element;
         addImplementedInterface(fittingElement);
         return true;
         }
@@ -45,23 +49,24 @@ public bool parseAttribute(string predicate, string objectContent, string lang, 
         return false;
         }
 
-public void setImplementedInterfaces(ISet<T> implementedInterface, int removeCascadeDepth = 0)
+public void setImplementedInterfaces(Set<T> implementedInterface, int removeCascadeDepth)
         {
-        foreach (T implInterface in getImplementedInterfaces().Values)
+            //TODO: values() richtig machen
+        for(T implInterface: getImplementedInterfaces().values())
         {
         removeImplementedInterfaces(implInterface.getModelComponentID(), removeCascadeDepth);
         }
-        if (implementedInterface is null) return;
-        foreach (T implInterface in implementedInterface)
+        if (implementedInterface == null) return;
+        for (T implInterface: implementedInterface)
         {
         addImplementedInterface(implInterface);
         }
         }
-
+//TODO: addTriple Methode
 public void addImplementedInterface(T implementedInterface)
         {
-        if (implementedInterface is null) { return; }
-        if (implementedInterfaces.TryAdd(implementedInterface.getModelComponentID(), implementedInterface))
+        if (implementedInterface == null) { return; }
+        if (implementedInterfaces.tryAdd(implementedInterface.getModelComponentID(), implementedInterface))
         {
         callback.publishElementAdded(implementedInterface);
         implementedInterface.register(callback);
@@ -69,46 +74,46 @@ public void addImplementedInterface(T implementedInterface)
         }
         }
 
-public void removeImplementedInterfaces(string id, int removeCascadeDepth = 0)
+public void removeImplementedInterfaces(String id, int removeCascadeDepth
         {
-        if (id is null) return;
-        if (implementedInterfaces.TryGetValue(id, out T implInterface))
+        if (id == null) return;
+        if (implementedInterfaces.tryGetValue(id, T implInterface))
         {
-        implementedInterfaces.Remove(id);
+        implementedInterfaces.remove(id);
         implInterface.unregister(callback, removeCascadeDepth);
         callback.removeTriple(new IncompleteTriple(OWLTags.abstrImplements, implInterface.getUriModelComponentID()));
         }
         }
 
-public IDictionary<string, T> getImplementedInterfaces()
+public Map<String, T> getImplementedInterfaces()
         {
-        return new Dictionary<string, T>(implementedInterfaces);
+        return new HashMap<String, T>(implementedInterfaces);
         }
 
 
 
-public void setImplementedInterfacesIDReferences(ISet<string> implementedInterfacesIDs)
+public void setImplementedInterfacesIDReferences(Set<String> implementedInterfacesIDs)
         {
-        implementedInterfacesIDs.Clear();
-        foreach (string implementedInterfaceID in implementedInterfacesIDs)
-        implementedInterfacesIDs.Add(implementedInterfaceID);
+        implementedInterfacesIDs.clear();
+        for (String implementedInterfaceID: implementedInterfacesIDs)
+        implementedInterfacesIDs.add(implementedInterfaceID);
         }
 
-public void addImplementedInterfaceIDReference(string implementedInterfaceID)
+public void addImplementedInterfaceIDReference(String implementedInterfaceID)
         {
-        implementedInterfacesIDs.Add(implementedInterfaceID);
+        implementedInterfacesIDs.add(implementedInterfaceID);
         }
 
-public void removeImplementedInterfacesIDReference(string implementedInterfaceID)
+public void removeImplementedInterfacesIDReference(String implementedInterfaceID)
         {
-        implementedInterfacesIDs.Remove(implementedInterfaceID);
+        implementedInterfacesIDs.remove(implementedInterfaceID);
         }
 
-public ISet<string> getImplementedInterfacesIDReferences()
+public Set<String> getImplementedInterfacesIDReferences()
         {
-        ISet<string> ts = new HashSet<string>(implementedInterfacesIDs);
-        foreach (string implementedInterfaceID in this.implementedInterfaces.Keys)
-        ts.Add(implementedInterfaceID);
+        Set<String> ts = new HashSet<String>(implementedInterfacesIDs);
+        for(String implementedInterfaceID: this.implementedInterfaces.keySet())
+        ts.add(implementedInterfaceID);
         return ts;
         }
 

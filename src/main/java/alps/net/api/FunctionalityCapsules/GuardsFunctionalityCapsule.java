@@ -2,59 +2,60 @@ package alps.net.api.FunctionalityCapsules;
 
 import alps.net.api.parsing.*;
 import alps.net.api.StandardPASS.*;
+import org.apache.commons.lang3.NotImplementedException;
+
+import java.util.Map;
+import java.util.Set;
 
 /// <summary>
 /// Encapsulates the extends behavior.
 /// Elements can hold this capsule and delegate methods to it
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IGuardsFunctionalityCapsule<T> extends IGuardingElement<T>, IFunctionalityCapsule<T>
-    {
-            }
 
-public class GuardsFunctionalityCapsule<T> : IGuardsFunctionalityCapsule<T> where T : IPASSProcessModelElement
+public class GuardsFunctionalityCapsule<T extends  IPASSProcessModelElement> implements IGuardsFunctionalityCapsule<T>
         {
 public void addGuardedElement(T guardedElement)
         {
         throw new NotImplementedException();
         }
 
-public void addGuardedElementIDReference(string guardedElementID)
+public void addGuardedElementIDReference(String guardedElementID)
         {
         throw new NotImplementedException();
         }
 
-public IDictionary<string, T> getGuardedElements()
+public Map<String, T> getGuardedElements()
         {
         throw new NotImplementedException();
         }
 
-public ISet<string> getGuardedElementsIDReferences()
+public Set<String> getGuardedElementsIDReferences()
         {
         throw new NotImplementedException();
         }
 
-public bool parseAttribute(string predicate, string objectContent, string lang, string dataType, IParseablePASSProcessModelElement element)
+public boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)
         {
         throw new NotImplementedException();
         }
 
-public void removeGuardedElement(string id, int removeCascadeDepth = 0)
+public void removeGuardedElement(String id, int removeCascadeDepth)
         {
         throw new NotImplementedException();
         }
 
-public void removeGuardedElementIDReference(string id)
+public void removeGuardedElementIDReference(String id)
         {
         throw new NotImplementedException();
         }
 
-public void setGuardedElements(ISet<T> guardedElements, int removeCascadeDepth = 0)
+public void setGuardedElements(Set<T> guardedElements, int removeCascadeDepth)
         {
         throw new NotImplementedException();
         }
 
-public void setGuardedElementsIDReferences(ISet<string> guardedElementsIDs)
+public void setGuardedElementsIDReferences(Set<String> guardedElementsIDs)
         {
         throw new NotImplementedException();
         }

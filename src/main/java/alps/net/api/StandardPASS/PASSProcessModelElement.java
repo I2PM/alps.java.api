@@ -164,7 +164,7 @@ import java.util.*;
 
                         // Parse the information encoded by the triple
                         additionalAttributeTriples.add(triple);
-                        parseAttribute(triple, out _);
+                        parseAttribute(triple, _);
                         }
                         }
 
@@ -355,7 +355,7 @@ import java.util.*;
                         IIncompleteTriple owlNamedIndivTriple = null;
                         for (Triple triple: getTriples())
                         {
-                        if (triple.toString().Contains(containedString))
+                        if (triple.toString().contains(containedString))
                         {
                         IIncompleteTriple newTriple = new IncompleteTriple(triple);
                         if (newTriple.getPredicate().contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#type") && newTriple.getObject().contains("http://www.w3.org/2002/07/owl#NamedIndividual"))
@@ -402,7 +402,7 @@ import java.util.*;
                         }
                         else
                         {
-                        setModelComponentID(labelForID + ("-") + guid.ToString());
+                        setModelComponentID(labelForID + ("-") + guid.toString());
                         if (addLabel) addModelComponentLabel(labelForID);
                         }
                         return getModelComponentID();
@@ -437,7 +437,7 @@ import java.util.*;
                         addTriple(new IncompleteTriple(OWLTags.stdHasModelComponentLabel, modelComponentLabel));
                         }
 
-                public List<String> getModelComponentLabelsAsStrings(boolean addLanguageAttribute = false)
+                public List<String> getModelComponentLabelsAsStrings(boolean addLanguageAttribute)
                         {
                         List<String> labels = new List<String>();
                         for(IStringWithExtra label: modelComponentLabels)
@@ -507,7 +507,7 @@ import java.util.*;
                         List<IParseablePASSProcessModelElement> successfullyParsedElements = new List<IParseablePASSProcessModelElement>();
                         for(Triple triple: getTriples())
                         {
-                        parseAttribute(triple, allElements, out IParseablePASSProcessModelElement parsedElement);
+                        parseAttribute(triple, allElements, IParseablePASSProcessModelElement parsedElement);
                         if (parsedElement != null)
                         {
                         successfullyParsedElements.add(parsedElement);
@@ -628,7 +628,7 @@ import java.util.*;
 
                 public int canParse(String className)
                         {
-                        if (className.toLowerCase()oLower().Equals(getClassName().toLowerCase()oLower()))
+                        if (className.toLowerCase().equals(getClassName().toLowerCase()))
                         {
                         return getClassName().length();
                         }
@@ -762,9 +762,10 @@ import java.util.*;
                     @Override
                     public boolean equals(Object obj)
                 {
-                    if (obj == IPASSProcessModelElement element)
+                    if (obj instanceof IPASSProcessModelElement)
                     {
-                        return element.getModelComponentID().Equals(getModelComponentID());
+                            IPASSProcessModelElement element = (IPASSProcessModelElement) obj;
+                        return element.getModelComponentID().equals(getModelComponentID());
                     }
                     return false;
                 }
@@ -808,7 +809,7 @@ import java.util.*;
                         {
                         for (IIncompleteTriple t: getIncompleteTriples())
                         {
-                        if (t.toString().Contains(oldID))
+                        if (t.toString().contains(oldID))
                         {
                         IIncompleteTriple newIncompleteTriple;
                         String predicate = t.getPredicate();
@@ -865,7 +866,7 @@ import java.util.*;
 
                 public Map<String, IPASSProcessModelElement> getElementsWithUnspecifiedRelation()
                         {
-                        return new Map<String, IPASSProcessModelElement>(additionalElements);
+                        return new HashMap<String, IPASSProcessModelElement>(additionalElements);
                         }
 
                 public void setElementsWithUnspecifiedRelation(Set<IPASSProcessModelElement> elements)
@@ -884,7 +885,8 @@ import java.util.*;
                 public void removeElementWithUnspecifiedRelation(String id)
                         {
                         if (id == null) return;
-                        if (additionalElements.tryGetValue(id, IPASSProcessModelElement element))
+                        IPASSProcessModelElement element = additionalElements.get(id);
+                        if (element != null)
                         {
                         additionalElements.remove(id);
                         removeTriple(new IncompleteTriple(OWLTags.stdContains, element.getUriModelComponentID()));

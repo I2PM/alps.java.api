@@ -9,7 +9,7 @@ import alps.net.api.util.*;
 /// Defines an interface for a model layer
 /// </summary>
 public interface IModelLayer extends IALPSModelElement, IPrioritizableElement, IContainableElement<IPASSProcessModel>,
-        IImplementingElement<IModelLayer>, IExtendingElement<IModelLayer>, IAbstractElement
+        IImplementingElementT<IModelLayer>, IExtendingElement<IModelLayer>, IAbstractElement
         {
 /// <summary>
 /// Represents the type of the layer
