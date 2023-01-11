@@ -1,5 +1,6 @@
 package alps.net.api.parsing;
 
+
 import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
@@ -8,7 +9,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import java.net.URI;
-import alps.net.api.parsing.PASSGraph;
 
 /// <summary>
 /// This is an interface for a graph used by each model to back up data in form of triples.

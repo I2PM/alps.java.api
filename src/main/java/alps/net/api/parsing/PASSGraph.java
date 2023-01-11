@@ -28,11 +28,7 @@ import org.apache.jena.vocabulary.OWL;
 /// It uses an <see cref="OntologyGraph"/> as internal graph.
 /// </summary>
 public class PASSGraph implements IPASSGraph{
-    public interface IGraphCallback{
-        void notify(Triple triple);
-        String getSubjectName();
-        void notifyModelComponentIDChanged(String oldID, String newID);
-    }
+
 
     public static final String EXAMPLE_BASE_URI_PLACEHOLDER = "baseuri:";
     public static final String EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY = "baseuri";

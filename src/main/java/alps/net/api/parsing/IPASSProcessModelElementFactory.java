@@ -1,6 +1,10 @@
 package alps.net.api.parsing;
 
+import alps.net.api.util.ITreeNode;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.List;
+import java.util.Map;
 
 /// <summary>
 /// An interface for factories that create PASSProcessModelElements
@@ -17,6 +21,6 @@ public interface IPASSProcessModelElementFactory<T extends IParseablePASSProcess
     /// <param name="names">names of types the owl class belongs to</param>
     /// <param name="element">will contain a new instance of an <see cref="IParseablePASSProcessModelElement"/> if parsing was successful</param>
     /// <returns>true if parsing was successful, false if not</returns>
-    String createInstance(Dictionary<String, List<(ITreeNode<IParseablePASSProcessModelElement>, int)>> parsingDict, List<String> names, T element);
+    String createInstance(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, List<String> names, T element);
 
 }

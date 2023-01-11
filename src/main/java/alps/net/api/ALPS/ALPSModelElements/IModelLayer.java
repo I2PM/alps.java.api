@@ -62,7 +62,7 @@ public enum LayerType
     /// </summary>
     /// <param name="extendedLayer"></param>
     /// <param name="removeCascadeDepth"></param>
-    public void setExtendedLayer(IModelLayer extendedLayer, int removeCascadeDepth = 0);
+    public void setExtendedLayer(IModelLayer extendedLayer, int removeCascadeDepth);
 
 
     /// <summary>

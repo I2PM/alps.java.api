@@ -1,7 +1,10 @@
 package alps.net.api.parsing;
 
-import alps.net.api.StandardPASS;
+
 import java.util.List;
+
+import alps.net.api.StandardPASS.PassProcessModelElements.IPASSProcessModel;
+import org.apache.jena.graph.Graph;
 import org.apache.jena.rdf.model.Model;
 
 public interface IPASSReaderWriter {
@@ -45,7 +48,7 @@ public interface IPASSReaderWriter {
     /// <param name="model">the model that should be exported</param>
     /// <param name="filepath">the path where the file will be saved</param>
     /// <returns>The full filepath to the file that was exported</returns>
-    String exportModel(IPASSProcessModel model, String filepath);
+    String exportModel(IPASSProcessModel model, String filepath, Graph exportGraph);
 
     /// <summary>
     /// Allows to set another factory to create the elements.

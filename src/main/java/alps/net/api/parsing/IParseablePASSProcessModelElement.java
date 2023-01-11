@@ -2,11 +2,11 @@ package alps.net.api.parsing;
 
 import alps.net.api.StandardPASS.*;
 import alps.net.api.util.*;
-import alps.net.api.PASSGraph;
 import org.apache.jena.graph.Triple;
 
 import java.util.Dictionary;
 import java.util.List;
+import java.util.Map;
 
 /// <summary>
 /// Interface that extends the standard PASSProcessModelElement interface for parsing methods
@@ -27,7 +27,7 @@ public interface IParseablePASSProcessModelElement {
     /// Completes the element by replacing temporary string ids with real objects
     /// </summary>
     /// <param name="allElements">a dict of all pass elements</param>
-    void completeObject(Dictionary<String, IParseablePASSProcessModelElement> allElements);
+    void completeObject(Map<String, IParseablePASSProcessModelElement> allElements);
 
     void setExportGraph(IPASSGraph graph);
 
@@ -48,7 +48,8 @@ public interface IParseablePASSProcessModelElement {
     /// (depending on whether there is a graph available or not)
     /// </summary>
     /// <param name="triple">the triple that is being saved</param>
-    void addTriples(List<IIncompleteTriple> triples);
+    
+    //void addTriples(List<IIncompleteTriple> triples);
 
     /// <summary>
     /// Adds a list of complete triples to the element.
