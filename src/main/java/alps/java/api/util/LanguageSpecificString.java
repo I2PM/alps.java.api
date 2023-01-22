@@ -1,8 +1,6 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.IPASSGraph;
-import org.apache.jena.rdf.model.Literal;
-import alps.java.api.parsing.*;
 import org.apache.jena.rdf.model.RDFNode;
 
 /**
@@ -23,7 +21,6 @@ import org.apache.jena.rdf.model.RDFNode;
          */
         public LanguageSpecificString(String content) {
             super(content);
-            //No need for calls here, base calls our overwriten setContent
             }
 
         /**
@@ -35,7 +32,6 @@ import org.apache.jena.rdf.model.RDFNode;
          */
         public LanguageSpecificString(String content, String lang){
             super(content, lang);
-            //No need for calls here, base calls our overwriten setContent
             }
 
         @Override

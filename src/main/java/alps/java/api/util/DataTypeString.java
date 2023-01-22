@@ -2,7 +2,6 @@ package alps.java.api.util;
 
 import alps.java.api.parsing.*;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Resource;
 
 import java.net.URI;
 import java.net.URISyntaxException;

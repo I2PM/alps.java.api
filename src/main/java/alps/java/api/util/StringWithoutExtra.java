@@ -3,6 +3,7 @@ package alps.java.api.util;
 import alps.java.api.parsing.IPASSGraph;
 import org.apache.jena.rdf.model.RDFNode;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 public class StringWithoutExtra extends StringWithExtra {
 
@@ -26,17 +27,25 @@ public class StringWithoutExtra extends StringWithExtra {
             try {
                 objectNode = graph.createUriNode(content);
             } catch (Exception e) {
-                objectNode = graph.createUriNode(new URI(content));
+                try {
+                    objectNode = graph.createUriNode(new URI(content));
+                } catch (URISyntaxException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         } else {
-            objectNode = graph.createUriNode(new URI(content));
+            try {
+                objectNode = graph.createUriNode(new URI(content));
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
         }
         return objectNode;
     }
 
     @Override
     public void setExtra(String lang) {
-        return;
+
     }
 
     @Override

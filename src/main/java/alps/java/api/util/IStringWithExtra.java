@@ -48,4 +48,5 @@ public interface IStringWithExtra {
      * @return clone of the current String
      */
     IStringWithExtra clone();
+
 }
