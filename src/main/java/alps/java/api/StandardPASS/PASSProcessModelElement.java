@@ -909,6 +909,6 @@ import java.util.*;
                         exportSubjectNodeName = xmlTag;
                         }
 
-                protected PASSProcessModelElement() { }
+                public PASSProcessModelElement() { }
                         }
 

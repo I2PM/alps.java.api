@@ -53,8 +53,7 @@ public class TreeNode<T> implements ITreeNode<T> {
             if (childNodes == null) {
                 this.childNodes.clear();
             } else {
-                for(ITreeNode<T> childNode: childNodes)
-                this.childNodes.add(childNode);
+                this.childNodes.addAll(childNodes);
             }
         }
 

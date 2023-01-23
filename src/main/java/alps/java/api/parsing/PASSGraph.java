@@ -5,18 +5,17 @@ import org.apache.jena.graph.Triple;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.vocabulary.XML;
 import org.apache.jena.vocabulary.SWRLA;
 import org.apache.jena.vocabulary.PassOnt;
 
-/// <summary>
-/// This class is an adapter class for the <see cref="IGraph"/> interface.
-/// It uses an <see cref="OntologyGraph"/> as internal graph.
-/// </summary>
+/**
+ * This class is an adapter class for the {@link Model} interface.
+ * It uses an {@link }as internal graph
+ */
 public class PASSGraph implements IPASSGraph{
 
 
@@ -25,7 +24,6 @@ public class PASSGraph implements IPASSGraph{
 
     private ICompatibilityDictionary<String, IGraphCallback> elements = new CompatibilityDictionary<String, IGraphCallback>();
 
-    //TODO:neu implementieren
     private ICompatibilityDictionary<String, String> namespaceMappings = new CompatibilityDictionary<String, String>{
         { "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"};
         { "rdfs", "http://www.w3.org/2000/01/rdf-schema#"};
@@ -41,14 +39,14 @@ public class PASSGraph implements IPASSGraph{
 
     //TODO:neu implementieren
     public boolean containsNonBaseURI(String input) {
-        for(KeyValuePair<String, String> nameMapping in namespaceMappings)
+        for(Map.Entry<String, String> nameMapping: namespaceMappings.entrySet())
         {
-            if (input.contains(nameMapping.Value) && !nameMapping.Key.Equals(EXAMPLE_BASE_URI_PLACEHOLDER.replace(":", "")))
+            if (input.contains(nameMapping.getValue()) && !nameMapping.getKey().equals(EXAMPLE_BASE_URI_PLACEHOLDER.replace(":", "")))
                 return true;
         }
         return false;
     }
-    protected final String EXAMPLE_BASE_URI = "http://www.imi.kit.edu/exampleBaseURI";
+    protected static final String EXAMPLE_BASE_URI = "http://www.imi.kit.edu/exampleBaseURI";
     protected Model baseGraph;
 
     public PASSGraph(String baseURI)
@@ -59,20 +57,19 @@ public class PASSGraph implements IPASSGraph{
         this.baseURI = baseURI;
         namespaceMappings.add(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY, baseURI + "#");
 
-        Model exportGraph = new Model() {
-        };
+        Model exportGraph = ModelFactory.createDefaultModel();
 
         // Adding all namespaceMappings (exchange short acronyms like owl: with the complete uri)
-        for(KeyValuePair<String, String> nameMapping in namespaceMappings)
+        for(Map.Entry<String, String> nameMapping: namespaceMappings)
         {
-            exportGraph.NamespaceMap.AddNamespace(nameMapping.Key, new URI(nameMapping.Value));
+            exportGraph.NamespaceMap.AddNamespace(nameMapping.getKey(), new URI(nameMapping.getValue()));
         }
         exportGraph.NamespaceMap.AddNamespace("", new URI(baseURI + "#"));
         exportGraph.BaseUri = new URI(baseURI);
 
-        Resource subjectNode;
-        Resource predicateNode;
-        Resource objectNode;
+        RDFNode subjectNode;
+        RDFNode predicateNode;
+        RDFNode objectNode;
         Triple triple;
 
 
@@ -87,10 +84,10 @@ public class PASSGraph implements IPASSGraph{
         subjectNode = exportGraph.CreateUriNode(exportGraph.BaseUri);
         predicateNode = exportGraph.CreateUriNode("owl:imports");
 
-        objectNode = exportGraph.CreateUriNode(new Uri("http://www.i2pm.net/standard-pass-ont"));
+        objectNode = exportGraph.CreateUriNode(new URI("http://www.i2pm.net/standard-pass-ont"));
         triple = new Triple(subjectNode, predicateNode, objectNode);
         exportGraph.Assert(triple);
-        objectNode = exportGraph.CreateUriNode(new Uri("http://www.imi.kit.edu/abstract-pass-ont"));
+        objectNode = exportGraph.CreateUriNode(new URI("http://www.imi.kit.edu/abstract-pass-ont"));
         triple = new Triple(subjectNode, predicateNode, objectNode);
         exportGraph.Assert(triple);
 
@@ -121,8 +118,8 @@ public class PASSGraph implements IPASSGraph{
     {
         if (baseGraph.Triples.Contains(t)) return;
         baseGraph.Assert(t);
-        string subjWithoutUri = t.Subject.ToString().Replace(baseURI + "#", "");
-        if (elements.ContainsKey(subjWithoutUri))
+        String subjWithoutUri = t.Subject.ToString().Replace(baseURI + "#", "");
+        if (elements.containsKey(subjWithoutUri))
         {
             elements[subjWithoutUri].notifyTriple(t);
         }
@@ -134,16 +131,16 @@ public class PASSGraph implements IPASSGraph{
     }
     public Resource createUriNode(URI uri)
     {
-        return baseGraph.CreateUriNode(uri);
+        return baseGraph.createUriNode(uri);
     }
     public Resource createUriNode(String qname)
     {
-        return baseGraph.CreateUriNode(qname);
+        return baseGraph.createUriNode(qname);
     }
 
     public Literal createLiteralNode(String literal)
     {
-        return baseGraph.CreateLiteralNode(literal);
+        return baseGraph.createLiteralNode(literal);
     }
     public Literal createLiteralNode(String literal, URI datadef)
     {
@@ -154,7 +151,7 @@ public class PASSGraph implements IPASSGraph{
         return baseGraph.CreateLiteralNode(literal, langspec);
     }
 
-    public void removeTriple(Triple t) { baseGraph.Retract(t); }
+    public void removeTriple(Triple t) { baseGraph.retract(t); }
 
 
     public void register(IGraphCallback element)
@@ -177,7 +174,7 @@ public class PASSGraph implements IPASSGraph{
                 String subjWithoutUri = t.Subject.ToString().Replace(baseURI + "#", "");
                 if (elements.containsKey(subjWithoutUri))
                 {
-                    elementsToNotify.Add(elements[subjWithoutUri]);
+                    elementsToNotify.add(elements[subjWithoutUri]);
                 }
             }
         }
