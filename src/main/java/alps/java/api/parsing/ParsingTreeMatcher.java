@@ -2,12 +2,14 @@ package alps.java.api.parsing;
 
 
 import alps.java.api.StandardPASS.PASSProcessModelElement;
-import alps.java.api.util.ConsoleProgressBar;
-import alps.java.api.util.ITreeNode;
-import alps.java.api.util.ReflectiveEnumerator;
-import alps.java.api.util.TreeNode;
+import alps.java.api.util.*;
 import org.apache.jena.atlas.lib.Pair;
+import org.apache.jena.atlas.logging.Log;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.ModelFactory;
 
+import java.sql.SQLOutput;
 import java.util.*;
 
 /**
@@ -18,54 +20,53 @@ import java.util.*;
 public class ParsingTreeMatcher implements IParsingTreeMatcher
         {
 
-public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>,Integer>>> loadOWLParsingStructure(List<OntologyGraph> owlStructureGraphs)
+public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>,Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs)
         {
-        Log.Information("Merging all input graphs...");
-        Console.Write("Generating class mapping for parser...");
-        ConsoleProgressBar consoleBar = new();
+                System.out.println("Merging all input graphs...");
+        System.out.println("Generating class mapping for parser...");
+        ConsoleProgressBar consoleBar = new ConsoleProgressBar();
         consoleBar.report(0);
-        OntologyGraph parsingStructureOntologyGraph = new();
-
+        OntModel parsingStructureOntologyGraph = ModelFactory.createOntologyModel();
         // Merge the input of all files in one big graph
-        for(OntologyGraph owlGraph: owlStructureGraphs)
+        for(OntModel owlGraph: owlStructureGraphs)
         {
-        parsingStructureOntologyGraph.merge(owlGraph);
+        parsingStructureOntologyGraph.add(owlGraph);
         }
 
         consoleBar.report(0.25);
 
-        Log.Information("Creating owl inheritance tree from merged graphs...");
+                System.out.println("Creating owl inheritance tree from merged graphs...");
 
         // Create the inheritance tree for the loaded owl classes
         // The base classes are the classes that have only child classes, no parent classes.
         // They are possible base classes for the tree structure
-        List<OntologyClass> baseClasses = createOWLInheritanceTree(parsingStructureOntologyGraph);
+        List<OntClass> baseClasses = createOWLInheritanceTree(parsingStructureOntologyGraph);
 
         consoleBar.report(0.5);
-        Log.Information("Dynamically created owl class tree");
-        Log.Information("Creating c# class inheritance tree from classes known to the assembly...");
+                System.out.println("Dynamically created owl class tree");
+                System.out.println("Creating c# class inheritance tree from classes known to the assembly...");
 
         // Create the inheritance tree for the c# classes by recursively finding child classes to the PASSProcessModelElement class
         // Does also find child classes of external projects if they registered themself at the ReflectiveEnumerator class.
         ITreeNode<IParseablePASSProcessModelElement> treeRootNode = createClassInheritanceTree();
 
         consoleBar.report(0.75);
-        Log.Information("Dynamically created c# class tree");
+                System.out.println("Dynamically created c# class tree");
 
         // Maps a list of possible c# classes to each ontology class
         Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict
         = new HashMap<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>>();
 
         // Map the each base class and its child classes with the c# classes
-        for(OntologyClass baseClass: baseClasses)
+        for(OntClass baseClass: baseClasses)
         {
         createParsingStructureFromTrees(parsingDict, baseClass, treeRootNode);
         }
 
-        Log.Information("Finished class mapping");
+        Log.info("Finished class mapping");
 
         consoleBar.report(1);
-        Console.Write("Done.");
+        System.out.println("Done.");
 
         return parsingDict;
         }
@@ -79,12 +80,12 @@ public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>,Intege
              * @param parsingStructureOntologyGraph
              * @return
              */
-            private List<OntologyClass> createOWLInheritanceTree(OntologyGraph parsingStructureOntologyGraph)
+            private List<OntClass> createOWLInheritanceTree(OntModel parsingStructureOntologyGraph)
         {
-        List<OntologyClass> nodesWithoutParents = new LinkedList<OntologyClass>();
+        List<OntClass> nodesWithoutParents = new LinkedList<OntClass>();
 
         // Find a root for the tree by finding alls classes that have no parent
-        for(OntologyClass ontClass: parsingStructureOntologyGraph.OwlClasses)
+        for(OntClass ontClass: parsingStructureOntologyGraph.getOntClass())
         {
         if (!ontClass.toString().contains("auto"))
         {
@@ -96,18 +97,18 @@ public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>,Intege
         }
         }
 
-        List<OntologyClass> baseClasses = new LinkedListList<OntologyClass>();
+        List<OntClass> baseClasses = new LinkedList<OntClass>();
 
         // Set the PassProcessModelElement as root
-        for(OntologyClass ontNode: nodesWithoutParents)
+        for(OntClass ontNode: nodesWithoutParents)
         {
-        if (ontNode.toString().ToLower().Contains("passprocessmodelelement"))
+        if (ontNode.toString().toLowerCase().contains("passprocessmodelelement"))
         {
         baseClasses.add(ontNode);
         }
         }
-        if (baseClasses.Count > 0) return baseClasses;
-        Log.Error("No PassProcessModelElement found in the loaded graphs");
+        if (baseClasses.size() > 0) return baseClasses;
+        Log.error("No PassProcessModelElement found in the loaded graphs");
         return null;
         }
 
@@ -116,13 +117,13 @@ public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>,Intege
              * @param ontClass the Ontology class
              * @return true if a parent class exists, false if not
              */
-            private boolean hasParentClass(OntologyClass ontClass)
+            private boolean hasParentClass(OntClass ontClass)
         {
-        if (ontClass.SuperClasses.ToList().Count > 0)
+        if (ontClass.listSuperClasses().toList().size() > 0)
         {
-        for(OntologyClass superClass: ontClass.SuperClasses.ToList())
+        for(OntClass superClass: ontClass.listSuperClasses().toList())
         {
-        if (!(superClass.toString().ToLower().Contains("auto"))) return true;
+        if (!(superClass.toString().toLowerCase().contains("auto"))) return true;
         }
         }
         return false;
@@ -152,8 +153,8 @@ public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>,Intege
 private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node)
         {
         // Get all classes that are known to the current project and that extend the given node
-        IEnumerable<IParseablePASSProcessModelElement> enumerable = ReflectiveEnumerator.getEnumerableOfType(node.getContent());
-        for(IParseablePASSProcessModelElement element: enumerable.ToList())
+        Iterable<IParseablePASSProcessModelElement> enumerable = ReflectiveEnumerator.getEnumerableOfType(node.getContent());
+        for(IParseablePASSProcessModelElement element: enumerable)
         {
         node.addChild(new TreeNode<IParseablePASSProcessModelElement>(element));
         }
@@ -177,21 +178,21 @@ private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node)
              * @param ontClass
              * @para, rootNode
              */
-            private void createParsingStructureFromTrees(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntologyClass ontClass, ITreeNode<IParseablePASSProcessModelElement> rootNode)
+            private void createParsingStructureFromTrees(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass ontClass, ITreeNode<IParseablePASSProcessModelElement> rootNode)
         {
         // Start with mapping the roots, they are both PASSProcessModelElement
-        if (parsingDict.Count == 0) parsingDict.add(removeUri(ontClass.Resource.ToString()), new LinkedList<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>> { (rootNode, 0) });
+        if (parsingDict.isEmpty()) parsingDict.put(removeUri(ontClass.getURI().toString()), new LinkedList<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>(){ {add(new Pair<>(rootNode, 0); } });
         // Create a new dictionary for those urls that could not be mapped properly (need that later)
-        ICompatibilityDictionary<OntologyClass, String> unmappableDict = new CompatibilityDictionary<OntologyClass, String>();
+        ICompatibilityDictionary<OntClass, String> unmappableDict = new CompatibilityDictionary<OntClass, String>();
 
         // Start to parse childs, passing the parent ontology class and the parent C#-class, as well as the dict off classes already parsed (only the root)
         parseChilds(parsingDict, ontClass, rootNode, unmappableDict);
-        Log.Information("##########################################");
-        Log.Information("Created parsing structure for owl classes.");
-        Log.Information(parsingDict.Count + " classes could be mapped correctly");
-        Log.Information(unmappableDict.Count + " were not mapped correctly");
-        Log.Information("##########################################");
-        for(Map.Entry<OntologyClass, String> pair: unmappableDict.entrySet())
+        System.out.println("##########################################");
+                System.out.println("Created parsing structure for owl classes.");
+                System.out.println(parsingDict.size() + " classes could be mapped correctly");
+                System.out.println(unmappableDict.size() + " were not mapped correctly");
+                System.out.println("##########################################");
+        for(Map.Entry<OntClass, String> pair: unmappableDict.entrySet())
         {
         mapRestWithParentNode(parsingDict, pair.getKey(), pair.getValue());
         }
@@ -210,15 +211,15 @@ private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node)
              * @param parentNode A node containing an instance representing a valid parsing class for the Ontology class given by parentOntClass
              * @param unmappableDict A dict of elements that could not be mapped
              */
-            private void parseChilds(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntologyClass parentOntClass, ITreeNode<IParseablePASSProcessModelElement> parentNode, ICompatibilityDictionary<OntologyClass, String> unmappableDict)
+            private void parseChilds(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass parentOntClass, ITreeNode<IParseablePASSProcessModelElement> parentNode, ICompatibilityDictionary<OntClass, String> unmappableDict)
         {
         List<ITreeNode<IParseablePASSProcessModelElement>> childsBeenParsed = new LinkedList<>();
 
         // Go through all ontology child classes of the ontology class
-        for(OntologyClass directSubclass: parentOntClass.DirectSubClasses)
+        for(OntClass directSubclass: parentOntClass.getSubClass())
         {
         List<ITreeNode<IParseablePASSProcessModelElement>> parseableClasses = new LinkedList<ITreeNode<IParseablePASSProcessModelElement>>();
-        String url = removeUri(directSubclass.Resource.ToString());
+        String url = removeUri(directSubclass.getURI().toString());
         // Go through all c# child classes of the parent c# class instance
         for(ITreeNode<IParseablePASSProcessModelElement> childNode: parentNode.getChildNodes())
         {
@@ -234,21 +235,21 @@ private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node)
         // Add the url to the list of classes that could not be parsed correctly.
         // The parent could be parsed correctly (else this method would not have been called for the child),
         // So the unparsed child will be parsed by using the class that can parse the parent
-        if (parseableClasses.Count == 0 && !parsingDict.containsKey(url))
+        if (parseableClasses.size() == 0 && !parsingDict.containsKey(url))
         {
-        String parentURI = removeUri(parentOntClass.Resource.ToString());
+        String parentURI = removeUri(parentOntClass.getURI().toString());
         unmappableDict.tryAdd(directSubclass, parentURI);
         }
         else
         {
-        for(OntologyClass ontClass: unmappableDict.keySet())
+        for(OntClass ontClass: unmappableDict.keySet())
         {
-        if (removeUri(ontClass.Resource.ToString()).Equals(url)) { unmappableDict.remove(ontClass); break; }
+        if (removeUri(ontClass.getURI().toString()).equals(url)) { unmappableDict.remove(ontClass); break; }
         }
 
         // We only want to store the most specific instantiation of a class.
         // All classes that are base classes to the currently found class - with our class still being able to parse the url - will be removed from the list
-        List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> toBeRemoved = new LinkedList<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>>;
+        List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>> toBeRemoved = new LinkedList<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>;
         if (parsingDict.containsKey(url))
         {
         for(ITreeNode<IParseablePASSProcessModelElement> element: parseableClasses)
@@ -326,9 +327,9 @@ private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node)
              * @param ontClass the Ontology class used (url as key)
              * @param element the instance that can parse the ontology class (used as value)
              */
-            private void addToParsingDict(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntologyClass ontClass, ITreeNode<IParseablePASSProcessModelElement> element, int depth)
+            private void addToParsingDict(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass ontClass, ITreeNode<IParseablePASSProcessModelElement> element, int depth)
         {
-        String ontResource = removeUri(ontClass.Resource.ToString());
+        String ontResource = removeUri(ontClass.getURI().toString());
 
         // If the key (the name of the owl class) is present in the mapping, add the new found class to the existing list (the value)
         if (parsingDict.containsKey(ontResource))
@@ -337,7 +338,7 @@ private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node)
         }
 
         // If not, create a new entry with a new list containing one element
-        else parsingDict.add(ontResource, new List<(ITreeNode<IParseablePASSProcessModelElement>, int)> { (element, depth) });
+        else parsingDict.put(ontResource, new List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>> { (element, depth) });
         }
 
             /**
@@ -349,7 +350,7 @@ private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node)
              * @param parentNodeKey the node that was mapped with the parent ontology class of the ontClass
              */
 
-private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntologyClass ontClass, String parentNodeKey)
+private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass ontClass, String parentNodeKey)
         {
         mapRestWithParentNode(parsingDict, ontClass, parentNodeKey, 1);
         }
@@ -359,9 +360,9 @@ private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePAS
              * {@link "mapRestWithParentNode(IDictionary{string, IList{(ITreeNode{IParseablePASSProcessModelElement}, int)}}, OntologyClass, ITreeNode{IParseablePASSProcessModelElement})"}
              * instead
              */
-            private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntologyClass ontClass, String parentNodeKey, int depth)
+            private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass ontClass, String parentNodeKey, int depth)
         {
-        String ontResource = removeUri(ontClass.Resource.ToString());
+        String ontResource = removeUri(ontClass.getURI().toString());
         List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>> possibleMappedClasses = parsingDict[parentNodeKey];
         if (!(parsingDict.containsKey(ontResource)))
         {
@@ -385,7 +386,7 @@ private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePAS
              */
             private static String removeUri(String stringWithUri)
         {
-        String[] splitStr = stringWithUri.split('#');
+        String[] splitStr = stringWithUri.split("#");
         return splitStr[splitStr.length - 1];
         }
         }

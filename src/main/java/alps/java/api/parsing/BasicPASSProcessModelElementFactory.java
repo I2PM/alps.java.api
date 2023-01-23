@@ -3,48 +3,46 @@ package alps.java.api.parsing;
 import alps.java.api.StandardPASS.PASSProcessModelElement;
 import alps.java.api.util.ITreeNode;
 import org.apache.jena.atlas.lib.Pair;
+import alps.java.api.parsing.IParseablePASSProcessModelElement;
 
 import java.util.*;
 
 /**
  * A basic factory that creates standard ModelElements contained inside the alps.net.api library
  */
-public class BasicPASSProcessModelElementFactory implements IPASSProcessModelElementFactory<IParseablePASSProcessModelElement>
-        {
+public class BasicPASSProcessModelElementFactory implements IPASSProcessModelElementFactory<IParseablePASSProcessModelElement> {
     public String createInstance(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, List<String> names,IParseablePASSProcessModelElement element){
             element = new PASSProcessModelElement();
             Set<String> bestParseableNames = new HashSet<String>();
-            int lowestParseDiff = int.MaxValue;
+            int lowestParseDiff = Integer.MAX_VALUE;
 
             // Check how good the instantiations for the names are.
             // Only use the names where instantiation-pairs have lowest numbers
-            for(String uriName: names)
-            {
-            String name = removeUri(uriName);
-            if (!parsingDict.containsKey(name)) continue;
+            for(String uriName: names) {
+                    String name = removeUri(uriName);
+                    if (!parsingDict.containsKey(name)) continue;
 
-            // The Item2 for each item signalizes how far off the c# class is mapped to an owl class.
-            // Example: in owl, "BlueSubject" is subclass of "Subject". In c# we only know "Subject".
-            // The owl "Subject" class has a mapping score of 0 and is mapped to the c# class "Subject"
-            // The owl "BlueSubject" class has a mapping score of 1 and is mapped to the c# class "Subject", the last known parent class
-            for((ITreeNode<IParseablePASSProcessModelElement>, int) pair: parsingDict[name])
-            {
-            if (pair.Item2 > lowestParseDiff) continue;
+                    // The Item2 for each item signalizes how far off the c# class is mapped to an owl class.
+                    // Example: in owl, "BlueSubject" is subclass of "Subject". In c# we only know "Subject".
+                    // The owl "Subject" class has a mapping score of 0 and is mapped to the c# class "Subject"
+                    // The owl "BlueSubject" class has a mapping score of 1 and is mapped to the c# class "Subject", the last known parent class
+                    for (Map.Entry<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> entry : parsingDict.entrySet()) {
+                            for (Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer> pair : entry.getValue()) {
+                                    if (pair > lowestParseDiff) continue;
 
-            // If the mapping is equally good as the mappings which were already found, add it
-            if (pair.Item2 == lowestParseDiff)
-            {
-            bestParseableNames.add(name);
-            }
+                                    // If the mapping is equally good as the mappings which were already found, add it
+                                    if (pair.equals(lowestParseDiff)) {
+                                            bestParseableNames.add(name);
+                                    }
 
-            // If the mapping is better than the mappings which were already found, delete the old mappings and add it
-            else
-            {
-            lowestParseDiff = pair.Item2;
-            bestParseableNames.clear();
-            bestParseableNames.add(name);
-            }
-            }
+                                    // If the mapping is better than the mappings which were already found, delete the old mappings and add it
+                                    else {
+                                            lowestParseDiff = pair;
+                                            bestParseableNames.clear();
+                                            bestParseableNames.add(name);
+                                    }
+                            }
+                    }
             }
 
             Map<IParseablePASSProcessModelElement, String> possibleElements = new HashMap<IParseablePASSProcessModelElement, String>();
@@ -88,7 +86,7 @@ public class BasicPASSProcessModelElementFactory implements IPASSProcessModelEle
             {
             // Take the only element and return a new instance
             case 1:
-            element = possibleElements.keySet().First().getParsedInstance();
+            element = possibleElements.keySet().first().getParsedInstance();
             return possibleElements.values().First();
 
             // Still some elements left that are both
@@ -107,7 +105,7 @@ public class BasicPASSProcessModelElementFactory implements IPASSProcessModelEle
             }
     private static String removeUri(String stringWithUri)
             {
-            String[] splitStr = stringWithUri.split('#');
+            String[] splitStr = stringWithUri.split("#");
 
             // return only the last part
             return splitStr[splitStr.length -1 ];
@@ -124,7 +122,7 @@ public class BasicPASSProcessModelElementFactory implements IPASSProcessModelEle
             if (parseability > max)
             {
             max = parseability;
-            maxPair = pair;
+            maxPair = (Map<IParseablePASSProcessModelElement, String>) pair;
             }
             counter++;
             }
