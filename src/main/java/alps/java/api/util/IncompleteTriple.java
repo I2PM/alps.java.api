@@ -1,7 +1,8 @@
 package alps.java.api.util;
 
-import alps.java.api.parsing;
+import alps.java.api.parsing.*;
 import org.apache.jena.ext.xerces.util.URI;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdf.model.impl.StatementImpl;
 
@@ -50,7 +51,7 @@ public class IncompleteTriple implements IIncompleteTriple {
         this.extraString = objectWithExtra;
     }
 
-    public Statement getRealTriple(IPASSGraph graph, Resource subjectNode) {
+    public Triple getRealTriple(IPASSGraph graph, RDFNode subjectNode) {
         Resource predicateNode;
         try {
             predicateNode = graph.createUriNode(predicateContent);

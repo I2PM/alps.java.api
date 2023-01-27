@@ -2,7 +2,7 @@ package alps.java.api.util;
 
 import alps.java.api.parsing.IPASSGraph;
 import org.apache.jena.rdf.model.RDFNode;
-import alps.java.api.parsing;
+
 
 /**
  * A language specific string is a string combined with a language specifier.

@@ -10,5 +10,8 @@
         <module name="IntellijerstesProjekt-master" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="IntellijerstesProjekt-master" target="19" />
+    </bytecodeTargetLevel>
   </component>
 </project>
