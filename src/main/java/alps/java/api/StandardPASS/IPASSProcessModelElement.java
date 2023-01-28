@@ -5,44 +5,42 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/// <summary>
-/// This class specifies the most general interface for elements contained inside a PASS model
-/// <br></br>
-/// <br></br>
-/// From PASS Doc: <i>All sub-class/instances of subclasses of a PASS-ProcessModelElement can be considered elements of PASS Process Models.
-/// Every element/sub-class of SimplePASSElement is also a child of PASSProcessModelElement.
-/// This is simply a surrogate class to group all simple elements together and differ them from StandardPASS</i>
-/// </summary>
+/**
+ * This class specifies the most general interface for elements contained inside a PASS model
+ * From PASS Doc All sub-class/instances of subclasses of a PASS-ProcessModelElement can be considered elements of PASS Process Models.
+ * Every element/sub-class of SimplePASSElement is also a child of PASSProcessModelElement.
+ * This is simply a surrogate class to group all simple elements together and differ them from StandardPASS
+ */
 public interface IPASSProcessModelElement extends IValueChangedPublisher<IPASSProcessModelElement>, IValueChangedObserver<IPASSProcessModelElement>
     {
-            /// <summary>
-            /// In some cases the full model component id (with uri) is needed.
-            /// If no graph exists, the baseUri is just a tag added in front acting as placeholder for the real uri.
-            /// </summary>
-            /// <returns>the id with the uri in front</returns>
-            String getUriModelComponentID();
+        /**
+         * In some cases the full model component id (with uri) is needed.
+         * If no graph exists, the baseUri is just a tag added in front acting as placeholder for the real uri.
+         * @return the id with the uri in front
+         */
+        String getUriModelComponentID();
 
-            /// <summary>
-            /// Returns the unique id the identifies the current element
-            /// </summary>
-            /// <returns></returns>
-            String getModelComponentID();
+        /**
+         * Returns the unique id the identifies the current elemen
+         * @return
+         */
+        String getModelComponentID();
 
-            /// <summary>
-            /// Attempts to remove the elment from every part that contains this element (model, layer, behavior...)
-            /// </summary>
-            /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
-            void removeFromEverything(int removeCascadeDepth);
+        /**
+         * Attempts to remove the elment from every part that contains this element (model, layer, behavior...)
+         * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+         */
+        void removeFromEverything(int removeCascadeDepth);
 
-            /// <summary>
-            /// <para>Sets the unique id for the current model.
-            /// Sets the id to the exact passed value.</para>
-            /// <para>The user must assure that the id is unique inside the current model,
-            /// otherwise exceptions might be thrown while using the model.</para>
-            /// <para>To safely create a component with a unique id, use <see cref="createUniqueModelComponentID(string)"/></para>
-            /// </summary>
-            /// <param name="id">the id that will be set as modelComponentID</param>
-            void setModelComponentID(String id);
+        /**
+         * Sets the unique id for the current model.
+         * Sets the id to the exact passed value.
+         * The user must assure that the id is unique inside the current model,
+         * otherwise exceptions might be thrown while using the model.
+         * To safely create a component with a unique id, use {@link "createUniqueModelComponentID(string)"}
+         * @param id the id that will be set as modelComponentID
+         */
+        void setModelComponentID(String id);
 
 
             /// <summary>

@@ -4,53 +4,53 @@ import java.util.Map;
 import java.util.Set;
 
 public interface IGuardingElement<T> {
-    /// <summary>
-    /// Sets the set of guarded elements for the instance
-    /// </summary>
-    /// <param name="implementedInterfaces">The set of guarded elements</param>
-    /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
+    /**
+     * Sets the set of guarded elements for the instance
+     * @param guardedElements The set of guarded elements
+     * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+     */
     void setGuardedElements(Set<T> guardedElements, int removeCascadeDepth);
 
-    /// <summary>
-    /// Adds an guarded element
-    /// </summary>
-    /// <param name="implementedInterface">the new guarded element</param>
+    /**
+     * Adds an guarded element
+     * @param guardedElement the new guarded element
+     */
     void addGuardedElement(T guardedElement);
 
-    /// <summary>
-    /// Removes a specified guarded element from the set of guarded elements.
-    /// </summary>
-    /// <param name="id">the id of the guarded element that should be removed</param>
-    /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
+    /**
+     * Removes a specified guarded element from the set of guarded elements.
+     * @param id the id of the guarded element that should be removed
+     * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+     */
     void removeGuardedElement(String id, int removeCascadeDepth);
 
-    /// <summary>
-    /// Returns the elements guarded by this instance
-    /// </summary>
-    /// <returns>the guarded elements</returns>
+    /**
+     * Returns the elements guarded by this instance
+     * @return the guarded elements
+     */
     Map<String, T> getGuardedElements();
 
-    /// <summary>
-    /// Sets the set of guarded elements for the instance
-    /// </summary>
-    /// <param name="implementedInterfacesIDs">The set of guarded elements</param>
+    /**
+     * Sets the set of guarded elements for the instance
+     * @param guardedElementsIDs The set of guarded elements
+     */
     void setGuardedElementsIDReferences(Set<String> guardedElementsIDs);
 
-    /// <summary>
-    /// Adds an guarded element
-    /// </summary>
-    /// <param name="implementedInterfaceID">the new guarded element</param>
+    /**
+     * Adds an guarded element
+     * @param guardedElementID the new guarded element
+     */
     void addGuardedElementIDReference(String guardedElementID);
 
-    /// <summary>
-    /// Removes a specified guarded element from the set of guarded elements.
-    /// </summary>
-    /// <param name="id">the id of the guarded element that should be removed</param>
+    /**
+     * Removes a specified guarded element from the set of guarded elements.
+     * @param id the id of the guarded element that should be removed
+     */
     void removeGuardedElementIDReference(String id);
 
-    /// <summary>
-    /// Returns the elements guarded by this instance
-    /// </summary>
-    /// <returns>the guarded elements</returns>
+    /**
+     * Returns the elements guarded by this instance
+     * @return the guarded element
+     */
     Set<String> getGuardedElementsIDReferences();
 }

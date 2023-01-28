@@ -9,9 +9,5 @@ public interface IExtendingElement<T> {
 
     String getExtendedElementID();
 
-    /**
-     * here should be an explanation
-     * @return return something
-     */
     boolean isExtension();
 }

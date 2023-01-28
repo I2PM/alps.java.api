@@ -1,9 +1,6 @@
 package alps.java.api.util;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 
@@ -16,21 +13,23 @@ import java.lang.reflect.Parameter;
         static {
             additionalAssemblies = new HashSet<>();
         }
-        public static IEnumerable<T> getEnumerableOfType<T extends class>(T element)
+        public static <T> Iterable<Class<? extends T>> getEnumerableOfType(Class<T> element)
         {
             // This is the "parent"-type, when want to find all types that extend this one
-                Class typeOfBase = element.GetType();
+                Class typeOfBase = element.getClass();
             if (!(element instanceof T)) return null;
             List<T> objects = new LinkedList<T>();
 
             // Add the assembly containing T to the set if not contained already
+            //TODO: Die Zeile umschreiben
             ClassLoader sameAsContainingT = ClassLoader.getAssembly(typeof(T));
             addAssemblyToCheckForTypes(sameAsContainingT);
 
             // Go through all the types that are in the same assembly as T
             // And through all the types that are in registered assemblies
             for(ClassLoader assembly: additionalAssemblies)
-            for(Class type: assembly.getClass()
+                //TODO: Das umschreiben
+            for(Class<?> type: assembly.getClass()
                     .Where(myType => myType.IsClass && !myType.IsAbstract && myType.BaseType == typeOfBase))
             {
                 T createdObject = createInstance<T>(type);
@@ -86,22 +85,22 @@ import java.lang.reflect.Parameter;
         // Baum hier erstellen, Baum aus Interfaces und Klassen erzeugen
         // Weiterhin kinder der klassen checken, aber auch direkte kinder von interfaces
 
-        public static T createInstance<T>(Class type)
+        public static <T> T createInstance(Class type)
         {
-            T finalInstance = default(T);
+            T finalInstance = null;
             Object[] args;
             try
             {
-                args = new Object[type.GetConstructors()[0].GetParameters().Length];
+                args = new Object[type.getConstructors()[0].getParameters().length];
                 int count = 0;
-                for(ParameterInfo info: type.GetConstructors()[0].GetParameters())
+                for(Parameter info: type.getConstructors()[0].getParameters())
                 {
-                    args[count] = (info.HasDefaultValue) ? info.DefaultValue : null;
+                    args[count] = (info.hasDefaultValue) ? info.DefaultValue : null;
                     count++;
                 }
-                finalInstance = (T)Activator.CreateInstance(type, args);
+                finalInstance = (T)Constructor.createInstance(type, args);
             }
-            catch
+            catch(Exception e)
         {
             boolean worked = false;
             int num = 0;
@@ -109,10 +108,10 @@ import java.lang.reflect.Parameter;
             {
                 try
                 {
-                    finalInstance = (T)Activator.CreateInstance(type);
+                    finalInstance = (T)Activator.createInstance(type);
                     worked = true;
                 }
-                catch (Exception)
+                catch (Exception ee)
                 {
                     num++;
                     args = new Object[num];

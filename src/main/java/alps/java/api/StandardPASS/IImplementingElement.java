@@ -3,39 +3,35 @@ package alps.java.api.StandardPASS;
 import java.util.Set;
 
         public interface IImplementingElement {
-            /// <summary>
-            /// Removes a specified interface from the set of implemented interfaces.
-            /// </summary>
-            /// <param name="id">the id of the interface that should be removed</param>
-            /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
+
+            /**
+             * Removes a specified interface from the set of implemented interfaces.
+             * @param id the id of the interface that should be removed
+             * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+             */
             void removeImplementedInterfaces(String id, int removeCascadeDepth);
 
-            /// <summary>
-            /// Sets the set of implemented interfaces for the instance
-            /// </summary>
-            /// <param name="implementedInterfacesIDs">The set of implemented interfaces</param>
+            /**
+             * Sets the set of implemented interfaces for the instance
+             * @param implementedInterfacesIDs The set of implemented interfaces
+             */
             void setImplementedInterfacesIDReferences(Set<String> implementedInterfacesIDs);
 
-            /// <summary>
-            /// Adds an implemented interface
-            /// </summary>
-            /// <param name="implementedInterfaceID">the new interface</param>
+            /**
+             * Adds an implemented interface
+             * @param implementedInterfaceID The set of implemented interfaces
+             */
             void addImplementedInterfaceIDReference(String implementedInterfaceID);
 
-            /// <summary>
-            /// Removes a specified interface from the set of implemented interfaces.
-            /// </summary>
-            /// <param name="id">the id of the interface that should be removed</param>
+            /**
+             * Removes a specified interface from the set of implemented interfaces.
+             * @param id the id of the interface that should be removed
+             */
             void removeImplementedInterfacesIDReference(String id);
 
-            /// <summary>
-            /// Returns the interfaces implemented by this instance
-            /// </summary>
-            /// <returns>the implemented interfaces</returns>
+            /**
+             * Returns the interfaces implemented by this instance
+             * @return the implemented interfaces
+             */
             Set<String> getImplementedInterfacesIDReferences();
         }
-
-        /// <summary>
-        /// An interface for classes that can (in a PASS context) implement other PASS objects which act as interfaces.
-        /// </summary>
-        /// <typeparam name="T">The type of the implemented classes, usually the type of the implementing class itself</typeparam>
