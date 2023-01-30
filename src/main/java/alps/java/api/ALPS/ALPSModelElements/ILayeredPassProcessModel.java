@@ -1,4 +1,8 @@
 package alps.java.api.ALPS.ALPSModelElements;
 
-public interface ILayeredPassProcessModel {
+import alps.java.api.StandardPASS.PassProcessModelElements.IPASSProcessModel;
+
+public interface ILayeredPassProcessModel extends IPASSProcessModel
+{
+
 }

@@ -3,178 +3,189 @@ package alps.java.api.ALPS.ALPSModelElements;
 import alps.java.api.ALPS.IALPSModelElement;
 import alps.java.api.StandardPASS.*;
 import alps.java.api.StandardPASS.PassProcessModelElements.IPASSProcessModel;
+import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.*;
+import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.InputPoolConstraints.IMessageSenderTypeConstraint;
+import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.InputPoolConstraints.IMessageTypeConstraint;
+import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.InputPoolConstraints.ISenderTypeConstraint;
+import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.Subjects.IFullySpecifiedSubject;
+import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.Subjects.IInterfaceSubject;
+import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.Subjects.IMultiSubject;
+import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.Subjects.ISingleSubject;
 import alps.java.api.util.*;
 
-/// <summary>
-/// Defines an interface for a model layer
-/// </summary>
-public interface IModelLayer extends IALPSModelElement, IPrioritizableElement, IContainableElement<IPASSProcessModel>,
-        IImplementingElementT<IModelLayer>, IExtendingElement<IModelLayer>, IAbstractElement
-        {
-/// <summary>
-/// Represents the type of the layer
-/// </summary>
-public enum LayerType
+import java.util.Map;
+
+/**
+ * Defines an interface for a model layer
+ */
+public interface IModelLayer implements IALPSModelElement, IPrioritizableElement, IContainableElement<IPASSProcessModel>,
+        IImplementingElement<IModelLayer>, IExtendingElement<IModelLayer>, IAbstractElement
 {
-    STANDARD,
-    BASE,
-    EXTENSION,
-    MACRO,
-    GUARD
-}
+    /**
+     * Represents the type of the layer
+     */
+    public enum LayerType
+    {
+        STANDARD,
+        BASE,
+        EXTENSION,
+        MACRO,
+        GUARD
+    }
 
 
-    /// <summary>
-    /// Sets the layertype for the layer
-    /// </summary>
-    /// <param name="layerType"></param>
+    /**
+     * Sets the layertype for the layer
+     * @param layerType
+     */
     void setLayerType(LayerType layerType);
 
-    /// <summary>
-    /// Returns the layer type for the current layer
-    /// </summary>
-    /// <returns></returns>
+    /**
+     * Returns the layer type for the current layer
+     * @return
+     */
     LayerType getLayerType();
 
 
-    /// <summary>
-    /// Returns all elements contained inside the layer.
-    /// The key is the ModelComponentID to each value item.
-    /// </summary>
-    /// <returns>A dictionary containing all elements</returns>
-    IDictionary<string, IPASSProcessModelElement> getElements();
+    /**
+     * Returns all elements contained inside the layer.
+     * The key is the ModelComponentID to each value item.
+     * @return A dictionary containing all elements
+     */
+    Map<String, IPASSProcessModelElement> getElements();
 
-    /// <summary>
-    /// Adds an element to the layer
-    /// </summary>
-    /// <param name="value"></param>
+    /**
+     * Adds an element to the layer
+     * @param value
+     */
     void addElement(IPASSProcessModelElement value);
 
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    IPASSProcessModelElement getElement(string id);
+    /**
+     *
+     * @param id
+     * @return
+     */
+    IPASSProcessModelElement getElement(String id);
 
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="extendedLayer"></param>
-    /// <param name="removeCascadeDepth"></param>
+    /**
+     *
+     * @param extendedLayer
+     * @param removeCascadeDepth
+     */
     public void setExtendedLayer(IModelLayer extendedLayer, int removeCascadeDepth);
 
 
-    /// <summary>
-    /// Returns a fully specified subject depending on its position
-    /// (inside the list of all fully specified subjects in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns></returns>
+    /**
+     * Returns a fully specified subject depending on its position
+     * (inside the list of all fully specified subjects in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     IFullySpecifiedSubject getFullySpecifiedSubject(int numberOfElement);
 
 
-    /// <summary>
-    /// Returns an interface subject depending on its position
-    /// (inside the list of interface subjects in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns></returns>
+    /**
+     * Returns an interface subject depending on its position
+     * (inside the list of interface subjects in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     IInterfaceSubject getInterfaceSubject(int numberOfElement);
 
-    /// <summary>
-    /// Returns a multi subject depending on its position
-    /// (inside the list of interface subjects in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns></returns>
+    /**
+     * Returns a multi subject depending on its position
+     * (inside the list of interface subjects in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     IMultiSubject getMultiSubject(int numberOfElement);
 
 
-    /// <summary>
-    /// Returns a single subject depending on its position
-    /// (inside the list of single subjects in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns></returns>
+    /**
+     * Returns a single subject depending on its position
+     * (inside the list of single subjects in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     ISingleSubject getSingleSubject(int numberOfElement);
 
 
-    /// <summary>
-    /// Returns a message exchange depending on its position
-    /// (inside the list of message exchanges in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns></returns>
+    /**
+     * Returns a message exchange depending on its position
+     * (inside the list of message exchanges in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     IMessageExchange getMessageExchange(int numberOfElement);
 
 
-    /// <summary>
-    /// Returns an input pool constraint depending on its position
-    /// (inside the list of input pool constraints in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns>The object</returns>
+    /**
+     * Returns an input pool constraint depending on its position
+     * (inside the list of input pool constraints in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     IInputPoolConstraint getInputPoolConstraint(int numberOfElement);
 
 
-    /// <summary>
-    /// Returns a message sender type constraint depending on its position
-    /// (inside the list of message sender type constraints in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns>The object</returns>
+    /**
+     * Returns a message sender type constraint depending on its position
+     * (inside the list of message sender type constraints in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     IMessageSenderTypeConstraint getMessageSenderTypeConstraint(int numberOfElement);
 
 
-    /// <summary>
-    /// Returns a message type constraint depending on its position
-    /// (inside the list of message type constraints in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns>The object</returns>
+    /**
+     * Returns a message type constraint depending on its position
+     * (inside the list of message type constraints in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     IMessageTypeConstraint getMessageTypeConstraint(int numberOfElement);
 
 
-    /// <summary>
-    /// Returns a sender type constraint depending on its position
-    /// (inside the list of sender type constraints in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns>The object</returns>
+    /**
+     * Returns a sender type constraint depending on its position
+     * (inside the list of sender type constraints in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     ISenderTypeConstraint getSenderTypeConstraint(int numberOfElement);
 
 
-    /// <summary>
-    /// Returns an input pool constraint handling strategy depending on its position
-    /// (inside the list of input pool constraint handling strategies in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns>The object</returns>
+    /**
+     * Returns an input pool constraint handling strategy depending on its position
+     * (inside the list of input pool constraint handling strategies in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     IInputPoolConstraintHandlingStrategy getInputPoolConstraintHandlingStrategy(int numberOfElement);
 
-    /// <summary>
-    /// Returns a message exchange list depending on its position
-    /// (inside the list of message exchange lists in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns>The object</returns>
+    /**
+     * Returns a message exchange list depending on its position
+     * (inside the list of message exchange lists in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     IMessageExchangeList getMessageExchangeList(int numberOfElement);
 
-    /// <summary>
-    /// Returns a message specification depending on its position
-    /// (inside the list of message specifications in the layer)
-    /// </summary>
-    /// <param name="numberOfElement">the position</param>
-    /// <returns>The object</returns>
+    /**
+     * Returns a message exchange list depending on its position
+     * (inside the list of message exchange lists in the layer)
+     * @param numberOfElement the position
+     * @return
+     */
     IMessageSpecification getMessageSpecification(int numberOfElement);
 
-    /// <summary>
-    /// Deletes an element depending on its id, if it is contained inside the layer
-    /// </summary>
-    /// <param name="modelComponentID">the id of the element</param>
-    /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
-    bool removeContainedElement(string modelComponentID, int removeCascadeDepth = 0);
+    /**
+     * Deletes an element depending on its id, if it is contained inside the layer
+     * @param modelComponentID the id of the element
+     * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+     * @return
+     */
+    boolean removeContainedElement(String modelComponentID, int removeCascadeDepth);
 
 }
 
