@@ -1,3 +1,5 @@
+package alps.java.api.FunctionalityCapsules;
+
 import alps.java.api.FunctionalityCapsules.ICapsuleCallback;
 import alps.java.api.FunctionalityCapsules.IExtendsFunctionalityCapsule;
 import alps.java.api.parsing.*;
