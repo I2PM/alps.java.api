@@ -11,6 +11,7 @@ package alps.java.api.util;
         void updateAdded(T update, T caller);
 
         void updateRemoved(T update, T caller, int removeCascadeDepth);
+        void updateRemoved(T update, T caller);
 
 
         void notifyModelComponentIDChanged(String oldID, String newID);

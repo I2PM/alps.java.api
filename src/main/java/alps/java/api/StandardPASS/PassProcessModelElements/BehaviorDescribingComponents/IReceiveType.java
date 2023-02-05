@@ -1,4 +1,9 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents;
 
-public interface IReceiveType {
+import alps.java.api.StandardPASS.PassProcessModelElements.IBehaviorDescribingComponent;
+
+/**
+ * Interface to the receive type class
+ */
+public interface IReceiveType extends IBehaviorDescribingComponent {
 }

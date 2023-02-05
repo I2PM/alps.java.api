@@ -11,16 +11,15 @@ import
 import java.net.URI;
 import java.util.*;
 
-/// <summary>
-        /// Root class for the inheritans graphs. Represents a PASS process model element
-        /// </summary>
+/**
+ * Root class for the inheritans graphs. Represents a PASS process model element
+ */
         public class PASSProcessModelElement implements ICapsuleCallback
         {
 
-                /// <summary>
-                /// This list contains the additional attributes as snd entry and the types for each of the additional attributes as first
-                /// </summary>
-                ///
+                /**
+                 * This list contains the additional attributes as snd entry and the types for each of the additional attributes as first
+                 */
 
                 protected String exportSubjectNodeName = null;
 
@@ -29,9 +28,9 @@ import java.util.*;
                 protected final String EXAMPLE_BASE_URI = "http://www.imi.kit.edu/exampleBaseURI";
                 public static final int CANNOT_PARSE = -1;
 
-                protected final List<IValueChangedObserver<IPASSProcessModelElement>> observerList = new List<IValueChangedObserver<IPASSProcessModelElement>>();
-                protected List<Triple> additionalAttributeTriples = new List<Triple>();
-                protected List<IIncompleteTriple> additionalIncompleteTriples = new List<IIncompleteTriple>();
+                protected final List<IValueChangedObserver<IPASSProcessModelElement>> observerList = new ArrayList<IValueChangedObserver<IPASSProcessModelElement>>();
+                protected List<Triple> additionalAttributeTriples = new ArrayList<Triple>();
+                protected List<IIncompleteTriple> additionalIncompleteTriples = new ArrayList<IIncompleteTriple>();
 
 
                 protected Set<IStringWithExtra> modelComponentLabels = new HashSet<IStringWithExtra>();
@@ -41,9 +40,9 @@ import java.util.*;
                 protected String modelComponentID = "";
                 protected IPASSGraph exportGraph;
 
-                /// <summary>
-                /// Name of the class, needed for parsing
-                /// </summary>
+                /**
+                 * Name of the class, needed for parsing
+                 */
                 private final String className = "PASSProcessModelElement";
 
 
@@ -58,12 +57,14 @@ import java.util.*;
                         }
 
 
-                /// <summary>
-                /// Constructor that creates a fully specified instance of the PASS Process Model Element class
-                /// </summary>
-                /// <param name="labelForID">a string describing the element used to generate the model id</param>
-                /// <param name="comment">the comment</param>
-                /// <param name="additionalAttributes">list of additional attributes</param>
+                /**
+                 *  Constructor that creates a fully specified instance of the PASS Process Model Element class
+                 * @param labelForID a string describing the element used to generate the model id
+                 * @param comment the comment
+                 * @param additionalLabel
+                 * @param additionalAttributes ist of additional attributes
+                 */
+                //TODO: KOnstruktor überladen
                 public PASSProcessModelElement(String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttributes)
                         {
                         if (labelForID == null || labelForID.equals(""))
@@ -85,11 +86,11 @@ import java.util.*;
                         }
 
 
-                /// <summary>
-                /// Adds an incomplete Triple to the element that will either be parsed right away or delayed,
-                /// depending on whether there is a graph with a base uri available or not.
-                /// </summary>
-                /// <param name="triple">the triple that is being saved</param>
+                /**
+                 * Adds an incomplete Triple to the element that will either be parsed right away or delayed,
+                 * depending on whether there is a graph with a base uri available or not.
+                 * @param triple the triple that is being saved
+                 */
                 public void addTriple(IIncompleteTriple triple)
                         {
                         if (containsTriple(triple)) return;
@@ -97,36 +98,49 @@ import java.util.*;
                         {
                         additionalIncompleteTriples.add(triple);
                         IStringWithExtra extraString = triple.getObjectWithExtra();
-                        parseAttribute(triple.getPredicate(), extraString.getContent(),
-                        (extraString == LanguageSpecificString) ? extraString.getExtra() : null,
-                        (extraString == DataTypeString) ? extraString.getExtra() : null, null);
+                        parseAttribute(triple.getPredicate(), extraString.getContent(), getExtraOrNullLang(extraString), getExtraOrNullData(extraString), null);
                         }
                         else
                         {
                         completeIncompleteTriple(triple);
                         }
                         }
+                private String getExtraOrNullLang(Object extraString){
+                        if(extraString instanceof LanguageSpecificString){
+                                return ((LanguageSpecificString) extraString).getExtra();
+                        }else{
+                                return null;
+                        }
+                }
 
-                /// <summary>
-                /// Adds a  list ofIncomplete Triple to the element that will either be parsed right away, or delayed
-                /// (depending on whether there is a graph available or not)
-                /// </summary>
-                /// <param name="triple">the triple that is being saved</param>
-                public void addTriples(List<IIncompleteTriple> triples)
+                private String getExtraOrNullData(Object extraString){
+                        if(extraString instanceof DataTypeString){
+                                return ((DataTypeString) extraString).getExtra();
+                        }else{
+                                return null;
+                        }
+                }
+
+                /**
+                 * Adds a  list ofIncomplete Triple to the element that will either be parsed right away, or delayed
+                 * (depending on whether there is a graph available or not)
+                 * @param triples the triple that is being saved
+                 */
+                /* public void addTriples(List<IIncompleteTriple> triples)
                         {
                         if (triples != null)
                         {
                         for (IIncompleteTriple triple:  triples)
                         addTriple(triple);
                         }
-                        }
+                        } */
 
-                /// <summary>
-                /// Adds a list of complete triples to the element.
-                /// If the element contains an Incomplete Triple containing the same information as a complete triple, the incomplete will be deleted.
-                /// The content of the triple will be parsed if possible.
-                /// </summary>
-                /// <param name="triples"></param>
+                /**
+                 * Adds a list of complete triples to the element.
+                 * If the element contains an Incomplete Triple containing the same information as a complete triple, the incomplete will be deleted.
+                 * The content of the triple will be parsed if possible.
+                 * @param triples
+                 */
                 public void addTriples(List<Triple> triples)
                         {
                         if (triples != null)
@@ -759,6 +773,10 @@ import java.util.*;
                     {
                         publishElementRemoved(this, removeCascadeDepth);
                     }
+                public void removeFromEverything()
+                {
+                        publishElementRemoved(this, 0);
+                }
 
 
                     @Override

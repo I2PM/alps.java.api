@@ -22,4 +22,11 @@ package alps.java.api.util;
          * @return
          */
         boolean unregister(IValueChangedObserver<T> observer, int removeCascadeDepth);
+
+        /**
+         * De-registers an observer
+         * @param observer the observer
+         * @return
+         */
+        boolean unregister(IValueChangedObserver<T> observer);
 }

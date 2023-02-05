@@ -33,6 +33,11 @@ public interface IPASSProcessModelElement extends IValueChangedPublisher<IPASSPr
         void removeFromEverything(int removeCascadeDepth);
 
         /**
+         * Attempts to remove the elment from every part that contains this element (model, layer, behavior...)
+         */
+        void removeFromEverything();
+
+        /**
          * Sets the unique id for the current model.
          * Sets the id to the exact passed value.
          * The user must assure that the id is unique inside the current model,
