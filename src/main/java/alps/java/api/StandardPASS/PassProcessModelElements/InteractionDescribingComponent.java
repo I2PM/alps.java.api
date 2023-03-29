@@ -1,8 +1,5 @@
 package alps.java.api.StandardPASS.PassProcessModelElements;
 
-    /// <summary>
-    /// Class that represents an InteractionDescriptionComponten
-    /// </summary>
 
 import alps.java.api.ALPS.ALPSModelElements.IModelLayer;
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
@@ -15,14 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/// <summary>
-    /// Class that represents an InteractionDescriptionComponten
-    /// </summary>
+/**
+ * Class that represents an InteractionDescriptionComponten
+ */
     public class InteractionDescribingComponent extends PASSProcessModelElement implements IInteractionDescribingComponent
             {
-        /// <summary>
-        /// Name of the class, needed for parsing
-        /// </summary>
+        /**
+         * Name of the class, needed for parsing
+         */
         private final String className = "InteractionDescribingComponent";
 
         protected IModelLayer layer;
@@ -52,18 +49,24 @@ import java.util.Set;
 
         protected InteractionDescribingComponent() { }
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="label"></param>
-        /// <param name="comment"></param>
-        /// <param name="additionalAttribute"></param>
+                /**
+                 *
+                 * @param layer
+                 * @param labelForID
+                 * @param comment
+                 * @param additionalLabel
+                 * @param additionalAttribute
+                 */
         public InteractionDescribingComponent(IModelLayer layer, String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
-            super(labelForID, comment, additionalLabel, additionalAttribute) {
+            super(labelForID, comment, additionalLabel, additionalAttribute);
                 setContainedBy(layer);
             }
-        }
 
+                public InteractionDescribingComponent(IModelLayer layer) {
+                    super();
+                    setContainedBy(layer);
+                }
+        //TODO: fertig implementieren
         @Override
         protected Map<String, IParseablePASSProcessModelElement> getDictionaryOfAllAvailableElements()
                 {
@@ -82,6 +85,7 @@ import java.util.Set;
                 }
                 return allParseableElements;
                 }
+                //TODO: fertig implementieren
         @Override
         public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
                 {

@@ -12,6 +12,12 @@ import java.util.Set;
             void removeImplementedInterfaces(String id, int removeCascadeDepth);
 
             /**
+             * Removes a specified interface from the set of implemented interfaces.
+             * @param id the id of the interface that should be removed
+             */
+            void removeImplementedInterfaces(String id);
+
+            /**
              * Sets the set of implemented interfaces for the instance
              * @param implementedInterfacesIDs The set of implemented interfaces
              */

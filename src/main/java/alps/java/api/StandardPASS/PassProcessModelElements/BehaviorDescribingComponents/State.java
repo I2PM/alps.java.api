@@ -2,16 +2,15 @@ package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCo
 
 import alps.java.api.FunctionalityCapsules.IImplementsFunctionalityCapsule;
 import alps.java.api.FunctionalityCapsules.ImplementsFunctionalityCapsule;
+import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponent;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IStateReference;
 import alps.java.api.StandardPASS.PassProcessModelElements.ISubjectBehavior;
 import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors.IGuardBehavior;
+import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors.ISubjectBaseBehavior;
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.src.OWLTags;
-import alps.java.api.util.CompatibilityDictionary;
-import alps.java.api.util.ICompatibilityDictionary;
-import alps.java.api.util.IIncompleteTriple;
-import alps.java.api.util.IncompleteTriple;
+import alps.java.api.util.*;
 
 import java.util.*;
 
@@ -71,6 +70,17 @@ protected State() { implCapsule = new ImplementsFunctionalityCapsule<IState>(thi
         setOutgoingTransitions(outgoingTransition);
         generateAction();
         }
+
+                public State(ISubjectBehavior behavior){
+                        super(behavior);
+                        implCapsule = new ImplementsFunctionalityCapsule<IState>(this);
+                        setGuardBehavior(null);
+                        setFunctionSpecification(null);
+                        setIncomingTransitions(null);
+
+                        setOutgoingTransitions(null);
+                        generateAction();
+                }
 
 
 public void addIncomingTransition(ITransition transition)
@@ -276,12 +286,12 @@ public IGuardBehavior getGuardBehavior()
         return guardBehavior;
         }
 
-
-protected void generateAction(IAction newGeneratedAction = null)
+//TODO: neu implementieren ?
+protected void generateAction(IAction newGeneratedAction)
         {
         IAction oldAction = action;
         // Might set it to null
-        String label = (getModelComponentLabelsAsStrings().Count > 0) ? getModelComponentLabelsAsStrings()[0] : getModelComponentID();
+        String label = (getModelComponentLabelsAsStrings().size() > 0) ? getModelComponentLabelsAsStrings().get(0) : getModelComponentID();
         this.action = (newGeneratedAction == null) ? new Action(this, "ActionFor" + label) : newGeneratedAction;
 
         if (oldAction != null)
@@ -300,35 +310,58 @@ protected void generateAction(IAction newGeneratedAction = null)
         }
         }
 
+                protected void generateAction()
+                {
+                        IAction oldAction = action;
+                        // Might set it to null
+                        String label = (getModelComponentLabelsAsStrings().size() > 0) ? getModelComponentLabelsAsStrings().get(0) : getModelComponentID();
+                        this.action = (newGeneratedAction == null) ? new Action(this, "ActionFor" + label) : newGeneratedAction;
+
+                        if (oldAction != null)
+                        {
+                                if (oldAction.equals(action)) return;
+                                oldAction.unregister(this);
+                                oldAction.removeFromEverything();
+                                removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, oldAction.getUriModelComponentID()));
+                        }
+
+                        if (!(action == null))
+                        {
+                                publishElementAdded(action);
+                                action.register(this);
+                                addTriple(new IncompleteTriple(OWLTags.stdBelongsTo, action.getUriModelComponentID()));
+                        }
+                }
+
 
 public IAction getAction()
         {
         return action;
         }
 
-public bool isStateType(StateType stateType)
+public boolean isStateType(IState.StateType stateType)
         {
-        return stateTypes.Contains(stateType);
+        return stateTypes.contains(stateType);
         }
-
-public virtual void setIsStateType(StateType stateType)
+//TODO: Out Param
+public void setIsStateType(IState.StateType stateType)
         {
         switch (stateType)
         {
-        case StateType.InitialStateOfBehavior:
-        if (stateTypes.Add(stateType))
+        case IState.StateType.InitialStateOfBehavior:
+        if (stateTypes.add(stateType))
         addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfBehavior"));
         break;
-        case StateType.InitialStateOfChoiceSegmentPath:
-        if (stateTypes.Add(stateType))
+        case IState.StateType.InitialStateOfChoiceSegmentPath:
+        if (stateTypes.add(stateType))
         addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfChoiceSegmentPath"));
         break;
-        case StateType.EndState:
-        if (stateTypes.Add(stateType))
+        case IState.StateType.EndState:
+        if (stateTypes.add(stateType))
         {
         addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "EndState"));
 
-        if (getContainedBy(out ISubjectBehavior behavior) && (behavior is ISubjectBaseBehavior baseBehav))
+        if (getContainedBy(out ISubjectBehavior behavior) && (behavior instanceof ISubjectBaseBehavior baseBehav))
         {
         baseBehav.registerEndState(this);
         }
@@ -338,26 +371,26 @@ public virtual void setIsStateType(StateType stateType)
 
         }
 
-public virtual void removeStateType(StateType stateType)
+public void removeStateType(IState.StateType stateType)
         {
         // If the type was removed successfully
-        if (stateTypes.Remove(stateType))
+        if (stateTypes.remove(stateType))
         {
         switch (stateType)
         {
-        case StateType.InitialStateOfBehavior:
+        case IState.StateType.InitialStateOfBehavior:
         removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfBehavior"));
         if (getContainedBy(out ISubjectBehavior behav))
         {
         behav.setInitialState(null);
         }
         break;
-        case StateType.InitialStateOfChoiceSegmentPath:
+        case IState.StateType.InitialStateOfChoiceSegmentPath:
         removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfChoiceSegmentPath"));
         break;
-        case StateType.EndState:
+        case IState.StateType.EndState:
         removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "EndState"));
-        if (getContainedBy(out ISubjectBehavior behavior) && behavior is ISubjectBaseBehavior baseBehav)
+        if (getContainedBy(out ISubjectBehavior behavior) && behavior instanceof ISubjectBaseBehavior baseBehav)
         {
         baseBehav.unregisterEndState(getModelComponentID());
         }
@@ -367,119 +400,119 @@ public virtual void removeStateType(StateType stateType)
         }
         }
 
-
-protected override bool parseAttribute(string predicate, string objectContent, string lang, string dataType, IParseablePASSProcessModelElement element)
+@Override
+protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)
         {
         if (implCapsule != null && implCapsule.parseAttribute(predicate, objectContent, lang, dataType, element))
         return true;
         else if (element != null)
         {
-        if (element is ITransition transition)
+        if (element instanceof ITransition transition)
         {
-        if (predicate.Contains(OWLTags.hasIncomingTransition))
+        if (predicate.contains(OWLTags.hasIncomingTransition))
         {
         addIncomingTransition(transition);
         return true;
         }
-        else if (predicate.Contains(OWLTags.hasOutgoingTransition))
+        else if (predicate.contains(OWLTags.hasOutgoingTransition))
         {
         addOutgoingTransition(transition);
         return true;
         }
 
         }
-        else if (predicate.Contains(OWLTags.guardedBy) && element is IGuardBehavior guard)
+        else if (predicate.contains(OWLTags.guardedBy) && element instanceof IGuardBehavior guard)
         {
         setGuardBehavior(guard);
         return true;
         }
 
-        else if (predicate.Contains(OWLTags.hasFunctionSpecification) && element is IFunctionSpecification specification)
+        else if (predicate.contains(OWLTags.hasFunctionSpecification) && element instanceof IFunctionSpecification specification)
         {
         setFunctionSpecification(specification);
         return true;
         }
 
-        else if (predicate.Contains(OWLTags.belongsTo) && element is IAction action)
+        else if (predicate.contains(OWLTags.belongsTo) && element instanceof IAction action)
         {
         generateAction(action);
         return true;
         }
-        else if (predicate.Contains(OWLTags.type))
+        else if (predicate.contains(OWLTags.type))
         {
-        if (objectContent.ToLower().Contains("endstate"))
+        if (objectContent.toLowerCase().contains("endstate"))
         {
-        setIsStateType(StateType.EndState);
+        setIsStateType(IState.StateType.EndState);
         return true;
         }
-        else if (objectContent.ToLower().Contains("initialstateofbehavior"))
+        else if (objectContent.toLowerCase().contains("initialstateofbehavior"))
         {
-        setIsStateType(StateType.InitialStateOfBehavior);
+        setIsStateType(IState.StateType.InitialStateOfBehavior);
         return true;
         }
-        else if (objectContent.ToLower().Contains("initialstateofchoicesegmentpath"))
+        else if (objectContent.toLowerCase().contains("initialstateofchoicesegmentpath"))
         {
-        setIsStateType(StateType.InitialStateOfChoiceSegmentPath);
+        setIsStateType(IState.StateType.InitialStateOfChoiceSegmentPath);
         return true;
         }
         }
         }
-        return base.parseAttribute(predicate, objectContent, lang, dataType, element);
+        return super.parseAttribute(predicate, objectContent, lang, dataType, element);
         }
 
-
-public override ISet<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
+@Override
+public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
         {
-        ISet<IPASSProcessModelElement> baseElements = base.getAllConnectedElements(specification);
+        Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
         if (getAction() != null)
-        baseElements.Add(getAction());
+        baseElements.add(getAction());
         if (getGuardBehavior() != null && specification == ConnectedElementsSetSpecification.ALL)
-        baseElements.Add(getGuardBehavior());
+        baseElements.add(getGuardBehavior());
         if (getFunctionSpecification() != null && (specification == ConnectedElementsSetSpecification.ALL || specification == ConnectedElementsSetSpecification.TO_ADD))
-        baseElements.Add(getFunctionSpecification());
+        baseElements.add(getFunctionSpecification());
         if (specification == ConnectedElementsSetSpecification.ALL || specification == ConnectedElementsSetSpecification.TO_ADD ||
         specification == ConnectedElementsSetSpecification.TO_REMOVE_DIRECTLY_ADJACENT || specification == ConnectedElementsSetSpecification.TO_REMOVE_ADJACENT_AND_MORE)
         {
-        foreach (ITransition transition in getOutgoingTransitions().Values)
-        baseElements.Add(transition);
+        for(ITransition transition: getOutgoingTransitions().values())
+        baseElements.add(transition);
 
         if (specification != ConnectedElementsSetSpecification.TO_REMOVE_DIRECTLY_ADJACENT)
-        foreach (ITransition transition in getIncomingTransitions().Values)
-        baseElements.Add(transition);
+        for(ITransition transition: getIncomingTransitions().values())
+        baseElements.add(transition);
         }
         return baseElements;
         }
 
-
-public override void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller, int removeCascadeDepth = 0)
+@Override
+public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller, int removeCascadeDepth)
         {
-        base.updateRemoved(update, caller);
-        if (update is null) return;
-        if (update.Equals(action))
+        super.updateRemoved(update, caller);
+        if (update == null) return;
+        if (update.equals(action))
         {
         // TODO what to do here?
         }
-        else if (update.Equals(guardBehavior))
+        else if (update.equals(guardBehavior))
         {
         setGuardBehavior(null, removeCascadeDepth);
         }
-        else if (update.Equals(functionSpecification))
+        else if (update.equals(functionSpecification))
         {
         setFunctionSpecification(null, removeCascadeDepth);
         }
         else
         {
-        foreach (ITransition trans in incomingTransitions.Values)
+        for(ITransition trans: incomingTransitions.values())
         {
-        if (update.Equals(trans))
+        if (update.equals(trans))
         {
         removeIncomingTransition(trans.getModelComponentID(), removeCascadeDepth);
         return;
         }
         }
-        foreach (ITransition trans in outgoingTransitions.Values)
+        for(ITransition trans: outgoingTransitions.values())
         {
-        if (update.Equals(trans))
+        if (update.equals(trans))
         {
         removeOutgoingTransition(trans.getModelComponentID(), removeCascadeDepth);
         return;
@@ -488,52 +521,78 @@ public override void updateRemoved(IPASSProcessModelElement update, IPASSProcess
         }
         }
 
-public override void notifyModelComponentIDChanged(string oldID, string newID)
+                @Override
+                public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller) {
+                        super.updateRemoved(update, caller);
+                        if (update == null) return;
+                        if (update.equals(action)) {
+                                // TODO what to do here?
+                        } else if (update.equals(guardBehavior)) {
+                                setGuardBehavior(null, 0);
+                        } else if (update.equals(functionSpecification)) {
+                                setFunctionSpecification(null, 0);
+                        } else {
+                                for (ITransition trans : incomingTransitions.values()) {
+                                        if (update.equals(trans)) {
+                                                removeIncomingTransition(trans.getModelComponentID(), 0);
+                                                return;
+                                        }
+                                }
+                                for (ITransition trans : outgoingTransitions.values()) {
+                                        if (update.equals(trans)) {
+                                                removeOutgoingTransition(trans.getModelComponentID(), 0);
+                                                return;
+                                        }
+                                }
+                        }
+                }
+@Override
+public void notifyModelComponentIDChanged(String oldID, String newID)
         {
-        if (incomingTransitions.ContainsKey(oldID))
+        if (incomingTransitions.containsKey(oldID))
         {
         ITransition element = incomingTransitions[oldID];
-        incomingTransitions.Remove(oldID);
-        incomingTransitions.Add(element.getModelComponentID(), element);
+        incomingTransitions.remove(oldID);
+        incomingTransitions.put(element.getModelComponentID(), element);
         }
 
-        if (outgoingTransitions.ContainsKey(oldID))
+        if (outgoingTransitions.containsKey(oldID))
         {
         ITransition element = outgoingTransitions[oldID];
-        outgoingTransitions.Remove(oldID);
-        outgoingTransitions.Add(element.getModelComponentID(), element);
+        outgoingTransitions.remove(oldID);
+        outgoingTransitions.put(element.getModelComponentID(), element);
         }
-        base.notifyModelComponentIDChanged(oldID, newID);
+        super.notifyModelComponentIDChanged(oldID, newID);
         }
 
 
 
-protected static readonly string STATE_REF_CLASS_NAME = "StateReference";
+protected static final String STATE_REF_CLASS_NAME = "StateReference";
 
-/// <summary>
-/// Sets a state that is referenced by this state.
-/// According to the PASS standard, this functionality belongs to the "StateReference" class.
-/// Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
-/// </summary>
-/// <param name="state">The referenced state</param>
-/// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
-public virtual void setReferencedState(IState state, int removeCascadeDepth = 0)
+/**
+ * Sets a state that is referenced by this state.
+ * According to the PASS standard, this functionality belongs to the "StateReference" class.
+ * Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
+ * @param state The referenced state
+ * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+ */
+        public void setReferencedState(IState state, int removeCascadeDepth)
         {
-        if (!(state.GetType().Equals(this.GetType()))) return;
+        if (!(state.getClass().equals(this.getClass()))) return;
         IState oldReference = referenceState;
         // Might set it to null
         this.referenceState = state;
 
         if (oldReference != null)
         {
-        if (oldReference.Equals(state)) return;
+        if (oldReference.equals(state)) return;
         oldReference.unregister(this, removeCascadeDepth);
         removeTriple(new IncompleteTriple(OWLTags.stdReferences, oldReference.getUriModelComponentID()));
         addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
         removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
         }
 
-        if (!(state is null))
+        if (!(state == null))
         {
         state.register(this);
         addTriple(new IncompleteTriple(OWLTags.stdReferences, state.getUriModelComponentID()));
@@ -542,80 +601,131 @@ public virtual void setReferencedState(IState state, int removeCascadeDepth = 0)
         }
         }
 
-/// <summary>
-/// Gets the state that is referenced by this state.
-/// According to the PASS standard, this functionality belongs to the "StateReference" class.
-/// Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
-/// </summary>
-/// <returns>The referenced state</returns>
-public IState getReferencedState()
+                /**
+                 * Sets a state that is referenced by this state.
+                 * According to the PASS standard, this functionality belongs to the "StateReference" class.
+                 * Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
+                 * @param state The referenced state
+                 */
+                public void setReferencedState(IState state)
+                {
+                        if (!(state.getClass().equals(this.getClass()))) return;
+                        IState oldReference = referenceState;
+                        // Might set it to null
+                        this.referenceState = state;
+
+                        if (oldReference != null)
+                        {
+                                if (oldReference.equals(state)) return;
+                                oldReference.unregister(this, 0);
+                                removeTriple(new IncompleteTriple(OWLTags.stdReferences, oldReference.getUriModelComponentID()));
+                                addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
+                                removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
+                        }
+
+                        if (!(state == null))
+                        {
+                                state.register(this);
+                                addTriple(new IncompleteTriple(OWLTags.stdReferences, state.getUriModelComponentID()));
+                                removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
+                                addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
+                        }
+                }
+
+                /**
+                 * Gets the state that is referenced by this state.
+                 * According to the PASS standard, this functionality belongs to the "StateReference" class.
+                 * Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
+                 * @return The referenced state
+                 */
+        public IState getReferencedState()
         {
         return referenceState;
         }
 
-public bool isReference()
+public boolean isReference()
         {
-        return !(referenceState is null);
+        return !(referenceState == null);
         }
-
-public override bool register(IValueChangedObserver<IPASSProcessModelElement> observer)
+@Override
+public boolean register(IValueChangedObserver<IPASSProcessModelElement> observer)
         {
-        bool added = base.register(observer);
+        boolean added = super.register(observer);
         // Special case: State is parsed, action knows about state, state does not know action -> action registeres at the state, state sets reference to action
-        if (added && observer is IAction action && getAction() is null)
+        if (added && observer instanceof IAction action && getAction() == null)
         {
         generateAction(action);
         }
         return added;
         }
-
-public override bool unregister(IValueChangedObserver<IPASSProcessModelElement> observer, int removeCascadeDepth = 0)
+@Override
+public boolean unregister(IValueChangedObserver<IPASSProcessModelElement> observer, int removeCascadeDepth)
         {
-        bool added = base.unregister(observer, removeCascadeDepth);
+        boolean added = super.unregister(observer, removeCascadeDepth);
         // Special case: State is parsed, action knows about state, state does not know action -> action registeres at the state, state sets reference to action
-        if (added && observer is IAction action && getAction().Equals(action))
+        if (added && observer instanceof IAction action && getAction().equals(action))
         {
         generateAction(null);
         }
         return added;
         }
 
-public void setImplementedInterfacesIDReferences(ISet<string> implementedInterfacesIDs)
+                @Override
+                public boolean unregister(IValueChangedObserver<IPASSProcessModelElement> observer)
+                {
+                        boolean added = super.unregister(observer, 0);
+                        // Special case: State is parsed, action knows about state, state does not know action -> action registeres at the state, state sets reference to action
+                        if (added && observer instanceof IAction action && getAction().equals(action))
+                        {
+                                generateAction(null);
+                        }
+                        return added;
+                }
+
+public void setImplementedInterfacesIDReferences(Set<String> implementedInterfacesIDs)
         {
         implCapsule.setImplementedInterfacesIDReferences(implementedInterfacesIDs);
         }
 
-public void addImplementedInterfaceIDReference(string implementedInterfaceID)
+public void addImplementedInterfaceIDReference(String implementedInterfaceID)
         {
         implCapsule.addImplementedInterfaceIDReference(implementedInterfaceID);
         }
 
-public void removeImplementedInterfacesIDReference(string implementedInterfaceID)
+public void removeImplementedInterfacesIDReference(String implementedInterfaceID)
         {
         implCapsule.removeImplementedInterfacesIDReference(implementedInterfaceID);
         }
 
-public ISet<string> getImplementedInterfacesIDReferences()
+public Set<String> getImplementedInterfacesIDReferences()
         {
         return implCapsule.getImplementedInterfacesIDReferences();
         }
 
-public void setImplementedInterfaces(ISet<IState> implementedInterface, int removeCascadeDepth = 0)
+public void setImplementedInterfaces(Set<IState> implementedInterface, int removeCascadeDepth)
         {
         implCapsule.setImplementedInterfaces(implementedInterface, removeCascadeDepth);
         }
+
+                public void setImplementedInterfaces(Set<IState> implementedInterface)
+                {
+                        implCapsule.setImplementedInterfaces(implementedInterface, 0);
+                }
 
 public void addImplementedInterface(IState implementedInterface)
         {
         implCapsule.addImplementedInterface(implementedInterface);
         }
 
-public void removeImplementedInterfaces(string id, int removeCascadeDepth = 0)
+public void removeImplementedInterfaces(String id, int removeCascadeDepth)
         {
         implCapsule.removeImplementedInterfaces(id, removeCascadeDepth);
         }
-
-public IDictionary<string, IState> getImplementedInterfaces()
+                public void removeImplementedInterfaces(String id)
+                {
+                        implCapsule.removeImplementedInterfaces(id, 0);
+                }
+public Map<String, IState> getImplementedInterfaces()
         {
         return implCapsule.getImplementedInterfaces();
         }

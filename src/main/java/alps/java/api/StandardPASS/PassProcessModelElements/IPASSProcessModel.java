@@ -10,145 +10,191 @@ import java.util.Map;
 import java.util.Set;
 
 
-/// <summary>
-/// Interface of the pass process model class
-/// </summary>
+/**
+ * Interface of the pass process model class
+ */
 public interface IPASSProcessModel extends IPASSProcessModelElement, IImplementingElementT<IPASSProcessModel>
     {
 
-            /// <summary>
-            /// Sets the base uri for the model.
-            /// This uri is important for the exporter to function properly.
-            /// Every element inside the model will be parsed with this specified uri.
-            /// </summary>
-            /// <param name="baseURI">the base uri</param>
-            void setBaseURI(String baseURI);
+        /**
+         * Sets the base uri for the model.
+         * This uri is important for the exporter to function properly.
+         * Every element inside the model will be parsed with this specified uri.
+         * @param baseURI the base uri
+         */
+        void setBaseURI(String baseURI);
 
-            /// <summary>
-            /// Returns the base graph behind the model.
-            /// This graph collects all information held by the model in the form of nodes and triples.
-            /// This information is redundand for anyone who has access to the model, but is used for exporting the model to owl.
-            /// </summary>
-            /// <returns>The underlying graph</returns>
-            IPASSGraph getBaseGraph();
+        /**
+         * Returns the base graph behind the model.
+         * This graph collects all information held by the model in the form of nodes and triples.
+         * This information is redundand for anyone who has access to the model, but is used for exporting the model to owl.
+         * @return The underlying graph
+         */
+        IPASSGraph getBaseGraph();
 
-            /// <summary>
-            /// Sets whether the model is layered or not
-            /// </summary>
-            void setIsLayered(boolean layered);
+        /**
+         * Sets whether the model is layered or not
+         * @param layered
+         */
+        void setIsLayered(boolean layered);
 
-            /// <summary>
-            /// Sets whether the model is layered or not
-            /// </summary>
-            /// <returns>true if layered, false if not</returns>
-            boolean isLayered();
+        /**
+         * Sets whether the model is layered or not
+         * @return true if layered, false if not
+         */
+        boolean isLayered();
 
 
             // ######################## StartSubject methods ########################
 
-            /// <summary>
-            /// Method that sets the start subject attribute of the instance
-            /// </summary>
-            /// <param name="startSubject">the new start subject</param>
-            void addStartSubject(ISubject startSubject);
+        /**
+         * Method that sets the start subject attribute of the instance
+         * @param startSubject the new start subject
+         */
+        void addStartSubject(ISubject startSubject);
 
-            /// <summary>
-            /// Method that overrides the current set of start subjects
-            /// </summary>
-            /// <param name="startSubjects"></param>
+        /**
+         * Method that overrides the current set of start subjects
+         * @param startSubjects
+         * @param removeCascadeDepth
+         */
             void setStartSubjects(Set<ISubject> startSubjects, int removeCascadeDepth);
 
-        /// <summary>
-        /// Method that removes a specified subject as start subject.
-        /// Does NOT remove the element from the model completely
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
+        /**
+         * Method that overrides the current set of start subjects
+         * @param startSubjects
+         */
+        void setStartSubjects(Set<ISubject> startSubjects);
+
+        /**
+         * Method that removes a specified subject as start subject.
+         * Does NOT remove the element from the model completely
+         * @param id
+         * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+         */
         void removeStartSubject(String id, int removeCascadeDepth);
 
-        /// <summary>
-        /// Method that returns the dictionary of all start subjects
-        /// </summary>
-        /// <returns>The known start subjects</returns>
+        /**
+         * Method that removes a specified subject as start subject.
+         * Does NOT remove the element from the model completely
+         * @param id
+         */
+        void removeStartSubject(String id);
+
+        /**
+         * Method that returns the dictionary of all start subjects
+         * @return The known start subjects
+         */
         Map<String, ISubject> getStartSubjects();
 
         // ######################## All contained elements methods ########################
 
-        /// <summary>
-        /// Adds a <see cref="IPASSProcessModelElement"/> to the model
-        /// </summary>
-        /// <param name="pASSProcessModelElement">the new model element</param>
-        /// <param name="layerID">the layer it should be added to.
-        /// If null, the element will be added to the base (default) layer</param>
+        /**
+         * Adds a {@link IPASSProcessModelElement} to the model
+         * @param pASSProcessModelElement the new model element
+         * @param layerID the layer it should be added to.
+         * If null, the element will be added to the base (default) layer
+         */
         void addElement(IPASSProcessModelElement pASSProcessModelElement, String layerID);
 
-        /// <summary>
-        /// Overrides the model elements currently contained by the model.
-        /// </summary>
-        /// <param name="elements">The new model elements</param>
-        /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
+        /**
+         * Adds a {@link IPASSProcessModelElement} to the model
+         * @param pASSProcessModelElement the new model element
+         * If null, the element will be added to the base (default) layer
+         */
+        void addElement(IPASSProcessModelElement pASSProcessModelElement);
+
+        /**
+         * Overrides the model elements currently contained by the model.
+         * @param elements The new model elements
+         * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+         */
         void setAllElements(Set<IPASSProcessModelElement> elements, int removeCascadeDepth);
 
-        /// <summary>
-        /// Returns a dictionary containing all known PASSProcessModelElements (in the current context) mapped with their model component id.
-        /// </summary>
-        /// <returns>The dict of all PASSProcessModelElements</returns>
+        /**
+         * Overrides the model elements currently contained by the model.
+         * @param elements The new model elements
+         */
+        void setAllElements(Set<IPASSProcessModelElement> elements);
+
+        /**
+         * Returns a Map containing all known PASSProcessModelElements (in the current context) mapped with their model component id.
+         * @return
+         */
         Map<String, IPASSProcessModelElement> getAllElements();
 
-        /// <summary>
-        /// Removes a <see cref="IPASSProcessModelElement"/> specified by its id
-        /// </summary>
-        /// <param name="modelComponentID">the model component id of the element that should be removed</param>
-        /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
+        /**
+         *  Removes a {@link IPASSProcessModelElement} specified by its id
+         * @param modelComponentID the model component id of the element that should be removed
+         * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+         */
         void removeElement(String modelComponentID, int removeCascadeDepth);
+
+        /**
+         *  Removes a {@link IPASSProcessModelElement} specified by its id
+         * @param modelComponentID the model component id of the element that should be removed
+         */
+        void removeElement(String modelComponentID);
 
         // ######################## Contained layer methods ########################
 
-        /// <summary>
-        /// Adds a new model Layer to the model
-        /// </summary>
-        /// <param name="modelLayer">The new model layer</param>
+        /**
+         * Adds a new model Layer to the model
+         * @param modelLayer The new model layer
+         */
         void addLayer(IModelLayer modelLayer);
 
-        /// <summary>
-        /// Overrides the layers currently contained by the model.
-        /// </summary>
-        /// <param name="modelLayers">The new model layers</param>
-        /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
+        /**
+         * Overrides the layers currently contained by the model.
+         * @param modelLayers The new model layers
+         * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+         */
         void setLayers(Set<IModelLayer> modelLayers, int removeCascadeDepth);
 
-        /// <summary>
-        /// Removes a model layer specified by its model component id
-        /// </summary>
-        /// <param name="id">the model component id of the layer</param>
-        /// <param name="removeCascadeDepth">Parses the depth of a cascading delete for elements that are connected to the currently deleted one</param>
+        /**
+         * Overrides the layers currently contained by the model.
+         * @param modelLayers The new model layers
+         */
+        void setLayers(Set<IModelLayer> modelLayers);
+
+        /**
+         *  Removes a model layer specified by its model component id
+         * @param id the model component id of the layer
+         * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+         */
         void removeLayer(String id, int removeCascadeDepth);
 
-        /// <summary>
-        /// Returns a dictionary containing all known Model layers (in the current context) mapped with their model component id.
-        /// </summary>
-        /// <returns>The dict of all model layers</returns>
+        /**
+         *  Removes a model layer specified by its model component id
+         * @param id the model component id of the layer
+         */
+        void removeLayer(String id);
+
+        /**
+         * Returns a map containing all known Model layers (in the current context) mapped with their model component id.
+         * @return The map of all model layers
+         */
         Map<String, IModelLayer> getModelLayers();
 
-        /// <summary>
-        /// Returns the current base layer (the standard layer of the model)
-        /// </summary>
-        /// <returns>The current base layer</returns>
+        /**
+         * Returns the current base layer (the standard layer of the model)
+         * @return The current base layer
+         */
         IModelLayer getBaseLayer();
 
-        /// <summary>
-        /// Sets a layer as the base layer for this model.
-        /// The base layer is the standard layer, and should not extend any other layers.
-        /// </summary>
-        /// <param name="layer">The model layer</param>
+        /**
+         * Sets a layer as the base layer for this model.
+         * The base layer is the standard layer, and should not extend any other layers.
+         * @param layer The model layer
+         */
         void setBaseLayer(IModelLayer layer);
 
-        /// <summary>
-        /// Exports the current model to the specified path using the underlying OWLGraph and TripleStore.
-        /// The result is a owl/rdf file at the specified location.
-        /// </summary>
-        /// <param name="filepath">The specified location for saving the file</param>
-        /// <returns>The absolute path the file was written to.</returns>
+        /**
+         *  Exports the current model to the specified path using the underlying OWLGraph and TripleStore.
+         * The result is a owl/rdf file at the specified location.
+         * @param filepath The specified location for saving the file
+         * @return The absolute path the file was written to.
+         */
         String export(String filepath);
         }
 

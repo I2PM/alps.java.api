@@ -4,25 +4,26 @@ import alps.java.api.ALPS.ALPSModelElements.IModelLayer;
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.StandardPASS.PASSProcessModelElement;
 import alps.java.api.parsing.*;
+import alps.java.api.src.OWLTags;
 import alps.java.api.util.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/// <summary>
-/// Class that represents a BehaviorDescriptionComponent
-/// </summary>
+/**
+ * Class that represents a BehaviorDescriptionComponent
+ */
 
     public class BehaviorDescribingComponent extends
         PASSProcessModelElement implements IBehaviorDescribingComponent {
 
         protected ISubjectBehavior subjectBehavior;
 
-        /// <summary>
-        /// Name of the class, needed for parsing
-        /// </summary>
-        private final String className = "BehaviorDescribingComponent";
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String className = "BehaviorDescribingComponent";
 
         @Override
         public String getClassName() {
@@ -37,18 +38,24 @@ import java.util.Set;
         protected BehaviorDescribingComponent() {
         }
 
-        /// <summary>
-        /// Constructor that creates an instance of the behavior description component
-        /// </summary>
-        /// <param name="label"></param>
-        /// <param name="comment"></param>
-        /// <param name="additionalAttribute"></param>
+    /**
+     * Constructor that creates an instance of the behavior description component
+     * @param subjectBehavior
+     * @param labelForID
+     * @param comment
+     * @param additionalLabel
+     * @param additionalAttribute
+     */
         public BehaviorDescribingComponent(ISubjectBehavior subjectBehavior, String labelForID, String comment,
                                            String additionalLabel, java.util.List<IIncompleteTriple> additionalAttribute) {
 
-        super(labelForID, comment, additionalLabel, additionalAttribute) {
+        super(labelForID, comment, additionalLabel, additionalAttribute);
             setContainedBy(subjectBehavior);
-        }
+
+    }
+    public BehaviorDescribingComponent(ISubjectBehavior subjectBehavior) {
+        super();
+        setContainedBy(subjectBehavior);
 
     }
 
@@ -69,7 +76,7 @@ import java.util.Set;
                 }
                 }
 
-
+    //TODO: fertig implementieren ist eig. Methode mit Out Parameter
         public boolean getContainedBy(ISubjectBehavior behavior)
                 {
                 behavior = subjectBehavior;
@@ -90,7 +97,7 @@ import java.util.Set;
                 return super.parseAttribute(predicate, objectContent, lang, dataType, element);
                 }
 
-
+    //TODO: hat eigentlich out-Parameter Aufruf
         @Override
         public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
                 {
@@ -104,7 +111,7 @@ import java.util.Set;
 
                     return baseElements;
                 }
-
+    //TODO: eig. out-ParameterAufruf
         @Override
         protected Map<String, IParseablePASSProcessModelElement> getDictionaryOfAllAvailableElements()
                 {

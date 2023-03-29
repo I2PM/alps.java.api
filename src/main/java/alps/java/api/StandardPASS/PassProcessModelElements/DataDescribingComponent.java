@@ -11,16 +11,16 @@ import java.util.Map;
 import java.util.Set;
 
 
-/// <summary>
-    /// Class that represents a data describing component
-    /// </summary>
+/**
+ * Class that represents a data describing component
+ */
     public class DataDescribingComponent extends PASSProcessModelElement implements IDataDescribingComponent {
         protected IPASSProcessModel model;
 
-        /// <summary>
-        /// Name of the class, needed for parsing
-        /// </summary>
-        private final String className = "DataDescribingComponent";
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String className = "DataDescribingComponent";
         @Override
         public String getClassName()
                 {
@@ -37,8 +37,8 @@ import java.util.Set;
                 }
                 }
 
-
-        public boolean getContainedBy(IPASSProcessModel model)
+        //TODO: out _Paramater
+        public boolean getContainedBy( _<IPASSProcessModel> model)
                 {
                 model = this.model;
                 return this.model != null;
@@ -50,34 +50,45 @@ import java.util.Set;
                 }
 
         protected DataDescribingComponent() { }
-        /// <summary>
-        /// Constructor that creates a new fully specified instance of the data describing component class
-        /// </summary>
-        /// <param name="additionalAttribute"></param>
-        /// <param name="modelComponentID"></param>
-        /// <param name="modelComponentLabel"></param>
-        /// <param name="comment"></param>
+
+    /**
+     * Constructor that creates a new fully specified instance of the data describing component class
+     * @param model
+     * @param labelForID
+     * @param comment
+     * @param additionalLabel
+     * @param additionalAttribute
+     */
         public DataDescribingComponent(IPASSProcessModel model, String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
-                super(labelForID, comment, additionalLabel, additionalAttribute)
-            {
+                super(labelForID, comment, additionalLabel, additionalAttribute);
                 setContainedBy(model);
-            }
         }
 
-        @Override
+    /**
+     * Constructor that creates a new fully specified instance of the data describing component class
+     * @param model
+     */
+    public DataDescribingComponent(IPASSProcessModel model) {
+        super();
+        setContainedBy(model);
+    }
+
+
+    @Override
         protected Map<String, IParseablePASSProcessModelElement> getDictionaryOfAllAvailableElements()
                 {
                 if (model == null) return null;
                 Map<String, IPASSProcessModelElement> allElements = model.getAllElements();
                 Map<String, IParseablePASSProcessModelElement> allParseableElements = new HashMap<String, IParseablePASSProcessModelElement>();
-                for(Map<String, IPASSProcessModelElement> pair: allElements)
-                    if (pair.values() instanceof IParseablePASSProcessModelElement) {
-                        IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) pair.get();
-                        allParseableElements.put(pair.get(), parseable);
+                for(Map.Entry<String, IPASSProcessModelElement> pair: allElements.entrySet())
+                    if (pair.getValue() instanceof IParseablePASSProcessModelElement) {
+                        IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) pair.getValue();
+                        allParseableElements.put(pair.getKey(), parseable);
                     }
                     return allParseableElements;
 
                 }
+                //TODO: Neu implementieren, hat wieder out-Parameter Aufruf
         @Override
         public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
                 {

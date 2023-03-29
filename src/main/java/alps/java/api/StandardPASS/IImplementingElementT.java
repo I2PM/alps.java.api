@@ -16,7 +16,13 @@ public interface IImplementingElementT<T extends IPASSProcessModelElement> exten
     void setImplementedInterfaces(Set<T> implementedInterfaces, int removeCascadeDepth);
 
     /**
-     * dds an implemented interface
+     * Sets the set of implemented interfaces for the instance
+     * @param implementedInterfaces The set of implemented interfaces
+     */
+    void setImplementedInterfaces(Set<T> implementedInterfaces);
+
+    /**
+     * adds an implemented interface
      * @param implementedInterface the new interface
      */
     void addImplementedInterface(T implementedInterface);

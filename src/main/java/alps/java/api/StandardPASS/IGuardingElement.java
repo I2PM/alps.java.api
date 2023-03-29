@@ -12,6 +12,11 @@ public interface IGuardingElement<T> {
     void setGuardedElements(Set<T> guardedElements, int removeCascadeDepth);
 
     /**
+     * Sets the set of guarded elements for the instance
+     * @param guardedElements The set of guarded elements*/
+    void setGuardedElements(Set<T> guardedElements);
+
+    /**
      * Adds an guarded element
      * @param guardedElement the new guarded element
      */
@@ -24,6 +29,11 @@ public interface IGuardingElement<T> {
      */
     void removeGuardedElement(String id, int removeCascadeDepth);
 
+    /**
+     * Removes a specified guarded element from the set of guarded elements.
+     * @param id the id of the guarded element that should be removed
+     */
+    void removeGuardedElement(String id);
     /**
      * Returns the elements guarded by this instance
      * @return the guarded elements

@@ -48,94 +48,114 @@ public interface IPASSProcessModelElement extends IValueChangedPublisher<IPASSPr
         void setModelComponentID(String id);
 
 
-            /// <summary>
-            /// <para>Creates a unique id for the element using a specified label.
-            /// For this, a <see cref="Guid"/> is used.</para>
-            /// <para>The specified label is only used to provide simpler reading.
-            /// Leaving the label blank or not passing anything causes the element to use guid-only as id.</para>
-            /// </summary>
-            /// <param name="label">the label that is used together with a guid to generate a valid and unique identifier for the element</param>
-            /// <param name="addLabel">If set to true, a modelComponentLabel is also added for the given label.
-            /// If false, only the id will be created.</param>
-            /// <returns>the created id for the current element</returns>
+        /**
+         * Creates a unique id for the element using a specified label.
+         * For this, a {@link "Guid"} is used.
+         * The specified label is only used to provide simpler reading.
+         * Leaving the label blank or not passing anything causes the element to use guid-only as id.
+         * @param labelForID the label that is used together with a guid to generate a valid and unique identifier for the element
+         * @param addLabel If set to true, a modelComponentLabel is also added for the given label.
+         * If false, only the id will be created.
+         * @return the created id for the current element
+         */
             String createUniqueModelComponentID(String labelForID, boolean addLabel);
 
+        /**
+         * Creates a unique id for the element using a specified label.
+         * For this, a {@link "Guid"} is used.
+         * The specified label is only used to provide simpler reading.
+         * Leaving the label blank or not passing anything causes the element to use guid-only as id.
+         * the default value of addLabel will be set to true
+         * @return the created id for the current element
+         */
+        String createUniqueModelComponentID();
 
 
-            /// <summary>
-            /// Method that sets the model component label list, overriding the previous content
-            /// </summary>
-            /// <param name="modelComponentLabel">the model component label list</param>
-            void setModelComponentLabels(List<String> modelComponentLabel);
+        /**
+         * Method that sets the model component label list, overriding the previous content
+         * @param modelComponentLabel the model component label list
+         */
+        void setModelComponentLabels(List<String> modelComponentLabel);
 
-        /// <summary>
-        /// Method that sets the model component label attribute
-        /// </summary>
-        /// <param name="modelComponentLabel">the model component label</param>
+        /**
+         * Method that sets the model component label attribute
+         * @param modelComponentLabel the model component label
+         */
         void addModelComponentLabel(String modelComponentLabel);
 
-        /// <summary>
-        /// Method that returns the model component labels as strings.
-        /// Additional language info can be added to each string by setting <paramref name="addLanguageAttribute"/> true
-        /// </summary>
-        /// <param name="addLanguageAttribute">If set to true, information about the language the label is written in is included in the each label</param>
-        /// <returns>The model component label list</returns>
+        /**
+         * Method that returns the model component labels as strings.
+         * Additional language info can be added to each string by setting addLanguageAttribute true
+         * @param addLanguageAttribute If set to true, information about the language the label is written in is included in the each label
+         * @return The model component label list
+         */
         List<String> getModelComponentLabelsAsStrings(boolean addLanguageAttribute);
 
-        /// <summary>
-        /// Method that returns the model component labels as objects with additional language info
-        /// </summary>
-        /// <returns></returns>
+        /**
+         * Method that returns the model component labels as strings.
+         * Additional language info can be added to each string by setting addLanguageAttribute true
+         * the default value of the param addLanguageAttributeis false
+         * @return The model component label list
+         */
+        List<String> getModelComponentLabelsAsStrings();
+
+        /**
+         * Method that returns the model component labels as objects with additional language info
+         * @return
+         */
         List<IStringWithExtra> getModelComponentLabels();
 
-        /// <summary>
-        /// Clears the list of model component labels
-        /// </summary>
+        /**
+         * Clears the list of model component labels
+         */
         void clearModelComponentLabels();
 
-        /// <summary>
-        /// Removes a label that has the specified string as content
-        /// </summary>
-        /// <param name="label"></param>
+        /**
+         * Removes a label that has the specified string as content
+         * @param label
+         */
         void removeModelComponentLabel(String label);
 
-        /// <summary>
-        /// Method that adds a comment attribute
-        /// </summary>
-        /// <param name="comment">the comment</param>
+        /**
+         * Method that adds a comment attribute
+         * @param comment the comment
+         */
         void addComment(String comment);
 
-        /// <summary>
-        /// Method that returns the comment attribute
-        /// </summary>
-        /// <returns>The comment attribute</returns>
+        /**
+         * Method that returns the comment attribute
+         * @return The comment attribute
+         */
         List<String> getComments();
 
-        /// <summary>
-        /// Clears the list of comments
-        /// </summary>
+        /**
+         * Clears the list of comments
+         */
         void clearComments();
 
-/// <summary>
-/// Adds an element that is in some undefined relation to the current element.
-/// This method is only for adding additional elements/information to another element that cannot be added in another way (using specified methods etc.)
-/// </summary>
-/// <param name="element">the new element</param>
+        /**
+         * Adds an element that is in some undefined relation to the current element.
+         * This method is only for adding additional elements/information to another element that cannot be added in another way (using specified methods etc.)
+         * @param element the new element
+         */
     void addElementWithUnspecifiedRelation(IPASSProcessModelElement element);
 
-/// <returns>A set of elements that are in some undefined relation to the current element</returns>
+        /**
+         *
+         * @return A set of elements that are in some undefined relation to the current element
+         */
     Map<String, IPASSProcessModelElement> getElementsWithUnspecifiedRelation();
 
-/// <summary>
-/// Overrides the elements that are in some undefined relation to the current element.
-/// This method is only for adding additional elements/information to another element that cannot be added in another way (using specified methods etc.)
-/// </summary>
-/// <param name="behaviors">the new elements</param>
+        /**
+         * Overrides the elements that are in some undefined relation to the current element.
+         * This method is only for adding additional elements/information to another element that cannot be added in another way (using specified methods etc.)
+         * @param elements the new elements
+         */
     void setElementsWithUnspecifiedRelation(Set<IPASSProcessModelElement> elements);
 
-/// <summary>
-/// Removes an elements that is in some undefined relation to the current element.
-/// </summary>
-/// <param name="id">the id of the element</param>
+        /**
+         * Removes an elements that is in some undefined relation to the current element.
+         * @param id the id of the element
+         */
     void removeElementWithUnspecifiedRelation(String id);
         }
