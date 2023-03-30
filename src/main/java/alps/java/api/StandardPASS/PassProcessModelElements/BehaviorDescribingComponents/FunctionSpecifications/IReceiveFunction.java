@@ -1,4 +1,8 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.FunctionSpecifications;
 
-public interface IReceiveFunction {
-}
+/**
+ * Interface of the receive function class
+ */
+public interface IReceiveFunction extends ICommunicationAct
+        {
+        }

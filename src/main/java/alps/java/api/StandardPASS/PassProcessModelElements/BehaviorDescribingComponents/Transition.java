@@ -2,12 +2,17 @@ package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCo
 
 import alps.java.api.FunctionalityCapsules.IImplementsFunctionalityCapsule;
 import alps.java.api.FunctionalityCapsules.ImplementsFunctionalityCapsule;
+import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponent;
 import alps.java.api.StandardPASS.PassProcessModelElements.ISubjectBehavior;
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
+import alps.java.api.src.OWLTags;
 import alps.java.api.util.IIncompleteTriple;
+import alps.java.api.util.IncompleteTriple;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class that represents a transition class
@@ -81,12 +86,11 @@ protected Transition() { implCapsule = new ImplementsFunctionalityCapsule<ITrans
                 setTransitionType(ITransition.TransitionType.Standard);
             }
 
-public Transition(ISubjectBehavior behavior, string labelForID = null, IState sourceState = null, IState targetState = null,
-        ITransitionCondition transitionCondition = null,
-        ITransition.TransitionType transitionType = ITransition.TransitionType.Standard, string comment = null, string additionalLabel = null,
-        IList<IIncompleteTriple> additionalAttribute = null)
-        : base(behavior, labelForID, comment, additionalLabel, additionalAttribute)
-        {
+public Transition(ISubjectBehavior behavior, String labelForID, IState sourceState, IState targetState,
+        ITransitionCondition transitionCondition,
+        ITransition.TransitionType transitionType, String comment, String additionalLabel,
+        List<IIncompleteTriple> additionalAttribute){
+        super(behavior, labelForID, comment, additionalLabel, additionalAttribute);
         implCapsule = new ImplementsFunctionalityCapsule<ITransition>(this);
         setSourceState(sourceState);
         setTargetState(targetState);
@@ -94,12 +98,20 @@ public Transition(ISubjectBehavior behavior, string labelForID = null, IState so
         setTransitionType(transitionType);
         }
 
+        public Transition(ISubjectBehavior behavior){
+                super(behavior);
+                        implCapsule = new ImplementsFunctionalityCapsule<ITransition>(this);
+                        setSourceState(null);
+                        setTargetState(null);
+                        setTransitionCondition(null);
+                        setTransitionType(TransitionType.Standard);
+                }
 
-/// <summary>
-/// Used to set the action that belongs to this transition.
-/// Only called from inside the class, should not be visible to the user (the action is set/removed automatically when a source state is added/removed)
-/// </summary>
-protected void setBelongsToAction(IAction action, int removeCascadeDepth = 0)
+/**
+ * Used to set the action that belongs to this transition.
+ * Only called from inside the class, should not be visible to the user (the action is set/removed automatically when a source state is added/removed)
+ */
+                protected void setBelongsToAction(IAction action, int removeCascadeDepth)
         {
         IAction oldAction = belongsToAction;
         // Might set it to null
@@ -107,12 +119,12 @@ protected void setBelongsToAction(IAction action, int removeCascadeDepth = 0)
 
         if (oldAction != null)
         {
-        if (oldAction.Equals(action)) return;
+        if (oldAction.equals(action)) return;
         oldAction.unregister(this, removeCascadeDepth);
         removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, oldAction.getUriModelComponentID()));
         }
 
-        if (!(action is null))
+        if (!(action == null))
         {
         publishElementAdded(action);
         action.register(this);
@@ -121,7 +133,33 @@ protected void setBelongsToAction(IAction action, int removeCascadeDepth = 0)
         }
 
 
-public virtual void setSourceState(IState sourceState, int removeCascadeDepth = 0)
+/**
+ * Used to set the action that belongs to this transition.
+ * Only called from inside the class, should not be visible to the user (the action is set/removed automatically when a source state is added/removed)
+ */
+                protected void setBelongsToAction(IAction action)
+                {
+                        IAction oldAction = belongsToAction;
+                        // Might set it to null
+                        this.belongsToAction = action;
+
+                        if (oldAction != null)
+                        {
+                                if (oldAction.equals(action)) return;
+                                oldAction.unregister(this, 0);
+                                removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, oldAction.getUriModelComponentID()));
+                        }
+
+                        if (!(action == null))
+                        {
+                                publishElementAdded(action);
+                                action.register(this);
+                                addTriple(new IncompleteTriple(OWLTags.stdBelongsTo, action.getUriModelComponentID()));
+                        }
+                }
+
+
+public void setSourceState(IState sourceState, int removeCascadeDepth)
         {
         IState oldSourceState = this.sourceState;
         // Might set it to null
@@ -129,13 +167,13 @@ public virtual void setSourceState(IState sourceState, int removeCascadeDepth = 
 
         if (oldSourceState != null)
         {
-        if (oldSourceState.Equals(sourceState)) return;
+        if (oldSourceState.equals(sourceState)) return;
         oldSourceState.unregister(this, removeCascadeDepth);
         oldSourceState.removeOutgoingTransition(getModelComponentID());
         setBelongsToAction(null);
         removeTriple(new IncompleteTriple(OWLTags.stdHasSourceState, oldSourceState.getUriModelComponentID()));
         }
-        if (!(sourceState is null))
+        if (!(sourceState == null))
         {
         publishElementAdded(sourceState);
         sourceState.register(this);
@@ -145,8 +183,32 @@ public virtual void setSourceState(IState sourceState, int removeCascadeDepth = 
         }
         }
 
+                public void setSourceState(IState sourceState)
+                {
+                        IState oldSourceState = this.sourceState;
+                        // Might set it to null
+                        this.sourceState = sourceState;
 
-public virtual void setTargetState(IState targetState, int removeCascadeDepth = 0)
+                        if (oldSourceState != null)
+                        {
+                                if (oldSourceState.equals(sourceState)) return;
+                                oldSourceState.unregister(this,0);
+                                oldSourceState.removeOutgoingTransition(getModelComponentID());
+                                setBelongsToAction(null);
+                                removeTriple(new IncompleteTriple(OWLTags.stdHasSourceState, oldSourceState.getUriModelComponentID()));
+                        }
+                        if (!(sourceState == null))
+                        {
+                                publishElementAdded(sourceState);
+                                sourceState.register(this);
+                                sourceState.addOutgoingTransition(this);
+                                setBelongsToAction(sourceState.getAction());
+                                addTriple(new IncompleteTriple(OWLTags.stdHasSourceState, sourceState.getUriModelComponentID()));
+                        }
+                }
+
+
+public void setTargetState(IState targetState, int removeCascadeDepth)
         {
         IState oldState = this.targetState;
         // Might set it to null
@@ -154,13 +216,13 @@ public virtual void setTargetState(IState targetState, int removeCascadeDepth = 
 
         if (oldState != null)
         {
-        if (oldState.Equals(targetState)) return;
+        if (oldState.equals(targetState)) return;
         oldState.unregister(this, removeCascadeDepth);
         oldState.removeIncomingTransition(getModelComponentID());
         removeTriple(new IncompleteTriple(OWLTags.stdHasTargetState, oldState.getUriModelComponentID()));
         }
 
-        if (!(targetState is null))
+        if (!(targetState == null))
         {
         publishElementAdded(targetState);
         targetState.register(this);
@@ -169,8 +231,30 @@ public virtual void setTargetState(IState targetState, int removeCascadeDepth = 
         }
         }
 
+                public void setTargetState(IState targetState)
+                {
+                        IState oldState = this.targetState;
+                        // Might set it to null
+                        this.targetState = targetState;
 
-public virtual void setTransitionCondition(ITransitionCondition transitionCondition, int removeCascadeDepth = 0)
+                        if (oldState != null)
+                        {
+                                if (oldState.equals(targetState)) return;
+                                oldState.unregister(this, 0);
+                                oldState.removeIncomingTransition(getModelComponentID());
+                                removeTriple(new IncompleteTriple(OWLTags.stdHasTargetState, oldState.getUriModelComponentID()));
+                        }
+
+                        if (!(targetState == null))
+                        {
+                                publishElementAdded(targetState);
+                                targetState.register(this);
+                                targetState.addIncomingTransition(this);
+                                addTriple(new IncompleteTriple(OWLTags.stdHasTargetState, targetState.getUriModelComponentID()));
+                        }
+                }
+
+public void setTransitionCondition(ITransitionCondition transitionCondition, int removeCascadeDepth)
         {
         ITransitionCondition oldCond = this.transitionCondition;
         // Might set it to null
@@ -178,12 +262,12 @@ public virtual void setTransitionCondition(ITransitionCondition transitionCondit
 
         if (oldCond != null)
         {
-        if (oldCond.Equals(transitionCondition)) return;
+        if (oldCond.equals(transitionCondition)) return;
         oldCond.unregister(this, removeCascadeDepth);
         removeTriple(new IncompleteTriple(OWLTags.stdHasTransitionCondition, oldCond.getUriModelComponentID()));
         }
 
-        if (!(transitionCondition is null))
+        if (!(transitionCondition == null))
         {
         publishElementAdded(transitionCondition);
         transitionCondition.register(this);
@@ -191,6 +275,26 @@ public virtual void setTransitionCondition(ITransitionCondition transitionCondit
         }
         }
 
+                public void setTransitionCondition(ITransitionCondition transitionCondition)
+                {
+                        ITransitionCondition oldCond = this.transitionCondition;
+                        // Might set it to null
+                        this.transitionCondition = transitionCondition;
+
+                        if (oldCond != null)
+                        {
+                                if (oldCond.equals(transitionCondition)) return;
+                                oldCond.unregister(this, 0);
+                                removeTriple(new IncompleteTriple(OWLTags.stdHasTransitionCondition, oldCond.getUriModelComponentID()));
+                        }
+
+                        if (!(transitionCondition == null))
+                        {
+                                publishElementAdded(transitionCondition);
+                                transitionCondition.register(this);
+                                addTriple(new IncompleteTriple(OWLTags.stdHasTransitionCondition, transitionCondition.getUriModelComponentID()));
+                        }
+                }
 
 public IAction getBelongsToAction()
         {
@@ -224,35 +328,35 @@ public ITransition.TransitionType getTransitionType()
         {
         return transitionType;
         }
-
-protected override bool parseAttribute(string predicate, string objectContent, string lang, string dataType, IParseablePASSProcessModelElement element)
+@Override
+protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)
         {
         if (implCapsule != null && implCapsule.parseAttribute(predicate, objectContent, lang, dataType, element))
         return true;
         else if (element != null)
         {
-        if (predicate.Contains(OWLTags.belongsTo) && element is IAction action)
+        if (predicate.contains(OWLTags.belongsTo) && element instanceof IAction action)
         {
         setBelongsToAction(action);
         return true;
         }
 
-        else if (predicate.Contains(OWLTags.hasTransitionCondition) && element is ITransitionCondition condition)
+        else if (predicate.contains(OWLTags.hasTransitionCondition) && element instanceof ITransitionCondition condition)
         {
         setTransitionCondition(condition);
         return true;
         }
 
-        else if (element is IState state)
+        else if (element instanceof IState state)
         {
 
 
-        if (predicate.Contains(OWLTags.hasSourceState))
+        if (predicate.contains(OWLTags.hasSourceState))
         {
         setSourceState(state);
         return true;
         }
-        else if (predicate.Contains(OWLTags.hasTargetState))
+        else if (predicate.contains(OWLTags.hasTargetState))
         {
         setTargetState(state);
         return true;
@@ -263,62 +367,82 @@ protected override bool parseAttribute(string predicate, string objectContent, s
         }
         else
         {
-        if (predicate.Contains(OWLTags.type))
+        if (predicate.contains(OWLTags.type))
         {
-        if (objectContent.Contains(ABSTRACT_NAME))
+        if (objectContent.contains(ABSTRACT_NAME))
         {
         setIsAbstract(true);
         return true;
         }
         }
         }
-        return base.parseAttribute(predicate, objectContent, lang, dataType, element);
+        return super.parseAttribute(predicate, objectContent, lang, dataType, element);
         }
 
-
-public override ISet<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
+@Override
+public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
         {
-        ISet<IPASSProcessModelElement> baseElements = base.getAllConnectedElements(specification);
+        Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
         if (getBelongsToAction() != null && specification == ConnectedElementsSetSpecification.ALL || specification == ConnectedElementsSetSpecification.TO_ADD)
-        baseElements.Add(getBelongsToAction());
+        baseElements.add(getBelongsToAction());
         if (specification != ConnectedElementsSetSpecification.TO_ALWAYS_REMOVE)
         {
         if (getSourceState() != null)
-        baseElements.Add(getSourceState());
+        baseElements.add(getSourceState());
         if (getTargetState() != null)
-        baseElements.Add(getTargetState());
+        baseElements.add(getTargetState());
         }
         if (getTransitionCondition() != null)
-        baseElements.Add(getTransitionCondition());
+        baseElements.add(getTransitionCondition());
         return baseElements;
         }
-
-public override void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller, int removeCascadeDepth = 0)
+@Override
+public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller, int removeCascadeDepth)
         {
-        base.updateRemoved(update, caller, removeCascadeDepth);
+        super.updateRemoved(update, caller, removeCascadeDepth);
         if (update != null)
         {
-        if (update is IAction action && action.Equals(getBelongsToAction()))
+        if (update instanceof IAction action && action.equals(getBelongsToAction()))
         setBelongsToAction(null, removeCascadeDepth);
-        if (update is IState state)
+        if (update instanceof IState state)
         {
-        if (state.Equals(getSourceState()))
+        if (state.equals(getSourceState()))
         setSourceState(null, removeCascadeDepth);
-        if (state.Equals(getTargetState()))
+        if (state.equals(getTargetState()))
         setTargetState(null, removeCascadeDepth);
         }
-        if (update is ITransitionCondition condition && condition.Equals(getTransitionCondition()))
+        if (update instanceof ITransitionCondition condition && condition.equals(getTransitionCondition()))
         setTransitionCondition(null, removeCascadeDepth);
         }
         }
 
-public override void updateAdded(IPASSProcessModelElement update, IPASSProcessModelElement caller)
+                @Override
+                public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller)
+                {
+                        super.updateRemoved(update, caller, 0);
+                        if (update != null)
+                        {
+                                if (update instanceof IAction action && action.equals(getBelongsToAction()))
+                                        setBelongsToAction(null, 0);
+                                if (update instanceof IState state)
+                                {
+                                        if (state.equals(getSourceState()))
+                                                setSourceState(null, 0);
+                                        if (state.equals(getTargetState()))
+                                                setTargetState(null, 0);
+                                }
+                                if (update instanceof ITransitionCondition condition && condition.equals(getTransitionCondition()))
+                                        setTransitionCondition(null, 0);
+                        }
+                }
+                @Override
+public void updateAdded(IPASSProcessModelElement update, IPASSProcessModelElement caller)
         {
         if (update != null)
         {
-        if (!(caller is null) && caller.Equals(getSourceState()))
+        if (!(caller == null) && caller.equals(getSourceState()))
         {
-        if (update is IAction action)
+        if (update instanceof IAction action)
         {
         setBelongsToAction(action);
         }
@@ -327,7 +451,7 @@ public override void updateAdded(IPASSProcessModelElement update, IPASSProcessMo
         }
 
 
-public void setIsAbstract(bool isAbstract)
+public void setIsAbstract(boolean isAbstract)
         {
         this.isAbstractType = isAbstract;
         if (isAbstract)
@@ -340,47 +464,56 @@ public void setIsAbstract(bool isAbstract)
         }
         }
 
-public bool isAbstract()
+public boolean isAbstract()
         {
         return isAbstractType;
         }
 
-public void setImplementedInterfacesIDReferences(ISet<string> implementedInterfacesIDs)
+public void setImplementedInterfacesIDReferences(Set<String> implementedInterfacesIDs)
         {
         implCapsule.setImplementedInterfacesIDReferences(implementedInterfacesIDs);
         }
 
-public void addImplementedInterfaceIDReference(string implementedInterfaceID)
+public void addImplementedInterfaceIDReference(String implementedInterfaceID)
         {
         implCapsule.addImplementedInterfaceIDReference(implementedInterfaceID);
         }
 
-public void removeImplementedInterfacesIDReference(string implementedInterfaceID)
+public void removeImplementedInterfacesIDReference(String implementedInterfaceID)
         {
         implCapsule.removeImplementedInterfacesIDReference(implementedInterfaceID);
         }
 
-public ISet<string> getImplementedInterfacesIDReferences()
+public Set<String> getImplementedInterfacesIDReferences()
         {
         return implCapsule.getImplementedInterfacesIDReferences();
         }
 
-public void setImplementedInterfaces(ISet<ITransition> implementedInterface, int removeCascadeDepth = 0)
+public void setImplementedInterfaces(Set<ITransition> implementedInterface, int removeCascadeDepth)
         {
         implCapsule.setImplementedInterfaces(implementedInterface, removeCascadeDepth);
         }
+
+                public void setImplementedInterfaces(Set<ITransition> implementedInterface)
+                {
+                        implCapsule.setImplementedInterfaces(implementedInterface,0);
+                }
 
 public void addImplementedInterface(ITransition implementedInterface)
         {
         implCapsule.addImplementedInterface(implementedInterface);
         }
 
-public void removeImplementedInterfaces(string id, int removeCascadeDepth = 0)
+public void removeImplementedInterfaces(String id, int removeCascadeDepth)
         {
         implCapsule.removeImplementedInterfaces(id, removeCascadeDepth);
         }
 
-public IDictionary<string, ITransition> getImplementedInterfaces()
+                public void removeImplementedInterfaces(String id)
+                {
+                        implCapsule.removeImplementedInterfaces(id, 0);
+                }
+public Map<String, ITransition> getImplementedInterfaces()
         {
         return implCapsule.getImplementedInterfaces();
         }

@@ -1,4 +1,11 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States;
 
-public interface IGenericReturnToOriginReference {
-}
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IState;
+
+/**
+ * Interface to the GenericReturnToOriginReference class
+ */
+
+public interface IGenericReturnToOriginReference extends IState
+        {
+        }
