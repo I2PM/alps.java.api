@@ -38,6 +38,23 @@ public class IncompleteTriple implements IIncompleteTriple {
             extraString = new StringWithoutExtra(content);
         }
     }
+
+    public IncompleteTriple(Statement realTriple) {
+        predicateContent = realTriple.getPredicate().getURI();
+        if (realTriple.getObject().isLiteral()) {
+            Literal literal = realTriple.getObject().asLiteral();
+            String language = literal.getLanguage();
+            if (language != null && !language.equals("")) {
+                extraString = new LanguageSpecificString(literal.getString(), language);
+            } else if (literal.getDatatype() != null && !literal.getDatatype().getURI().equals("")) {
+                extraString = new DataTypeString(literal.getString(), literal.getDatatype().getURI());
+            } else {
+                extraString = new StringWithoutExtra(realTriple.getObject().toString());
+            }
+        } else {
+            extraString = new StringWithoutExtra(realTriple.getObject().toString());
+        }
+    }
     public IncompleteTriple(String predicate, String objectContent, LiteralType literalType, String objectAddition) {
         this.predicateContent = predicate;
         if (literalType == LiteralType.DATATYPE) {
