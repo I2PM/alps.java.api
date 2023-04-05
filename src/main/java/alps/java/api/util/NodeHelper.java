@@ -6,24 +6,21 @@ import org.apache.jena.rdf.model.RDFNode;
 
 public class NodeHelper {
     public static String getNodeContent(RDFNode node) {
-        if (node instanceof LiteralLabel) {
-            LiteralLabel literal = (LiteralLabel) node;
-            return literal.toString();
+        if (node instanceof Literal literal) {
+            return literal.getValue().toString();
         }
         return node.toString();
     }
 
     public static String getLangIfContained(RDFNode node) {
-        if (node instanceof LiteralLabel) {
-            LiteralLabel literal = (LiteralLabel) node;
-            return literal.language();
+        if (node instanceof Literal literal) {
+            return literal.getLanguage();
         }
         return "";
     }
 
     public static String getDataTypeIfContained(RDFNode node) {
-        if (node instanceof LiteralLabel) {
-            LiteralLabel literal = (LiteralLabel) node;
+        if (node instanceof Literal literal) {
             if (literal.getDatatype() != null) {
                 return literal.getDatatype().toString();
             }
@@ -32,8 +29,7 @@ public class NodeHelper {
     }
 
     public static String cutURI(String uri) {
-        String[] firstCut = uri.split("#");
-        String[] secondCut = firstCut[firstCut.length - 1].split(":");
-        return secondCut[secondCut.length - 1];
+        String firstCut = uri.split("#")[uri.split("#").length - 1];
+        return firstCut.split(":")[firstCut.split(":").length - 1];
     }
 }

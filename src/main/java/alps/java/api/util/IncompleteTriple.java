@@ -1,10 +1,11 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.*;
-import org.apache.jena.ext.xerces.util.URI;
-import org.apache.jena.graph.Triple;
+import alps.java.api.util.priv.Triple;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdf.model.impl.StatementImpl;
+
+import java.net.URI;
 
 public class IncompleteTriple implements IIncompleteTriple {
     private String predicateContent;
@@ -19,7 +20,8 @@ public class IncompleteTriple implements IIncompleteTriple {
         predicateContent = predicate;
         this.extraString = new StringWithoutExtra(objectContent);
     }
-    public IncompleteTriple(Statement realTriple, String baseUriToReplace) {
+
+    /*public IncompleteTriple(Triple realTriple, String baseUriToReplace) {
         String predicate = baseUriToReplace == null ? realTriple.getPredicate().getURI() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.getPredicate().getURI(), baseUriToReplace);
         predicateContent = predicate;
         if (realTriple.getObject().isLiteral()) {
@@ -39,7 +41,7 @@ public class IncompleteTriple implements IIncompleteTriple {
         }
     }
 
-    public IncompleteTriple(Statement realTriple) {
+    public IncompleteTriple(Triple realTriple) {
         predicateContent = realTriple.getPredicate().getURI();
         if (realTriple.getObject().isLiteral()) {
             Literal literal = realTriple.getObject().asLiteral();
@@ -55,6 +57,47 @@ public class IncompleteTriple implements IIncompleteTriple {
             extraString = new StringWithoutExtra(realTriple.getObject().toString());
         }
     }
+    */
+    public IncompleteTriple(Triple realTriple, String baseUriToReplace) {
+        predicateContent = (baseUriToReplace == null) ? realTriple.Predicate.toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.Predicate.toString(), baseUriToReplace);
+        if (realTriple.OObject instanceof Literal literal)
+        {
+            if (literal.getLanguage() != null && !literal.getLanguage().equals(""))
+                extraString = new LanguageSpecificString(literal.getValue().toString(), literal.getLanguage());
+            else if (literal.getDatatype() != null && !literal.getDatatype().toString().equals(""))
+                extraString = new DataTypeString(literal.getValue().toString(), literal.getDatatype().toString());
+            else {
+                String content = baseUriToReplace == null ? realTriple.OObject.toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.OObject.toString(), baseUriToReplace);
+                extraString = new StringWithoutExtra(content);
+            }
+        }
+            else
+        {
+            String content = baseUriToReplace == null ? realTriple.OObject.toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.OObject.toString(), baseUriToReplace);
+            extraString = new StringWithoutExtra(content);
+        }
+    }
+    public IncompleteTriple(Triple realTriple) {
+        predicateContent = realTriple.Predicate.toString();
+        if (realTriple.OObject instanceof Literal literal)
+        {
+            if (literal.getLanguage() != null && !literal.getLanguage().equals(""))
+                extraString = new LanguageSpecificString(literal.getValue().toString(), literal.getLanguage());
+            else if (literal.getDatatype() != null && !literal.getDatatype().toString().equals(""))
+                extraString = new DataTypeString(literal.getValue().toString(), literal.getDatatype().toString());
+            else {
+                String content = realTriple.OObject.toString();
+                extraString = new StringWithoutExtra(content);
+            }
+        }
+        else
+        {
+            String content = realTriple.OObject.toString();
+            extraString = new StringWithoutExtra(content);
+        }
+    }
+
+
     public IncompleteTriple(String predicate, String objectContent, LiteralType literalType, String objectAddition) {
         this.predicateContent = predicate;
         if (literalType == LiteralType.DATATYPE) {
@@ -63,25 +106,18 @@ public class IncompleteTriple implements IIncompleteTriple {
             this.extraString = new LanguageSpecificString(objectContent, objectAddition);
         }
     }
+
     public IncompleteTriple(String predicate, IStringWithExtra objectWithExtra) {
         predicateContent = predicate;
         this.extraString = objectWithExtra;
     }
 
     public Triple getRealTriple(IPASSGraph graph, RDFNode subjectNode) {
-        Resource predicateNode;
-        try {
-            predicateNode = graph.createUriNode(predicateContent);
-        } catch (Exception e) {
-            try {
-                predicateNode = graph.createUriNode(new URI(predicateContent));
-            } catch (URI.MalformedURIException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        RDFNode predicateNode;
+        predicateNode = graph.createUriNode(predicateContent);
         RDFNode objectNode = extraString.getNodeFromString(graph);
 
-        return new StatementImpl(subjectNode, (Property) predicateNode, objectNode);
+        return new Triple(subjectNode, predicateNode, objectNode);
     }
 
     public String getPredicate() {
@@ -108,6 +144,7 @@ public class IncompleteTriple implements IIncompleteTriple {
     public IStringWithExtra getObjectWithExtra() {
         return extraString.clone();
     }
+
     @Override
     public int hashCode() {
         String baseString = "";

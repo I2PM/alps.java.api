@@ -257,8 +257,8 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         String predicateToSearchFor = NodeHelper.cutURI(searchedTriple.getPredicate());
         String objectContentToSearchFor = NodeHelper.cutURI(searchedTriple.getObject());
         for (Triple triple : getTriples()) {
-            String predicateToMatch = NodeHelper.cutURI(NodeHelper.getNodeContent(triple.getPredicate()));
-            String objectContentToMatch = NodeHelper.cutURI(NodeHelper.getNodeContent(triple.Object));
+            String predicateToMatch = NodeHelper.cutURI(NodeHelper.getNodeContent(triple.Predicate);
+            String objectContentToMatch = NodeHelper.cutURI(NodeHelper.getNodeContent(triple.OObject);
             if (predicateToSearchFor.equals(predicateToMatch) && objectContentToSearchFor.equals(objectContentToMatch))
                 return triple;
         }

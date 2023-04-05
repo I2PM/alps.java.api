@@ -1,4 +1,5 @@
 package alps.java.api.util;
+
 import alps.java.api.parsing.IPASSGraph;
 import org.apache.jena.rdf.model.RDFNode;
 
@@ -31,6 +32,7 @@ public abstract class StringWithExtra implements IStringWithExtra {
             this.content = content;
         }
     }
+
     public void setExtra(String extra) {
         if (extra == null) {
             this.extra = "";
@@ -39,13 +41,14 @@ public abstract class StringWithExtra implements IStringWithExtra {
             this.extra = extra;
         }
     }
+
     public abstract RDFNode getNodeFromString(IPASSGraph graph);
+
     public abstract IStringWithExtra clone();
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof IStringWithExtra) {
-            IStringWithExtra extra = (IStringWithExtra)  obj;
+        if (obj instanceof IStringWithExtra extra) {
             if (getClass().equals(extra.getClass())) {
                 int matches = 0;
                 if ((extra.getContent() != null && getContent() != null && extra.getContent().equals(getContent())) || (extra.getContent() == null && getContent() == null)) {
@@ -61,6 +64,7 @@ public abstract class StringWithExtra implements IStringWithExtra {
         }
         return false;
     }
+
     @Override
     public int hashCode() {
         return (getContent() + getExtra()).hashCode();

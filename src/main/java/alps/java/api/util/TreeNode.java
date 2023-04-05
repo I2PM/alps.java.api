@@ -13,7 +13,7 @@ public class TreeNode<T> implements ITreeNode<T> {
         private T content;
 
     /**
-     * Constructor that creates a empty tree node
+     * Constructor that creates an empty tree node
      */
     public TreeNode() {}
 
@@ -90,7 +90,13 @@ public class TreeNode<T> implements ITreeNode<T> {
 
             return result;
         }
-
+    //TODO: out-Method
+    /**
+     * "out"-method
+     * @param content the String that will be checked as reference
+     * @param node
+     * @return
+     */
         public boolean containsContent(T content, ITreeNode<T> node) {
             boolean test = false;
             node = null;
@@ -119,6 +125,17 @@ public class TreeNode<T> implements ITreeNode<T> {
             if (!direct) return parentNode.isSubClassOf(parent, direct);
             return false;
         }
+
+    /**
+     * The default value of direct is false
+     * @param parent the other node the given instance might be subclass of
+     * @return
+     */
+    public boolean isSubClassOf(ITreeNode<T> parent) {
+        if (parentNode == null) return false;
+        if (parentNode.equals(parent)) return true;
+        return parentNode.isSubClassOf(parent, false);
+    }
         public ITreeNode<T> getChild(int index) {
             if (index < 0 || index > (childNodes.size() - 1)) return null;
             return childNodes.get(index);

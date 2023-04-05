@@ -10,13 +10,15 @@ import org.apache.jena.rdf.model.RDFNode;
 public interface IStringWithExtra {
 
     /**
-     * Returns the content, the actual strin
+     * Returns the content, the actual string
+     *
      * @return the actual String
      */
     String getContent();
 
     /**
      * Sets the content, the actual string
+     *
      * @param content
      */
     void setContent(String content);
@@ -24,13 +26,15 @@ public interface IStringWithExtra {
     /**
      * Returns the extra that is specified in addition to the string.
      * What this is depends on the concrete implementation
+     *
      * @return the extra information
      */
     String getExtra();
 
     /**
-     *  Sets the extra that is specified in addition to the string.
-     *  What this is depends on the concrete implementation.
+     * Sets the extra that is specified in addition to the string.
+     * What this is depends on the concrete implementation.
+     *
      * @param extra
      */
     void setExtra(String extra);
@@ -38,6 +42,7 @@ public interface IStringWithExtra {
     /**
      * Creates a {@link RDFNode} from the current string (a literal node)
      * therefor it needs a graph as context
+     *
      * @param graph the context in which the node is created
      * @return the created Node
      */
@@ -45,6 +50,7 @@ public interface IStringWithExtra {
 
     /**
      * Clones the current string with extra to get a new instance
+     *
      * @return clone of the current String
      */
     IStringWithExtra clone();

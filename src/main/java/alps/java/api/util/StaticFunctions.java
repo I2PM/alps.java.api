@@ -1,14 +1,16 @@
 package alps.java.api.util;
+
 import alps.java.api.parsing.PASSGraph;
 
 public class StaticFunctions {
     public static final char BASE_URI_SEPARATOR = '#';
 
     /**
-     *Replaces a base uri contained in a string with a generic placeholder.
+     * Replaces a base uri contained in a string with a generic placeholder.
      * Example: http://www.imi.kit.edu/exampleBaseURI#MyModel1 will return baseuri:MyModel1.
      * The baseuri name mapping is defined in the triple store graph.
      * This way, the base uri can be changed without changing all triples.
+     *
      * @param input The string that MAY contain a base uri
      * @return the string without specific base uri
      */
@@ -33,9 +35,10 @@ public class StaticFunctions {
      * Example: http://www.imi.kit.edu/exampleBaseURI#MyModel1 will return baseuri:MyModel1.
      * The baseuri name mapping is defined in the triple store graph.
      * This way, the base uri can be changed without changing all triples.
-     * @param input
+     *
+     * @param input The string that MAY contain a base uri
      * @param baseuri
-     * @return
+     * @return the string without specific base uri
      */
     public static String removeBaseUri(String input, String baseuri) {
         String output = input;

@@ -2,6 +2,7 @@ package alps.java.api.util;
 
 import alps.java.api.parsing.IPASSGraph;
 import org.apache.jena.rdf.model.RDFNode;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -9,10 +10,12 @@ public class StringWithoutExtra extends StringWithExtra {
 
     public StringWithoutExtra(String content) {
         super(content);
+        // No need for calls here, base calls our overwritten setContent
     }
 
     public StringWithoutExtra(String content, String lang) {
         super(content);
+        // No need for calls here, base calls our overwritten setContent
     }
 
     @Override
@@ -45,7 +48,6 @@ public class StringWithoutExtra extends StringWithExtra {
 
     @Override
     public void setExtra(String lang) {
-
     }
 
     @Override

@@ -6,7 +6,7 @@ package alps.java.api.util;
  * inside a behavior. if the state is added to a behavior, the behavior can set itself as container
  * while only checking if the given IPASSProcessModelElement is IContainableElement<ISubjectBehavior>,
  * it does not need to know it is a specific element (a state)
- * @param <T> the type of the container
+ * @param <T>
  */
 public interface IContainableElement<T> {
     /**
@@ -17,6 +17,7 @@ public interface IContainableElement<T> {
 
     /**
      * Returns the container this element belongs to
+     * "out" method
      * @param container the container instance
      * @return true if the container is not null and the element is currently contained by another instance
      */
