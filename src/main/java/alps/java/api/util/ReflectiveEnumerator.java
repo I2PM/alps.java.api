@@ -5,14 +5,54 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 
     public class ReflectiveEnumerator {
-        static{
+        private static Set<ClassLoader> classLoaders = new HashSet<>();
 
-        }
-        private static Set<ClassLoader> additionalAssemblies;
+        public static <T> List<T> getEnumerableOfType(Class<T> baseClass, T element) {
+            if (!baseClass.isInstance(element)) {
+                return null;
+            }
 
-        static {
-            additionalAssemblies = new HashSet<>();
+            List<T> objects = new ArrayList<>();
+            Class<?> typeOfBase = element.getClass();
+
+            // Add the class loader containing T to the set if not contained already
+            ClassLoader sameAsContainingT = baseClass.getClassLoader();
+            addClassLoaderToCheckForTypes(sameAsContainingT);
+
+            // Go through all the types that are in the same class loader as T
+            // And through all the types that are in registered class loaders
+            for (ClassLoader classLoader : classLoaders) {
+                try {
+                    for (Class<?> clazz : ClassGraphHelper.getClassesOfType(typeOfBase, classLoader)) {
+                        T createdObject = createInstance(clazz, baseClass);
+                        if (createdObject != null) {
+                            objects.add(createdObject);
+                        }
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return objects;
         }
+
+        private static <T> T createInstance(Class<?> clazz, Class<T> baseClass) {
+            try {
+                Object instance = clazz.getDeclaredConstructor().newInstance();
+                return baseClass.cast(instance);
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        public static void addClassLoaderToCheckForTypes(ClassLoader classLoader) {
+            classLoaders.add(classLoader);
+        }
+    }
+
+       /*private static Set<ClassLoader> additionalAssemblies = new HashSet<>();
         public static <T> Iterable<Class<? extends T>> getEnumerableOfType(Class<T> element)
         {
             // This is the "parent"-type, when want to find all types that extend this one
@@ -84,7 +124,7 @@ import java.lang.reflect.Parameter;
         }*/
         // Baum hier erstellen, Baum aus Interfaces und Klassen erzeugen
         // Weiterhin kinder der klassen checken, aber auch direkte kinder von interfaces
-
+/*
         public static <T> T createInstance(Class type)
         {
             T finalInstance = null;
@@ -127,6 +167,6 @@ import java.lang.reflect.Parameter;
         }
 
     }
-
+/*
 
 }
