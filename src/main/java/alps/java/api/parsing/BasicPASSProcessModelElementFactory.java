@@ -2,8 +2,7 @@ package alps.java.api.parsing;
 
 import alps.java.api.StandardPASS.PASSProcessModelElement;
 import alps.java.api.util.ITreeNode;
-import org.apache.jena.atlas.lib.Pair;
-import alps.java.api.parsing.IParseablePASSProcessModelElement;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -11,124 +10,117 @@ import java.util.*;
  * A basic factory that creates standard ModelElements contained inside the alps.net.api library
  */
 public class BasicPASSProcessModelElementFactory implements IPASSProcessModelElementFactory<IParseablePASSProcessModelElement> {
-    public String createInstance(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, List<String> names,IParseablePASSProcessModelElement element){
-            element = new PASSProcessModelElement();
-            Set<String> bestParseableNames = new HashSet<String>();
-            int lowestParseDiff = Integer.MAX_VALUE;
+    public String createInstance(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, List<String> names, IParseablePASSProcessModelElement element) {
+        element = new PASSProcessModelElement();
+        Set<String> bestParseableNames = new HashSet<String>();
+        int lowestParseDiff = Integer.MAX_VALUE;
 
-            // Check how good the instantiations for the names are.
-            // Only use the names where instantiation-pairs have lowest numbers
-            for(String uriName: names) {
-                    String name = removeUri(uriName);
-                    if (!parsingDict.containsKey(name)) continue;
+        // Check how good the instantiations for the names are.
+        // Only use the names where instantiation-pairs have lowest numbers
+        for (String uriName : names) {
+            String name = removeUri(uriName);
+            if (!parsingDict.containsKey(name)) continue;
 
-                    // The Item2 for each item signalizes how far off the c# class is mapped to an owl class.
-                    // Example: in owl, "BlueSubject" is subclass of "Subject". In c# we only know "Subject".
-                    // The owl "Subject" class has a mapping score of 0 and is mapped to the c# class "Subject"
-                    // The owl "BlueSubject" class has a mapping score of 1 and is mapped to the c# class "Subject", the last known parent class
-                    for (Map.Entry<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> entry : parsingDict.entrySet()) {
-                            for (Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer> pair : entry.getValue()) {
-                                    if (pair > lowestParseDiff) continue;
+            // The Item2 for each item signalizes how far off the c# class is mapped to an owl class.
+            // Example: in owl, "BlueSubject" is subclass of "Subject". In c# we only know "Subject".
+            // The owl "Subject" class has a mapping score of 0 and is mapped to the c# class "Subject"
+            // The owl "BlueSubject" class has a mapping score of 1 and is mapped to the c# class "Subject", the last known parent class
+            for (Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer> pair : parsingDict.get(name)) {
+                if (pair.getRight() > lowestParseDiff) continue;
 
-                                    // If the mapping is equally good as the mappings which were already found, add it
-                                    if (pair.equals(lowestParseDiff)) {
-                                            bestParseableNames.add(name);
-                                    }
+                // If the mapping is equally good as the mappings which were already found, add it
+                if (pair.getRight() == lowestParseDiff) {
+                    bestParseableNames.add(name);
+                }
 
-                                    // If the mapping is better than the mappings which were already found, delete the old mappings and add it
-                                    else {
-                                            lowestParseDiff = pair;
-                                            bestParseableNames.clear();
-                                            bestParseableNames.add(name);
-                                    }
-                            }
-                    }
+                // If the mapping is better than the mappings which were already found, delete the old mappings and add it
+                else {
+                    lowestParseDiff = pair.getRight();
+                    bestParseableNames.clear();
+                    bestParseableNames.add(name);
+                }
+
+
             }
+        }
 
-            Map<IParseablePASSProcessModelElement, String> possibleElements = new HashMap<IParseablePASSProcessModelElement, String>();
-            // Gather all possible instantiations
-            for(String name: bestParseableNames)
-            {
-            for((ITreeNode<IParseablePASSProcessModelElement>, int) pair: parsingDict[name])
-            possibleElements.add(pair.Item1.getContent(), name);
-            }
+        Map<IParseablePASSProcessModelElement, String> possibleElements = new HashMap<IParseablePASSProcessModelElement, String>();
+        // Gather all possible instantiations
+        for (String name : bestParseableNames) {
+            for (Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>pair:
+            parsingDict.get(name))
+            possibleElements.put(pair.getLeft().getContent(), name);
+        }
 
-            if (bestParseableNames.Count > 1)
-            {
+        if (bestParseableNames.size() > 1) {
             boolean foundSubclass;
 
             // If one of the possible instances is superclass to another possible instance, throw the superclass out (only want most specific instance)
-            do
-            {
-            foundSubclass = false;
-            List<IParseablePASSProcessModelElement> remove = new LinkedList<>(IParseablePASSProcessModelElement);
-            for(IParseablePASSProcessModelElement someElement: possibleElements.keySet())
-            {
-            // If none of the elements are equal and no other type in the list is subclass of the current type, continue
-            if (!possibleElements.keySet().Any(someOtherElement => someElement.equals(someOtherElement) &&
-            someOtherElement.GetType()
-            .IsSubclassOf(someElement.getClass()))) continue;
+            do {
+                foundSubclass = false;
+                List<IParseablePASSProcessModelElement> remove = new LinkedList<>();
+                    for (IParseablePASSProcessModelElement someElement : possibleElements.keySet()) {
+                            // If none of the elements are equal and no other type in the list is subclass of the current type, continue
+                            boolean shouldContinue = true;
+                            for (IParseablePASSProcessModelElement someOtherElement : possibleElements.keySet()) {
+                                    if (someElement.equals(someOtherElement) && someElement.getClass().isAssignableFrom(someOtherElement.getClass())) {
+                                            shouldContinue = false;
+                                            break;
+                                    }
+                            }
+                            if (shouldContinue) continue;
 
-            // Else add the redundant/parent type to be removed later
-            remove.add(someElement);
-            foundSubclass = true;
-            }
-
-            // Delete after finishing iteration over list
-            for(IParseablePASSProcessModelElement someElement: remove)
-            {
-            possibleElements.remove(someElement);
-            }
+                            // Else add the redundant/parent type to be removed later
+                            remove.add(someElement);
+                            foundSubclass = true;
+                    }
+                // Delete after finishing iteration over list
+                for (IParseablePASSProcessModelElement someElement : remove) {
+                    possibleElements.remove(someElement);
+                }
             } while (foundSubclass);
-            }
+        }
+        int elementCount = possibleElements.size();
 
-            switch (possibleElements.Count)
-            {
+        if(elementCount == 1) {
             // Take the only element and return a new instance
-            case 1:
-            element = possibleElements.keySet().first().getParsedInstance();
-            return possibleElements.values().First();
-
+            element = possibleElements.keySet().iterator().next().getParsedInstance();
+            return possibleElements.values().iterator().next();
+        }else if(elementCount > 1){
             // Still some elements left that are both
             // - equally good in parsing
             // - no superclass to another class
             // parse the one having the longest matching name (longer name -> more specific instance ?)
-            case > 1:
-            {
-            Map<IParseablePASSProcessModelElement, String> selectedPair = decideForElement(possibleElements);
-            element = selectedPair.keySet().getParsedInstance();
-            return selectedPair.values();
-            }
-    default:
-            return null;
-            }
-            }
-    private static String removeUri(String stringWithUri)
-            {
-            String[] splitStr = stringWithUri.split("#");
+                Map.Entry<IParseablePASSProcessModelElement, String> selectedPair = (Map.Entry<IParseablePASSProcessModelElement, String>) decideForElement(possibleElements);
+                element = selectedPair.getKey().getParsedInstance();
+                return selectedPair.getValue();
+            }else{
+                return null;
+        }
+    }
 
-            // return only the last part
-            return splitStr[splitStr.length -1 ];
-            }
+    private static String removeUri(String stringWithUri) {
+        String[] splitStr = stringWithUri.split("#");
 
-    protected Map<IParseablePASSProcessModelElement, String> decideForElement(Map<IParseablePASSProcessModelElement, String> possibleElements)
-            {
-            int max = -1;
-            Map<IParseablePASSProcessModelElement, String> maxPair = new HashMap<IParseablePASSProcessModelElement, String>();
-            int counter = 0;
-            for(Map.Entry<IParseablePASSProcessModelElement, String> pair: possibleElements.entrySet())
-            {
+        // return only the last part
+        return splitStr[splitStr.length - 1];
+    }
+
+    protected Map.Entry<IParseablePASSProcessModelElement, String> decideForElement(Map<IParseablePASSProcessModelElement, String> possibleElements) {
+        int max = -1;
+        Map.Entry<IParseablePASSProcessModelElement, String> maxPair = new AbstractMap.SimpleEntry<>(null, "");
+        int counter = 0;
+        for (Map.Entry<IParseablePASSProcessModelElement, String> pair : possibleElements.entrySet()) {
             int parseability = pair.getKey().canParse(pair.getValue());
-            if (parseability > max)
-            {
-            max = parseability;
-            maxPair = (Map<IParseablePASSProcessModelElement, String>) pair;
+            if (parseability > max) {
+                max = parseability;
+                maxPair = pair;
             }
             counter++;
-            }
+        }
 
-            return maxPair;
+        return maxPair;
 
-            }
-            }
+    }
+}
 

@@ -1,7 +1,6 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.IPASSGraph;
-import alps.java.api.util.priv.Triple;
 import org.apache.jena.rdf.model.*;
 
 

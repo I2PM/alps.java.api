@@ -1,4 +1,8 @@
 package alps.java.api.util;
+import alps.java.api.util.priv.ClassGraphHelper;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.lang.reflect.Constructor;
@@ -41,7 +45,8 @@ import java.lang.reflect.Parameter;
             try {
                 Object instance = clazz.getDeclaredConstructor().newInstance();
                 return baseClass.cast(instance);
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException |
+                     InvocationTargetException e) {
                 e.printStackTrace();
                 return null;
             }
@@ -169,4 +174,4 @@ import java.lang.reflect.Parameter;
     }
 /*
 
-}
+*/

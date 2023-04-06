@@ -1,7 +1,6 @@
 package alps.java.api.parsing;
 
 
-import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Resource;
 
@@ -20,24 +19,28 @@ public interface IPASSGraph {
 
     /**
      * Adds a triple to the triple store this graph contains
+     *
      * @param t the triple
      */
     void addTriple(Triple t);
 
     /**
      * Removes a triple from the triple store this graph contains
+     *
      * @param t the triple
      */
     void removeTriple(Triple t);
 
     /**
      * Creates a new Uri node inside the graph
+     *
      * @return The new Uri node
      */
     Resource createUriNode();
 
     /**
      * Creates a new Uri node from an Uri
+     *
      * @param uri The correctly formatted uri
      * @return The new Uri node
      */
@@ -47,13 +50,16 @@ public interface IPASSGraph {
      * Creates a new Uri node from a string name
      * This name should not be an uri/url (start with http: ...)
      * For this use {@link "CreateUriNode(Uri)"}.
-     * @param qname The name
+     *
+     * @param name The name
      * @return The new Uri node
      */
-    Resource createUriNode(String qname);
+    Resource createUriNode(String name);
 
     Literal createLiteralNode(String literal);
+
     Literal createLiteralNode(String literal, URI datadef);
+
     Literal createLiteralNode(String literal, String langspec);
 
 
@@ -61,12 +67,14 @@ public interface IPASSGraph {
      * Registers a component to the graph.
      * When a triple is changed, the affected component will be notified and can react
      * to the change
+     *
      * @param element the element that is registered
      */
     void register(IGraphCallback element);
 
     /**
      * Deregisteres a component previously registered via {@link "register(IParseablePASSProcessModelelement)"}
+     *
      * @param element the element that is de-registered
      */
     void unregister(IGraphCallback element);
@@ -75,6 +83,7 @@ public interface IPASSGraph {
      * Should be called when a modelComponentID is changed.
      * The model component ids are like primary keys in a database, and many triples must be updated as result.
      * Also, the other components inside the model will be notified about the change when they are registered.
+     *
      * @param oldID the old id
      * @param newID the new id
      */
@@ -82,6 +91,7 @@ public interface IPASSGraph {
 
     /**
      * Exports the current graph as owl to the specified filename.
+     *
      * @param filepath
      */
     void exportTo(String filepath);

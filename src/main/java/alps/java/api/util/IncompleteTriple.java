@@ -1,11 +1,7 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.*;
-import alps.java.api.util.priv.Triple;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.rdf.model.impl.StatementImpl;
-
-import java.net.URI;
 
 public class IncompleteTriple implements IIncompleteTriple {
     private String predicateContent;

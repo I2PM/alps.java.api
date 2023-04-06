@@ -3,18 +3,21 @@ package alps.java.api.parsing;
 import alps.java.api.util.*;
 import org.apache.jena.graph.Triple;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.vocabulary.XML;
-import org.apache.jena.vocabulary.SWRLA;
-import org.apache.jena.vocabulary.PassOnt;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 
 /**
  * This class is an adapter class for the {@link Model} interface.
- * It uses an {@link }as internal graph
+ * It uses an {@link org.apache.jena.ontology.OntModel}as internal graph
  */
 public class PASSGraph implements IPASSGraph{
 
@@ -24,20 +27,19 @@ public class PASSGraph implements IPASSGraph{
 
     private ICompatibilityDictionary<String, IGraphCallback> elements = new CompatibilityDictionary<String, IGraphCallback>();
 
-    private ICompatibilityDictionary<String, String> namespaceMappings = new CompatibilityDictionary<String, String>{
-        { "rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"};
-        { "rdfs", "http://www.w3.org/2000/01/rdf-schema#"};
-        { "xml", "http://www.w3.org/XML/1998/namespace"};
-        { "xsd", "http://www.w3.org/2001/XMLSchema#"};
-        { "swrla", "http://swrl.stanford.edu/ontologies/3.3/swrla.owl#"};
-        { "abstract-pass-ont", "http://www.imi.kit.edu/abstract-pass-ont#"};
-        { "standard-pass-ont", "http://www.i2pm.net/standard-pass-ont#"};
-        { "owl", "http://www.w3.org/2002/07/owl#"};
-        { "", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"}
-        }
+    private final ICompatibilityDictionary<String, String> namespaceMappings = new CompatibilityDictionary<String, String>() {{
+        put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+        put("xml", "http://www.w3.org/XML/1998/namespace");
+        put("xsd", "http://www.w3.org/2001/XMLSchema#");
+        put("swrla", "http://swrl.stanford.edu/ontologies/3.3/swrla.owl#");
+        put("abstract-pass-ont", "http://www.imi.kit.edu/abstract-pass-ont#");
+        put("standard-pass-ont", "http://www.i2pm.net/standard-pass-ont#");
+        put("owl", "http://www.w3.org/2002/07/owl#");
+        put("", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+    }};
     private String baseURI;
 
-    //TODO:neu implementieren
     public boolean containsNonBaseURI(String input) {
         for(Map.Entry<String, String> nameMapping: namespaceMappings.entrySet())
         {
@@ -49,47 +51,42 @@ public class PASSGraph implements IPASSGraph{
     protected static final String EXAMPLE_BASE_URI = "http://www.imi.kit.edu/exampleBaseURI";
     protected Model baseGraph;
 
-    public PASSGraph(String baseURI)
-    {
+    public PASSGraph(String baseURI){
         if (baseURI == null)
         this.baseURI = EXAMPLE_BASE_URI;
             else
         this.baseURI = baseURI;
-        namespaceMappings.add(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY, baseURI + "#");
+        namespaceMappings.put(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY, baseURI + "#");
 
         Model exportGraph = ModelFactory.createDefaultModel();
 
         // Adding all namespaceMappings (exchange short acronyms like owl: with the complete uri)
-        for(Map.Entry<String, String> nameMapping: namespaceMappings)
+        for(Map.Entry<String, String> nameMapping: namespaceMappings.entrySet())
         {
-            exportGraph.NamespaceMap.AddNamespace(nameMapping.getKey(), new URI(nameMapping.getValue()));
+            exportGraph.setNsPrefix(nameMapping.getKey(), nameMapping.getValue());
         }
-        exportGraph.NamespaceMap.AddNamespace("", new URI(baseURI + "#"));
-        exportGraph.BaseUri = new URI(baseURI);
+        exportGraph.setNsPrefix("", baseURI + "#"));
+        exportGraph.setNsPrefix("base", baseURI);
 
-        RDFNode subjectNode;
-        RDFNode predicateNode;
-        RDFNode objectNode;
-        Triple triple;
+        Resource subjectNode;
+        Property predicateNode;
+        Resource objectNode;
 
 
-        subjectNode = exportGraph.createUriNode(exportGraph.BaseUri);
-        predicateNode = exportGraph.CreateUriNode("rdf:type");
-        objectNode = exportGraph.CreateUriNode("owl:Ontology");
-        triple = new Triple(subjectNode, predicateNode, objectNode);
-        exportGraph.Assert(triple);
+        subjectNode = exportGraph.createResource(baseURI);
+        predicateNode = exportGraph.createProperty("rdf:type");
+        objectNode = exportGraph.createResource("owl:Ontology");
+        exportGraph.add(subjectNode, predicateNode, objectNode);
 
 
         // Adding import triples for standard pass and abstract pass
-        subjectNode = exportGraph.CreateUriNode(exportGraph.BaseUri);
-        predicateNode = exportGraph.CreateUriNode("owl:imports");
+        subjectNode = exportGraph.createResource(baseURI);
+        predicateNode = exportGraph.createProperty("owl:imports");
 
-        objectNode = exportGraph.CreateUriNode(new URI("http://www.i2pm.net/standard-pass-ont"));
-        triple = new Triple(subjectNode, predicateNode, objectNode);
-        exportGraph.Assert(triple);
-        objectNode = exportGraph.CreateUriNode(new URI("http://www.imi.kit.edu/abstract-pass-ont"));
-        triple = new Triple(subjectNode, predicateNode, objectNode);
-        exportGraph.Assert(triple);
+        objectNode = exportGraph.createResource("http://www.i2pm.net/standard-pass-ont"));
+        exportGraph.add(subjectNode, predicateNode, objectNode);
+        objectNode = exportGraph.createResource("http://www.imi.kit.edu/abstract-pass-ont"));
+        exportGraph.add(subjectNode, predicateNode, objectNode);
 
         baseGraph = exportGraph;
     }
@@ -101,11 +98,11 @@ public class PASSGraph implements IPASSGraph{
             else
         this.baseURI = newUri;
 
-        namespaceMappings[EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY] = baseURI + "#";
+        namespaceMappings.put(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY, baseURI + "#");
         // baseGraph.NamespaceMap.RemoveNamespace("");
         // baseGraph.NamespaceMap.RemoveNamespace(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY);
-        baseGraph.NamespaceMap.AddNamespace("", new URI(baseURI + "#"));
-        baseGraph.NamespaceMap.AddNamespace(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY, new URI(baseURI + "#"));
+        baseGraph.setNsPrefix("",baseURI + "#");
+        baseGraph.setNsPrefix(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY,baseURI + "#");
         //exportGraph.NamespaceMap.AddNamespace("", new Uri(baseURI + "#"));
     }
 
@@ -114,44 +111,43 @@ public class PASSGraph implements IPASSGraph{
         return baseGraph;
     }
 
-    public void addTriple(Triple t)
+    public void addTriple(Statement t)
     {
-        if (baseGraph.Triples.Contains(t)) return;
-        baseGraph.Assert(t);
-        String subjWithoutUri = t.Subject.ToString().Replace(baseURI + "#", "");
+        if (baseGraph.contains(t)) return;
+        baseGraph.add(t);
+        String subjWithoutUri = t.getSubject().toString().replace(baseURI + "#", "");
         if (elements.containsKey(subjWithoutUri))
         {
-            elements[subjWithoutUri].notifyTriple(t);
+            elements.get(subjWithoutUri).notifyTriple(t);
         }
     }
 
-    public Resource createUriNode()
-    {
-        return baseGraph.createUriNode();
+    public Resource createUriNode() {
+        return baseGraph.createResource();
     }
     public Resource createUriNode(URI uri)
     {
-        return baseGraph.createUriNode(uri);
+        return baseGraph.createResource(uri.toString());
     }
     public Resource createUriNode(String qname)
     {
-        return baseGraph.createUriNode(qname);
+        return baseGraph.createResource(qname);
     }
 
     public Literal createLiteralNode(String literal)
     {
-        return baseGraph.createLiteralNode(literal);
+        return baseGraph.createLiteral(literal);
     }
     public Literal createLiteralNode(String literal, URI datadef)
     {
-        return baseGraph.CreateLiteralNode(literal, datadef);
+        return baseGraph.createLiteral(literal, datadef.toString());
     }
     public Literal createLiteralNode(String literal, String langspec)
     {
-        return baseGraph.CreateLiteralNode(literal, langspec);
+        return baseGraph.createLiteral(literal, langspec);
     }
 
-    public void removeTriple(Triple t) { baseGraph.retract(t); }
+    public void removeTriple(Statement t) { baseGraph.remove(t); }
 
 
     public void register(IGraphCallback element)
@@ -166,15 +162,16 @@ public class PASSGraph implements IPASSGraph{
 
     public void modelComponentIDChanged(String oldID, String newID)
     {
-        List<IGraphCallback> elementsToNotify = new List<IGraphCallback>();
-        for (Triple t: baseGraph.Triples)
-        {
+        List<IGraphCallback> elementsToNotify = new ArrayList<IGraphCallback>();
+        StmtIterator stmtIter = baseGraph.listStatements();
+        while(stmtIter.hasNext()){
+            Statement t = stmtIter.next();
             if (t.toString().contains(oldID))
             {
-                String subjWithoutUri = t.Subject.ToString().Replace(baseURI + "#", "");
+                String subjWithoutUri = t.getSubject().toString().replace(baseURI + "#", "");
                 if (elements.containsKey(subjWithoutUri))
                 {
-                    elementsToNotify.add(elements[subjWithoutUri]);
+                    elementsToNotify.add(elements.get(subjWithoutUri));
                 }
             }
         }
@@ -184,11 +181,14 @@ public class PASSGraph implements IPASSGraph{
         }
     }
 
-    public void exportTo(String filepath)
-    {
-        IRdfWriter writer = new RdfXmlWriter();
-        String fullPath = (filepath.endsWith(".owl")) ? filepath : filepath + ".owl";
-        writer.Save(baseGraph, fullPath);
+    public void exportTo(String filepath) {
+        String fullPath = filepath.endsWith(".owl") ? filepath : filepath + ".owl";
+        try (FileOutputStream fos = new FileOutputStream(fullPath)) {
+            RDFDataMgr.write(fos, baseGraph, RDFFormat.RDFXML);
+        } catch (IOException e) {
+            // Handle the exception (e.g., print an error message or rethrow the exception)
+            e.printStackTrace();
+        }
     }
 
     public String getBaseURI()

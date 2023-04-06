@@ -4,7 +4,6 @@ import alps.java.api.FunctionalityCapsules.*;
 import alps.java.api.parsing.*;
 import alps.java.api.src.OWLTags;
 import alps.java.api.util.*;
-import alps.java.api.util.priv.Triple;
 import org.apache.jena.rdf.model.Resource;
 
 import java.net.URI;
