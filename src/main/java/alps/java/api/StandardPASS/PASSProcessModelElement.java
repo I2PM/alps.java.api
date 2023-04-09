@@ -8,6 +8,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 /**
@@ -82,6 +83,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
     }
 
     public PASSProcessModelElement() {
+        createUniqueModelComponentID(getClassName(), false);
 
     }
 
@@ -139,7 +141,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      *
      * @param triples
      */
-   public void addTriples(List<Statement> triples) {
+    public void addTriples(List<Statement> triples) {
         if (triples != null) {
             for (Statement triple : triples) {
                 addTriple(triple);
@@ -174,16 +176,17 @@ public class PASSProcessModelElement implements ICapsuleCallback {
 
             // Parse the information encoded by the triple
             additionalAttributeTriples.add(triple);
-            parseAttribute(triple, _);
+            parseAttribute(triple, null);
         }
     }
 
-    /// <summary>
-    /// Tries to parse an incomplete triple and add it as complete triple
-    /// this is only possible if a graph is given. A valid base uri must not be provided,
-    /// otherwise an example base uri is used.
-    /// </summary>
-    /// <param name="triple">The incomplete triple</param>
+    /**
+     * Tries to parse an incomplete triple and add it as complete triple
+     * this is only possible if a graph is given. A valid base uri must not be provided,
+     * otherwise an example base uri is used.
+     *
+     * @param triple The incomplete triple
+     */
     protected void completeIncompleteTriple(IIncompleteTriple triple) {
         if (exportGraph == null) return;
         Resource subjectNode;
@@ -196,38 +199,43 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         // Generate it from preset name
         else {
 
-            if (exportSubjectNodeName.equals(getBaseURI()))
-                subjectNode = exportGraph.createUriNode(new URI(getBaseURI()));
-            else
+            if (exportSubjectNodeName.equals(getBaseURI())) {
+                try {
+                    subjectNode = exportGraph.createUriNode(new URI(getBaseURI()));
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+            } else
                 subjectNode = exportGraph.createUriNode(StaticFunctions.addGenericBaseURI(exportSubjectNodeName));
 
         }
 
 
         // other nodes are evaluated from the provided incomplete triple
-        Triple completeTriple = triple.getRealTriple(exportGraph, subjectNode);
+        Statement completeTriple = triple.getRealTriple(exportGraph, subjectNode);
 
         additionalAttributeTriples.add(completeTriple);
         exportGraph.addTriple(completeTriple);
         additionalIncompleteTriples.remove(triple);
     }
 
-    public List<Triple> getTriples() {
-        return new List<Triple>(additionalAttributeTriples);
+    public List<Statement> getTriples() {
+        return new ArrayList<Statement>(additionalAttributeTriples);
     }
 
     public List<IIncompleteTriple> getIncompleteTriples() {
-        return new List<IIncompleteTriple>(additionalIncompleteTriples);
+        return new ArrayList<IIncompleteTriple>(additionalIncompleteTriples);
     }
 
-    /// <summary>
-    /// Removes a triple from either the complete or incomplete triples.
-    /// </summary>
-    /// <param name="incTriple">An incomplete triple coding the value that should be deleted.
-    /// The deleted object must not be incomplete, but can as well be a complete triple</param>
-    /// <returns></returns>
+    /**
+     * Removes a triple from either the complete or incomplete triples.
+     *
+     * @param incTriple An incomplete triple coding the value that should be deleted.
+     *                  The deleted object must not be incomplete, but can as well be a complete triple
+     * @return
+     */
     public boolean removeTriple(IIncompleteTriple incTriple) {
-        Triple foundTriple = getTriple(incTriple);
+        Statement foundTriple = getTriple(incTriple);
         if (foundTriple != null) {
             if (exportGraph != null) exportGraph.removeTriple(foundTriple);
             return additionalAttributeTriples.remove(foundTriple);
@@ -238,38 +246,41 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         return false;
     }
 
-    /// <summary>
-    /// Determines wheter there is a triple (complete or incomplete), holding the same data as the given incomplete triple
-    /// </summary>
-    /// <param name="incTriple">An incomplete triple coding the value that should be found.
-    /// The found object must not be incomplete, but can as well be a complete triple</param>
-    /// <returns></returns>
+    /**
+     * Determines wheter there is a triple (complete or incomplete), holding the same data as the given incomplete triple
+     *
+     * @param incTriple An incomplete triple coding the value that should be found.
+     *                  The found object must not be incomplete, but can as well be a complete triple
+     * @return
+     */
     public boolean containsTriple(IIncompleteTriple incTriple) {
         return (getTriple(incTriple) != null) || (getIncompleteTriple(incTriple) != null);
     }
 
-    /// <summary>
-    /// Returns a real triple which contains the same data as the given incomplete triple.
-    /// </summary>
-    /// <param name="searchedTriple">An incomplete triple providing the data to be searched for</param>
-    /// <returns></returns>
-    protected Triple getTriple(IIncompleteTriple searchedTriple) {
+    /**
+     * Returns a real triple which contains the same data as the given incomplete triple.
+     *
+     * @param searchedTriple An incomplete triple providing the data to be searched for
+     * @return
+     */
+    protected Statement getTriple(IIncompleteTriple searchedTriple) {
         String predicateToSearchFor = NodeHelper.cutURI(searchedTriple.getPredicate());
         String objectContentToSearchFor = NodeHelper.cutURI(searchedTriple.getObject());
-        for (Triple triple : getTriples()) {
-            String predicateToMatch = NodeHelper.cutURI(NodeHelper.getNodeContent(triple.Predicate);
-            String objectContentToMatch = NodeHelper.cutURI(NodeHelper.getNodeContent(triple.OObject);
+        for (Statement triple : getTriples()) {
+            String predicateToMatch = NodeHelper.cutURI(NodeHelper.getNodeContent(triple.getPredicate()));
+            String objectContentToMatch = NodeHelper.cutURI(NodeHelper.getNodeContent(triple.getObject()));
             if (predicateToSearchFor.equals(predicateToMatch) && objectContentToSearchFor.equals(objectContentToMatch))
                 return triple;
         }
         return null;
     }
 
-    /// <summary>
-    /// Returns an incomplete triple which contains the same data as the given incomplete triple.
-    /// </summary>
-    /// <param name="searchedTriple">An incomplete triple providing the data to be searched for</param>
-    /// <returns></returns>
+    /**
+     * Returns an incomplete triple which contains the same data as the given incomplete triple.
+     *
+     * @param searchedTriple An incomplete triple providing the data to be searched for
+     * @return
+     */
     protected IIncompleteTriple getIncompleteTriple(IIncompleteTriple searchedTriple) {
         String predicateToSearchFor = NodeHelper.cutURI(searchedTriple.getPredicate());
         String objectContentToSearchFor = NodeHelper.cutURI(searchedTriple.getObject());
@@ -282,11 +293,12 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         return null;
     }
 
-    /// <summary>
-    /// Replaces an old triple with a new one.
-    /// </summary>
-    /// <param name="oldTriple">An incomplete triple holding the data to find the triple to be replaced</param>
-    /// <param name="newTriple">An incomplete triple holding the data to replace the old triple</param>
+    /**
+     * Replaces an old triple with a new one.
+     *
+     * @param oldTriple An incomplete triple holding the data to find the triple to be replaced
+     * @param newTriple An incomplete triple holding the data to replace the old triple
+     */
     public void replaceTriple(IIncompleteTriple oldTriple, IIncompleteTriple newTriple) {
         if (oldTriple.equals(newTriple)) return;
         if (oldTriple != null && containsTriple(oldTriple)) {
@@ -332,17 +344,18 @@ public class PASSProcessModelElement implements ICapsuleCallback {
     }
 
 
-    /// <summary>
-    /// This method is used to replace invalid triples with incomplete representations.
-    /// A triple might be invalid if the base URI of the model graph or the ModelComponentID of the current element has changed.
-    /// On such a change, the nodes inside the graph must be updated.
-    /// Therefore, the triples are stored as incomplete triples, which are later parsed back to Triples once the new id or URI is known.
-    /// </summary>
-    /// <param name="containedString"></param>
+    /**
+     * This method is used to replace invalid triples with incomplete representations.
+     * A triple might be invalid if the base URI of the model graph or the ModelComponentID of the current element has changed.
+     * On such a change, the nodes inside the graph must be updated.
+     * Therefore, the triples are stored as incomplete triples, which are later parsed back to Triples once the new id or URI is known.
+     *
+     * @param containedString
+     */
     protected void invalidateTriplesContainingString(String containedString) {
-        List<IIncompleteTriple> triplesToBeChanged = new List<IIncompleteTriple>();
+        List<IIncompleteTriple> triplesToBeChanged = new ArrayList<IIncompleteTriple>();
         IIncompleteTriple owlNamedIndivTriple = null;
-        for (Triple triple : getTriples()) {
+        for (Statement triple : getTriples()) {
             if (triple.toString().contains(containedString)) {
                 IIncompleteTriple newTriple = new IncompleteTriple(triple);
                 if (newTriple.getPredicate().contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#type") && newTriple.getObject().contains("http://www.w3.org/2002/07/owl#NamedIndividual"))
@@ -385,6 +398,23 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         return getModelComponentID();
     }
 
+    @Override
+    public String createUniqueModelComponentID(String labelForID) {
+        if (labelForID == null || labelForID.equals("")) {
+            setModelComponentID(guid.toString());
+        } else {
+            setModelComponentID(labelForID + ("-") + guid.toString());
+            addModelComponentLabel(labelForID);
+        }
+        return getModelComponentID();
+    }
+
+    @Override
+    public String createUniqueModelComponentID() {
+        setModelComponentID(guid.toString());
+        return getModelComponentID();
+    }
+
     // ############################ ModelComponent labels ############################
 
     public void setModelComponentLabels(List<String> modelComponentLabels) {
@@ -410,15 +440,23 @@ public class PASSProcessModelElement implements ICapsuleCallback {
     }
 
     public List<String> getModelComponentLabelsAsStrings(boolean addLanguageAttribute) {
-        List<String> labels = new List<String>();
+        List<String> labels = new ArrayList<String>();
         for (IStringWithExtra label : modelComponentLabels) {
             labels.add((addLanguageAttribute) ? label.toString() : label.getContent());
         }
         return labels;
     }
 
+    public List<String> getModelComponentLabelsAsStrings() {
+        List<String> labels = new ArrayList<String>();
+        for (IStringWithExtra label : modelComponentLabels) {
+            labels.add((false) ? label.toString() : label.getContent());
+        }
+        return labels;
+    }
+
     public List<IStringWithExtra> getModelComponentLabels() {
-        return new List<IStringWithExtra>(modelComponentLabels);
+        return new ArrayList<IStringWithExtra>(modelComponentLabels);
     }
 
     public void clearModelComponentLabels() {
@@ -448,7 +486,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
     }
 
     public List<String> getComments() {
-        List<String> commentsAsString = new List<String>();
+        List<String> commentsAsString = new ArrayList<String>();
         for (IStringWithExtra langString : comments) {
             commentsAsString.add(langString.toString());
         }
@@ -459,12 +497,12 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         comments.clear();
     }
 
-
+    //TODO: out-Parameter
     public void completeObject(Map<String, IParseablePASSProcessModelElement> allElements) {
         if (parsingStarted) return;
         parsingStarted = true;
-        List<IParseablePASSProcessModelElement> successfullyParsedElements = new List<IParseablePASSProcessModelElement>();
-        for (Triple triple : getTriples()) {
+        List<IParseablePASSProcessModelElement> successfullyParsedElements = new ArrayList<IParseablePASSProcessModelElement>();
+        for (Statement triple : getTriples()) {
             parseAttribute(triple, allElements, IParseablePASSProcessModelElement parsedElement);
             if (parsedElement != null) {
                 successfullyParsedElements.add(parsedElement);
@@ -478,35 +516,37 @@ public class PASSProcessModelElement implements ICapsuleCallback {
 
     protected boolean parsingStarted = false;
 
-    protected boolean parseAttribute(Triple triple, IParseablePASSProcessModelElement parsedElement) {
+    //TODO: out Parameter Methode
+    protected boolean parseAttribute(Statement triple, IParseablePASSProcessModelElement parsedElement) {
 
         // Calling parsing method
         // If attribute contains a reference to a PassProcessModelElement, pass this to the method
         Map<String, IParseablePASSProcessModelElement> allElements = getDictionaryOfAllAvailableElements();
         return parseAttribute(triple, allElements, parsedElement);
     }
+    //TODO: out Methode
 
-    protected boolean parseAttribute(Triple triple, Map<String, IParseablePASSProcessModelElement> allElements, IParseablePASSProcessModelElement parsedElement) {
+    protected boolean parseAttribute(Statement triple, Map<String, IParseablePASSProcessModelElement> allElements, IParseablePASSProcessModelElement parsedElement) {
 
         // Calling parsing method
         // If attribute contains a reference to a PassProcessModelElement, pass this to the method
         parsedElement = null;
-        setExportXMLName(NodeHelper.getNodeContent(triple.Subject));
-        String predicateContent = NodeHelper.getNodeContent(triple.Predicate);
-        String objectContent = NodeHelper.getNodeContent(triple.Object);
-        String lang = NodeHelper.getLangIfContained(triple.Object);
-        String dataType = NodeHelper.getDataTypeIfContained(triple.Object);
+        setExportXMLName(NodeHelper.getNodeContent(triple.getSubject()));
+        String predicateContent = NodeHelper.getNodeContent(triple.getPredicate());
+        String objectContent = NodeHelper.getNodeContent(triple.getObject());
+        String lang = NodeHelper.getLangIfContained(triple.getObject());
+        String dataType = NodeHelper.getDataTypeIfContained(triple.getObject());
         String possibleID = objectContent;
-        if (possibleID.split('#').Length > 1)
-            possibleID = possibleID.split('#')[possibleID.split('#').Length - 1];
+        if (possibleID.split("#").length > 1)
+            possibleID = possibleID.split("#")[possibleID.split("#").length - 1];
 
-        if (triple.Subject != null && triple.Subject.ToString() != "") {
-            exportSubjectNodeName = triple.Subject.ToString();
+        if (triple.getSubject() != null && triple.getSubject().toString() != "") {
+            exportSubjectNodeName = triple.getSubject().toString();
         }
 
         if (allElements != null && allElements.containsKey(possibleID)) {
-            if (parseAttribute(predicateContent, possibleID, lang, dataType, allElements[possibleID]) && allElements[possibleID] != this) {
-                parsedElement = allElements[possibleID];
+            if (parseAttribute(predicateContent, possibleID, lang, dataType, allElements.get(possibleID)) && allElements.get(possibleID) != this) {
+                parsedElement = allElements.get(possibleID);
                 successfullyParsedElement(parsedElement);
                 return true;
             }
@@ -521,27 +561,29 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         return;
     }
 
-    /// <summary>
-    /// Provides access to the dictionary of all available elements inside the current model.
-    /// </summary>
-    /// <returns>A dictionary containing model component ids as keys and elements as values</returns>
+    /**
+     * Provides access to the dictionary of all available elements inside the current model.
+     *
+     * @return A dictionary containing model component ids as keys and elements as values
+     */
     protected Map<String, IParseablePASSProcessModelElement> getDictionaryOfAllAvailableElements() {
         return null;
     }
 
-    /// <summary>
-    /// Gets called while parsing a triple from a set of triples where this element is subject.
-    /// The predicate and objectContent are derived directly from the triple,
-    /// lang and dataType might be null (they will never both be NonNull at the same time)
-    /// If the object specifies an uri to another element and the collection of all available elements contains this element,
-    /// the element is passed as well
-    /// </summary>
-    /// <param name="predicate">the predicate contained by the triple</param>
-    /// <param name="objectContent">the content of the object contained by the triple</param>
-    /// <param name="lang">the lang attribute of the object if one was specified</param>
-    /// <param name="dataType">the datatype attribute of the object if one was specified</param>
-    /// <param name="element">the element the objectContent points to (if it does and the element exists)</param>
-    /// <returns></returns>
+    /**
+     * Gets called while parsing a triple from a set of triples where this element is subject.
+     * The predicate and objectContent are derived directly from the triple,
+     * lang and dataType might be null (they will never both be NonNull at the same time)
+     * If the object specifies an uri to another element and the collection of all available elements contains this element,
+     * the element is passed as well
+     *
+     * @param predicate     the predicate contained by the triple
+     * @param objectContent the content of the object contained by the triple
+     * @param lang          the lang attribute of the object if one was specified
+     * @param dataType      the datatype attribute of the object if one was specified
+     * @param element       the element the objectContent points to (if it does and the element exists)
+     * @return
+     */
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
         if (predicate.toLowerCase().contains(OWLTags.rdfsComment)) {
             addComment(new LanguageSpecificString(objectContent, lang));
@@ -550,7 +592,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
             addModelComponentLabel(new LanguageSpecificString(objectContent, lang));
             return true;
         } else if (predicate.contains(OWLTags.hasModelComponentID)) {
-            setModelComponentID(objectContent.split('#')[objectContent.split('#').Length - 1]);
+            setModelComponentID(objectContent.split("#")[objectContent.split("#").length - 1]);
             return true;
         }
         if (!(element == null)) {
@@ -594,31 +636,51 @@ public class PASSProcessModelElement implements ICapsuleCallback {
 
     }
 
-    /// <summary>
-    /// Publishes that an element has been added to this component
-    /// </summary>
-    /// <param name="element">the added element</param>
+    public boolean unregister(IValueChangedObserver<IPASSProcessModelElement> observer) {
+        if (observer != null && observerList.contains(observer)) {
+            observerList.remove(observer);
+            // Might not call this every time
+            //if (removeCascadeDepth > 0)
+            informObserverAboutConnectedObjects(observer, ObserverInformType.REMOVED, 0);
+            return true;
+        }
+        return false;
+
+    }
+
+    /**
+     * Publishes that an element has been added to this component
+     *
+     * @param element the added element
+     */
     public void publishElementAdded(IPASSProcessModelElement element) {
-        List<IValueChangedObserver<IPASSProcessModelElement>> localObserver = new List<IValueChangedObserver<IPASSProcessModelElement>>(observerList);
+        List<IValueChangedObserver<IPASSProcessModelElement>> localObserver = new ArrayList<IValueChangedObserver<IPASSProcessModelElement>>(observerList);
         for (IValueChangedObserver<IPASSProcessModelElement> observer : localObserver) {
             observer.updateAdded(element, this);
         }
     }
 
-    /// <summary>
-    /// Publishes that an element has been removed from this component
-    /// </summary>
-    /// <param name="element">the removed element</param>
-    /// <param name="removeCascadeDepth">An integer that specifies the depth of a cascading delete for connected elements (to the deleted element)
-    /// 0 deletes only the given element, 1 the adjacent elements etc.</param>
+    /**
+     * Publishes that an element has been removed from this component
+     *
+     * @param element            the removed element
+     * @param removeCascadeDepth An integer that specifies the depth of a cascading delete for connected elements (to the deleted element)
+     *                           0 deletes only the given element, 1 the adjacent elements etc
+     */
     public void publishElementRemoved(IPASSProcessModelElement element, int removeCascadeDepth) {
-        for (IValueChangedObserver<IPASSProcessModelElement> observer : new List<IValueChangedObserver<IPASSProcessModelElement>>(observerList)) {
+        for (IValueChangedObserver<IPASSProcessModelElement> observer : new ArrayList<IValueChangedObserver<IPASSProcessModelElement>>(observerList)) {
             observer.updateRemoved(element, this, removeCascadeDepth);
         }
     }
 
+    public void publishElementRemoved(IPASSProcessModelElement element) {
+        for (IValueChangedObserver<IPASSProcessModelElement> observer : new ArrayList<IValueChangedObserver<IPASSProcessModelElement>>(observerList)) {
+            observer.updateRemoved(element, this, 0);
+        }
+    }
+
     protected void publishNewModelComponentID(String oldID) {
-        List<IValueChangedObserver<IPASSProcessModelElement>> localObserver = new List<IValueChangedObserver<IPASSProcessModelElement>>(observerList);
+        List<IValueChangedObserver<IPASSProcessModelElement>> localObserver = new ArrayList<IValueChangedObserver<IPASSProcessModelElement>>(observerList);
         for (IValueChangedObserver<IPASSProcessModelElement> observer : localObserver) {
             observer.notifyModelComponentIDChanged(oldID, this.getModelComponentID());
         }
@@ -632,23 +694,27 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         return;
     }
 
+    public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller) {
+        return;
+    }
+
     protected enum ObserverInformType {ADDED, REMOVED}
 
-    /// <summary>
-    /// This enum specifies a group of elements that should be returned on function call
-    /// </summary>
+    /**
+     * This enum specifies a group of elements that should be returned on function call
+     */
     public enum ConnectedElementsSetSpecification {
-        /// <summary>
-        /// All elements that are somehow connected to the class
-        /// </summary>
+        /**
+         * All elements that are somehow connected to the class
+         */
         ALL,
-        /// <summary>
-        /// All elements that should be added to other components via cascading add
-        /// </summary>
+        /**
+         * All elements that should be added to other components via cascading add
+         */
         TO_ADD,
-        /// <summary>
-        /// All elements that should be deleted from other components via cascading delete
-        /// </summary>
+        /**
+         * All elements that should be deleted from other components via cascading delete
+         */
         TO_REMOVE_DIRECTLY_ADJACENT,
 
         TO_REMOVE_ADJACENT_AND_MORE,
@@ -656,7 +722,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         TO_ALWAYS_REMOVE
     }
 
-    protected void informObserverAboutConnectedObjects(IValueChangedObserver<IPASSProcessModelElement> observer, ObserverInformType informType, int removeCascadeDepth =0) {
+    protected void informObserverAboutConnectedObjects(IValueChangedObserver<IPASSProcessModelElement> observer, ObserverInformType informType, int removeCascadeDepth) {
         if (informType == ObserverInformType.ADDED) {
             for (IPASSProcessModelElement element : getAllConnectedElements(ConnectedElementsSetSpecification.TO_ADD))
                 observer.updateAdded(element, this);
@@ -673,6 +739,18 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         }
     }
 
+    protected void informObserverAboutConnectedObjects(IValueChangedObserver<IPASSProcessModelElement> observer, ObserverInformType informType) {
+        if (informType == ObserverInformType.ADDED) {
+            for (IPASSProcessModelElement element : getAllConnectedElements(ConnectedElementsSetSpecification.TO_ADD))
+                observer.updateAdded(element, this);
+        }
+        if (informType == ObserverInformType.REMOVED) {
+            ConnectedElementsSetSpecification connectedSpecification;
+            connectedSpecification = ConnectedElementsSetSpecification.TO_ALWAYS_REMOVE;
+            for (IPASSProcessModelElement element : getAllConnectedElements(connectedSpecification))
+                observer.updateRemoved(element, this, 0);
+        }
+    }
 
     public void removeFromEverything(int removeCascadeDepth) {
         publishElementRemoved(this, removeCascadeDepth);
@@ -692,17 +770,13 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         return false;
     }
 
-    @Override
-    public int GetHashCode() {
-        return modelComponentID.getHashCode();
-    }
-
 
     public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification) // TODO add depth everywhere
     {
         return new HashSet<IPASSProcessModelElement>();
     }
 
+    //TODO: ref Methode
     public void setExportGraph(IPASSGraph graph) {
 
         if (this.exportGraph != null) {
@@ -718,7 +792,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         for (IIncompleteTriple triple : getIncompleteTriples()) {
             completeIncompleteTriple(triple);
         }
-        for (Triple triple : getTriples()) {
+        for (Statement triple : getTriples()) {
             graph.addTriple(triple);
         }
     }
@@ -739,7 +813,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
                 replaceTriple(t, newIncompleteTriple);
             }
         }
-        for (Triple t : getTriples()) {
+        for (Statement t : getTriples()) {
             if (t.toString().contains(oldID)) {
                 IIncompleteTriple oldIncompleteTriple = new IncompleteTriple(t);
                 IIncompleteTriple newIncompleteTriple;
@@ -757,7 +831,6 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         }
     }
 
-    //TODO: warum Fehlermeldung? jetzt nicht mehr, da gecastet, Frage aber ob es so gleiche Funktionalität hat
     public IParseablePASSProcessModelElement getParsedInstance() {
         return new PASSProcessModelElement();
     }
@@ -798,7 +871,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         return getModelComponentID();
     }
 
-    public void notifyTriple(Triple triple) {
+    public void notifyTriple(Statement triple) {
         addTriple(triple);
     }
 

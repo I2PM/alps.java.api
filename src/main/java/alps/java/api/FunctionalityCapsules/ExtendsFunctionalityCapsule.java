@@ -1,17 +1,9 @@
 package alps.java.api.FunctionalityCapsules;
 
-import alps.java.api.FunctionalityCapsules.ICapsuleCallback;
-import alps.java.api.FunctionalityCapsules.IExtendsFunctionalityCapsule;
 import alps.java.api.parsing.*;
 import alps.java.api.StandardPASS.*;
+import alps.java.api.src.OWLTags;
 import alps.java.api.util.*;
-/// <summary>
-/// Encapsulates the extends behavior.
-/// Elements can hold this capsule and delegate methods to it
-/// </summary>
-/// <typeparam name="T"></typeparam>
-
-
 
     public class ExtendsFunctionalityCapsule<T extends  IPASSProcessModelElement> implements IExtendsFunctionalityCapsule<T>
             {
@@ -40,14 +32,12 @@ import alps.java.api.util.*;
 
         public boolean isExtension()
                 {
-                if (getExtendedElement() != null || getExtendedElementID() != null)
-                return true;
-                return false;
+                        return getExtendedElement() != null || getExtendedElementID() != null;
                 }
-
+//TODO: Typparamater checken
         public boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)
                 {
-                if (predicate.contains(OWLTags.extends))
+                if (predicate.contains(OWLTags.eextends))
                 {
                 if (element instanceof T)
                 {
@@ -63,7 +53,7 @@ import alps.java.api.util.*;
                 }
                 return false;
                 }
-    //TODO: removeTriple und addTriple austauschen
+
         public void setExtendedElement(T element)
                 {
                 T oldExtends = extendedElement;

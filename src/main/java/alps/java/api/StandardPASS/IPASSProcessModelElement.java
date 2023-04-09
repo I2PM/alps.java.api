@@ -22,7 +22,7 @@ public interface IPASSProcessModelElement extends IValueChangedPublisher<IPASSPr
     String getUriModelComponentID();
 
     /**
-     * Returns the unique id the identifies the current elemen
+     * Returns the unique id the identifies the current element
      *
      * @return
      */
