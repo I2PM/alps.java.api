@@ -1,7 +1,11 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.*;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.*;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class IncompleteTriple implements IIncompleteTriple {
     private String predicateContent;
@@ -54,41 +58,36 @@ public class IncompleteTriple implements IIncompleteTriple {
         }
     }
     */
-    public IncompleteTriple(Triple realTriple, String baseUriToReplace) {
-        predicateContent = (baseUriToReplace == null) ? realTriple.Predicate.toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.Predicate.toString(), baseUriToReplace);
-        if (realTriple.OObject instanceof Literal literal)
-        {
+    public IncompleteTriple(Statement realTriple, String baseUriToReplace) {
+        predicateContent = (baseUriToReplace == null) ? realTriple.getPredicate().toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.getPredicate().toString(), baseUriToReplace);
+        if (realTriple.getObject() instanceof Literal literal) {
             if (literal.getLanguage() != null && !literal.getLanguage().equals(""))
                 extraString = new LanguageSpecificString(literal.getValue().toString(), literal.getLanguage());
             else if (literal.getDatatype() != null && !literal.getDatatype().toString().equals(""))
                 extraString = new DataTypeString(literal.getValue().toString(), literal.getDatatype().toString());
             else {
-                String content = baseUriToReplace == null ? realTriple.OObject.toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.OObject.toString(), baseUriToReplace);
+                String content = baseUriToReplace == null ? realTriple.getObject().toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.getObject().toString(), baseUriToReplace);
                 extraString = new StringWithoutExtra(content);
             }
-        }
-            else
-        {
-            String content = baseUriToReplace == null ? realTriple.OObject.toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.OObject.toString(), baseUriToReplace);
+        } else {
+            String content = baseUriToReplace == null ? realTriple.getObject().toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.getObject().toString(), baseUriToReplace);
             extraString = new StringWithoutExtra(content);
         }
     }
-    public IncompleteTriple(Triple realTriple) {
-        predicateContent = realTriple.Predicate.toString();
-        if (realTriple.OObject instanceof Literal literal)
-        {
+
+    public IncompleteTriple(Statement realTriple) {
+        predicateContent = realTriple.getPredicate().toString();
+        if (realTriple.getObject() instanceof Literal literal) {
             if (literal.getLanguage() != null && !literal.getLanguage().equals(""))
                 extraString = new LanguageSpecificString(literal.getValue().toString(), literal.getLanguage());
             else if (literal.getDatatype() != null && !literal.getDatatype().toString().equals(""))
                 extraString = new DataTypeString(literal.getValue().toString(), literal.getDatatype().toString());
             else {
-                String content = realTriple.OObject.toString();
+                String content = realTriple.getObject().toString();
                 extraString = new StringWithoutExtra(content);
             }
-        }
-        else
-        {
-            String content = realTriple.OObject.toString();
+        } else {
+            String content = realTriple.getObject().toString();
             extraString = new StringWithoutExtra(content);
         }
     }
@@ -108,12 +107,21 @@ public class IncompleteTriple implements IIncompleteTriple {
         this.extraString = objectWithExtra;
     }
 
-    public Triple getRealTriple(IPASSGraph graph, RDFNode subjectNode) {
-        RDFNode predicateNode;
-        predicateNode = graph.createUriNode(predicateContent);
+    public Statement getRealTriple(IPASSGraph graph, Resource subjectNode) {
+        Property predicateNode;
+        try {
+            predicateNode = ResourceFactory.createProperty(predicateContent);
+        } catch (Exception e) {
+            try {
+                predicateNode = ResourceFactory.createProperty(new URI(predicateContent).toString());
+            } catch (URISyntaxException uriEx) {
+                System.err.println("Invalid URI for predicateContent: " + predicateContent);
+                predicateNode = null;
+            }
+        }
         RDFNode objectNode = extraString.getNodeFromString(graph);
 
-        return new Triple(subjectNode, predicateNode, objectNode);
+        return ResourceFactory.createStatement(subjectNode, predicateNode, objectNode);
     }
 
     public String getPredicate() {

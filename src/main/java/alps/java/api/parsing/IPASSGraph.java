@@ -2,7 +2,9 @@ package alps.java.api.parsing;
 
 
 import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 
 import java.net.URI;
 
@@ -22,14 +24,14 @@ public interface IPASSGraph {
      *
      * @param t the triple
      */
-    void addTriple(Triple t);
+    void addTriple(Statement t);
 
     /**
      * Removes a triple from the triple store this graph contains
      *
      * @param t the triple
      */
-    void removeTriple(Triple t);
+    void removeTriple(Statement t);
 
     /**
      * Creates a new Uri node inside the graph
@@ -45,6 +47,14 @@ public interface IPASSGraph {
      * @return The new Uri node
      */
     Resource createUriNode(URI uri);
+
+    /**
+     * Creates a new Uri node from an Uri
+     *
+     * @param uri The correctly formatted uri
+     * @return The new Uri node
+     */
+    Property createUriNodeProp(URI uri);
 
     /**
      * Creates a new Uri node from a string name

@@ -20,7 +20,7 @@ public interface IIncompleteTriple {
      * @param subjectNode the subject that will be subject of the new triple
      * @return The real triple
      */
-    Triple getRealTriple(IPASSGraph graph, RDFNode subjectNode);
+    Statement getRealTriple(IPASSGraph graph, Resource subjectNode);
 
     /**
      * Get the predicate attribute of the incomplete Triple

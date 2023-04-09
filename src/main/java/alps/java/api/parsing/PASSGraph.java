@@ -19,7 +19,7 @@ import org.apache.jena.riot.RDFFormat;
  * This class is an adapter class for the {@link Model} interface.
  * It uses an {@link org.apache.jena.ontology.OntModel}as internal graph
  */
-public class PASSGraph implements IPASSGraph{
+public class PASSGraph implements IPASSGraph {
 
 
     public static final String EXAMPLE_BASE_URI_PLACEHOLDER = "baseuri:";
@@ -40,32 +40,31 @@ public class PASSGraph implements IPASSGraph{
     }};
     private String baseURI;
 
-    public boolean containsNonBaseURI(String input) {
-        for(Map.Entry<String, String> nameMapping: namespaceMappings.entrySet())
-        {
+    public boolean containsNonBaseUri(String input) {
+        for (Map.Entry<String, String> nameMapping : namespaceMappings.entrySet()) {
             if (input.contains(nameMapping.getValue()) && !nameMapping.getKey().equals(EXAMPLE_BASE_URI_PLACEHOLDER.replace(":", "")))
                 return true;
         }
         return false;
     }
+
     protected static final String EXAMPLE_BASE_URI = "http://www.imi.kit.edu/exampleBaseURI";
     protected Model baseGraph;
 
-    public PASSGraph(String baseURI){
+    public PASSGraph(String baseURI) {
         if (baseURI == null)
-        this.baseURI = EXAMPLE_BASE_URI;
-            else
-        this.baseURI = baseURI;
+            this.baseURI = EXAMPLE_BASE_URI;
+        else
+            this.baseURI = baseURI;
         namespaceMappings.put(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY, baseURI + "#");
 
         Model exportGraph = ModelFactory.createDefaultModel();
 
         // Adding all namespaceMappings (exchange short acronyms like owl: with the complete uri)
-        for(Map.Entry<String, String> nameMapping: namespaceMappings.entrySet())
-        {
+        for (Map.Entry<String, String> nameMapping : namespaceMappings.entrySet()) {
             exportGraph.setNsPrefix(nameMapping.getKey(), nameMapping.getValue());
         }
-        exportGraph.setNsPrefix("", baseURI + "#"));
+        exportGraph.setNsPrefix("", baseURI + "#");
         exportGraph.setNsPrefix("base", baseURI);
 
         Resource subjectNode;
@@ -83,41 +82,37 @@ public class PASSGraph implements IPASSGraph{
         subjectNode = exportGraph.createResource(baseURI);
         predicateNode = exportGraph.createProperty("owl:imports");
 
-        objectNode = exportGraph.createResource("http://www.i2pm.net/standard-pass-ont"));
+        objectNode = exportGraph.createResource("http://www.i2pm.net/standard-pass-ont");
         exportGraph.add(subjectNode, predicateNode, objectNode);
-        objectNode = exportGraph.createResource("http://www.imi.kit.edu/abstract-pass-ont"));
+        objectNode = exportGraph.createResource("http://www.imi.kit.edu/abstract-pass-ont");
         exportGraph.add(subjectNode, predicateNode, objectNode);
 
         baseGraph = exportGraph;
     }
 
-    public void changeBaseURI(String newUri)
-    {
+    public void changeBaseURI(String newUri) {
         if (newUri == null)
-        this.baseURI = EXAMPLE_BASE_URI;
-            else
-        this.baseURI = newUri;
+            this.baseURI = EXAMPLE_BASE_URI;
+        else
+            this.baseURI = newUri;
 
         namespaceMappings.put(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY, baseURI + "#");
         // baseGraph.NamespaceMap.RemoveNamespace("");
         // baseGraph.NamespaceMap.RemoveNamespace(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY);
-        baseGraph.setNsPrefix("",baseURI + "#");
-        baseGraph.setNsPrefix(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY,baseURI + "#");
+        baseGraph.setNsPrefix("", baseURI + "#");
+        baseGraph.setNsPrefix(EXAMPLE_BASE_URI_PLACEHOLDER_MAPPING_KEY, baseURI + "#");
         //exportGraph.NamespaceMap.AddNamespace("", new Uri(baseURI + "#"));
     }
 
-    public Model getGraph()
-    {
+    public Model getGraph() {
         return baseGraph;
     }
 
-    public void addTriple(Statement t)
-    {
+    public void addTriple(Statement t) {
         if (baseGraph.contains(t)) return;
         baseGraph.add(t);
         String subjWithoutUri = t.getSubject().toString().replace(baseURI + "#", "");
-        if (elements.containsKey(subjWithoutUri))
-        {
+        if (elements.containsKey(subjWithoutUri)) {
             elements.get(subjWithoutUri).notifyTriple(t);
         }
     }
@@ -125,58 +120,58 @@ public class PASSGraph implements IPASSGraph{
     public Resource createUriNode() {
         return baseGraph.createResource();
     }
-    public Resource createUriNode(URI uri)
-    {
+
+    public Resource createUriNode(URI uri) {
         return baseGraph.createResource(uri.toString());
     }
-    public Resource createUriNode(String qname)
-    {
+
+    @Override
+    public Property createUriNodeProp(URI uri) {
+        return baseGraph.createProperty(uri.toString());
+    }
+
+    public Resource createUriNode(String qname) {
         return baseGraph.createResource(qname);
     }
 
-    public Literal createLiteralNode(String literal)
-    {
+    public Literal createLiteralNode(String literal) {
         return baseGraph.createLiteral(literal);
     }
-    public Literal createLiteralNode(String literal, URI datadef)
-    {
+
+    public Literal createLiteralNode(String literal, URI datadef) {
         return baseGraph.createLiteral(literal, datadef.toString());
     }
-    public Literal createLiteralNode(String literal, String langspec)
-    {
+
+    public Literal createLiteralNode(String literal, String langspec) {
         return baseGraph.createLiteral(literal, langspec);
     }
 
-    public void removeTriple(Statement t) { baseGraph.remove(t); }
+    public void removeTriple(Statement t) {
+        baseGraph.remove(t);
+    }
 
 
-    public void register(IGraphCallback element)
-    {
+    public void register(IGraphCallback element) {
         elements.tryAdd(element.getSubjectName(), element);
     }
 
-    public void unregister(IGraphCallback element)
-    {
+    public void unregister(IGraphCallback element) {
         elements.remove(element.getSubjectName());
     }
 
-    public void modelComponentIDChanged(String oldID, String newID)
-    {
+    public void modelComponentIDChanged(String oldID, String newID) {
         List<IGraphCallback> elementsToNotify = new ArrayList<IGraphCallback>();
         StmtIterator stmtIter = baseGraph.listStatements();
-        while(stmtIter.hasNext()){
+        while (stmtIter.hasNext()) {
             Statement t = stmtIter.next();
-            if (t.toString().contains(oldID))
-            {
+            if (t.toString().contains(oldID)) {
                 String subjWithoutUri = t.getSubject().toString().replace(baseURI + "#", "");
-                if (elements.containsKey(subjWithoutUri))
-                {
+                if (elements.containsKey(subjWithoutUri)) {
                     elementsToNotify.add(elements.get(subjWithoutUri));
                 }
             }
         }
-        for(IGraphCallback parseable: elementsToNotify)
-        {
+        for (IGraphCallback parseable : elementsToNotify) {
             parseable.notifyModelComponentIDChanged(oldID, newID);
         }
     }
@@ -191,8 +186,7 @@ public class PASSGraph implements IPASSGraph{
         }
     }
 
-    public String getBaseURI()
-    {
+    public String getBaseURI() {
         return baseURI;
     }
 

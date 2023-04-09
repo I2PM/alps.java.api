@@ -5,6 +5,7 @@ import alps.java.api.parsing.*;
 import alps.java.api.src.OWLTags;
 import alps.java.api.util.*;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 
 import java.net.URI;
 import java.util.*;
@@ -26,7 +27,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
     public static final int CANNOT_PARSE = -1;
 
     protected final List<IValueChangedObserver<IPASSProcessModelElement>> observerList = new ArrayList<IValueChangedObserver<IPASSProcessModelElement>>();
-    protected List<Triple> additionalAttributeTriples = new ArrayList<Triple>();
+    protected List<Statement> additionalAttributeTriples = new ArrayList<Statement>();
     protected List<IIncompleteTriple> additionalIncompleteTriples = new ArrayList<IIncompleteTriple>();
 
 
@@ -138,9 +139,9 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      *
      * @param triples
      */
-   public void addTriples(List<Triple> triples) {
+   public void addTriples(List<Statement> triples) {
         if (triples != null) {
-            for (Triple triple : triples) {
+            for (Statement triple : triples) {
                 addTriple(triple);
             }
         }
@@ -153,7 +154,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      *
      * @param triple
      */
-    public void addTriple(Triple triple) {
+    public void addTriple(Statement triple) {
         // Do not add the triple if it is already contained
         if (triple == null)
             return;

@@ -2,6 +2,7 @@ package alps.java.api.parsing;
 
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.util.*;
+import org.apache.jena.rdf.model.Statement;
 
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public interface IParseablePASSProcessModelElement extends IPASSProcessModelElem
     /**
      * Adds a  list ofIncomplete Triple to the element that will either be parsed right away, or delayed
      * (depending on whether there is a graph available or not)
+     *
      * @param triples the triple that is being saved
      */
 
@@ -59,7 +61,7 @@ public interface IParseablePASSProcessModelElement extends IPASSProcessModelElem
      *
      * @param triples the triple that is being saved
      */
-    void addTriples(List<Triple> triples);
+    void addTriples(List<Statement> triples);
 
     /**
      * Adds a complete triple to the element.
@@ -68,7 +70,7 @@ public interface IParseablePASSProcessModelElement extends IPASSProcessModelElem
      *
      * @param triple
      */
-    void addTriple(Triple triple);
+    void addTriple(Statement triple);
 
     /**
      * Returns all the triples currently contained by the class.
@@ -76,7 +78,7 @@ public interface IParseablePASSProcessModelElement extends IPASSProcessModelElem
      *
      * @return
      */
-    List<Triple> getTriples();
+    List<Statement> getTriples();
 
     /**
      * Returns all the triples currently contained by the class as incomplete triples (not containing the subject).
