@@ -18,717 +18,655 @@ import java.util.*;
  * Class that represents a state
  */
 
-public class State extends BehaviorDescribingComponent implements IStateReference
-        {
-protected final ICompatibilityDictionary<String, ITransition> incomingTransitions = new CompatibilityDictionary<String, ITransition>();
-protected final ICompatibilityDictionary<String, ITransition> outgoingTransitions = new CompatibilityDictionary<String, ITransition>();
-protected final IImplementsFunctionalityCapsule<IState> implCapsule;
-protected final Set<IState.StateType> stateTypes = new HashSet<IState.StateType>();
-protected IFunctionSpecification functionSpecification;
-protected IGuardBehavior guardBehavior;
-protected IAction action;
-protected IState referenceState;
+public class State extends BehaviorDescribingComponent implements IStateReference {
+    protected final ICompatibilityDictionary<String, ITransition> incomingTransitions = new CompatibilityDictionary<String, ITransition>();
+    protected final ICompatibilityDictionary<String, ITransition> outgoingTransitions = new CompatibilityDictionary<String, ITransition>();
+    protected final IImplementsFunctionalityCapsule<IState> implCapsule;
+    protected final Set<IState.StateType> stateTypes = new HashSet<IState.StateType>();
+    protected IFunctionSpecification functionSpecification;
+    protected IGuardBehavior guardBehavior;
+    protected IAction action;
+    protected IState referenceState;
 
-/**
- * Name of the class, needed for parsing
- */
-            private final String className = "State";
-@Override
-public String getClassName()
-        {
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String className = "State";
+
+    @Override
+    public String getClassName() {
         return className;
-        }
-@Override
-public IParseablePASSProcessModelElement getParsedInstance()
-        {
+    }
+
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
         return new State();
-        }
+    }
 
-protected State() { implCapsule = new ImplementsFunctionalityCapsule<IState>(this); }
+    protected State() {
+        implCapsule = new ImplementsFunctionalityCapsule<IState>(this);
+    }
 
-            /**
-             *
-             * @param behavior
-             * @param labelForID
-             * @param guardBehavior
-             * @param functionSpecification
-             * @param incomingTransition
-             * @param outgoingTransition
-             * @param comment
-             * @param additionalLabel
-             * @param additionalAttribute
-             */
-            //TODO: KOnstuktor überladen
-            public State(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,
-                         IFunctionSpecification functionSpecification, Set<ITransition> incomingTransition, Set<ITransition> outgoingTransition,
-                         String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
-                super(behavior, labelForID, comment, additionalLabel, additionalAttribute);
+    /**
+     * @param behavior
+     * @param labelForID
+     * @param guardBehavior
+     * @param functionSpecification
+     * @param incomingTransition
+     * @param outgoingTransition
+     * @param comment
+     * @param additionalLabel
+     * @param additionalAttribute
+     */
+    public State(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,
+                 IFunctionSpecification functionSpecification, Set<ITransition> incomingTransition, Set<ITransition> outgoingTransition,
+                 String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
+        super(behavior, labelForID, comment, additionalLabel, additionalAttribute);
         implCapsule = new ImplementsFunctionalityCapsule<IState>(this);
         setGuardBehavior(guardBehavior);
         setFunctionSpecification(functionSpecification);
         setIncomingTransitions(incomingTransition);
         setOutgoingTransitions(outgoingTransition);
         generateAction();
+    }
+
+    public State(ISubjectBehavior behavior) {
+        super(behavior, null, null, null, null);
+        implCapsule = new ImplementsFunctionalityCapsule<IState>(this);
+        setGuardBehavior(null);
+        setFunctionSpecification(null);
+        setIncomingTransitions(null);
+
+        setOutgoingTransitions(null);
+        generateAction();
+    }
+
+
+    public void addIncomingTransition(ITransition transition) {
+        if (transition == null) {
+            return;
         }
-
-                public State(ISubjectBehavior behavior){
-                        super(behavior);
-                        implCapsule = new ImplementsFunctionalityCapsule<IState>(this);
-                        setGuardBehavior(null);
-                        setFunctionSpecification(null);
-                        setIncomingTransitions(null);
-
-                        setOutgoingTransitions(null);
-                        generateAction();
-                }
-
-
-public void addIncomingTransition(ITransition transition)
-        {
-        if (transition == null) { return; }
-        if (incomingTransitions.tryAdd(transition.getModelComponentID(), transition))
-        {
-        transition.setTargetState(this);
-        publishElementAdded(transition);
-        transition.register(this);
-        addTriple(new IncompleteTriple(OWLTags.stdHasIncomingTransition, transition.getUriModelComponentID()));
+        if (incomingTransitions.tryAdd(transition.getModelComponentID(), transition)) {
+            transition.setTargetState(this);
+            publishElementAdded(transition);
+            transition.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdHasIncomingTransition, transition.getUriModelComponentID()));
         }
-        }
+    }
 
-            /**
-             * Method that returns the incoming transition attribute of the instance
-             * @return The incoming transition attribute of the instance
-             */
-            public Map<String, ITransition> getIncomingTransitions()
-        {
+    /**
+     * Method that returns the incoming transition attribute of the instance
+     *
+     * @return The incoming transition attribute of the instance
+     */
+    public Map<String, ITransition> getIncomingTransitions() {
         return new HashMap<String, ITransition>(incomingTransitions);
-        }
+    }
 
 
-public void addOutgoingTransition(ITransition transition)
-        {
-        if (transition == null) { return; }
-        if (outgoingTransitions.tryAdd(transition.getModelComponentID(), transition))
-        {
-        transition.setSourceState(this);
-        publishElementAdded(transition);
-        transition.register(this);
-        addTriple(new IncompleteTriple(OWLTags.stdHasOutgoingTransition, transition.getUriModelComponentID()));
+    public void addOutgoingTransition(ITransition transition) {
+        if (transition == null) {
+            return;
         }
+        if (outgoingTransitions.tryAdd(transition.getModelComponentID(), transition)) {
+            transition.setSourceState(this);
+            publishElementAdded(transition);
+            transition.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdHasOutgoingTransition, transition.getUriModelComponentID()));
         }
+    }
 
-public void setOutgoingTransitions(Set<ITransition> transitions, int removeCascadeDepth)
-        {
-        for(ITransition transition: getOutgoingTransitions().values())
-        {
-        removeOutgoingTransition(transition.getModelComponentID());
+    public void setOutgoingTransitions(Set<ITransition> transitions, int removeCascadeDepth) {
+        for (ITransition transition : getOutgoingTransitions().values()) {
+            removeOutgoingTransition(transition.getModelComponentID());
         }
         if (transitions == null) return;
-        for(ITransition transition: transitions)
-        {
-        addOutgoingTransition(transition);
+        for (ITransition transition : transitions) {
+            addOutgoingTransition(transition);
         }
-        }
+    }
 
-            public void setOutgoingTransitions(Set<ITransition> transitions)
-            {
-                for(ITransition transition: getOutgoingTransitions().values())
-                {
-                    removeOutgoingTransition(transition.getModelComponentID());
-                }
-                if (transitions == null) return;
-                for(ITransition transition: transitions)
-                {
-                    addOutgoingTransition(transition);
-                }
-            }
-
-public void setIncomingTransitions(Set<ITransition> transitions, int removeCascadeDepth)
-        {
-        for(ITransition transition: getIncomingTransitions().values())
-        {
-        removeIncomingTransition(transition.getModelComponentID());
+    public void setOutgoingTransitions(Set<ITransition> transitions) {
+        for (ITransition transition : getOutgoingTransitions().values()) {
+            removeOutgoingTransition(transition.getModelComponentID());
         }
         if (transitions == null) return;
-        for(ITransition transition: transitions)
-        {
-        addIncomingTransition(transition);
+        for (ITransition transition : transitions) {
+            addOutgoingTransition(transition);
         }
+    }
+
+    public void setIncomingTransitions(Set<ITransition> transitions, int removeCascadeDepth) {
+        for (ITransition transition : getIncomingTransitions().values()) {
+            removeIncomingTransition(transition.getModelComponentID());
         }
+        if (transitions == null) return;
+        for (ITransition transition : transitions) {
+            addIncomingTransition(transition);
+        }
+    }
 
-            public void setIncomingTransitions(Set<ITransition> transitions)
-            {
-                for(ITransition transition: getIncomingTransitions().values())
-                {
-                    removeIncomingTransition(transition.getModelComponentID());
-                }
-                if (transitions == null) return;
-                for(ITransition transition: transitions)
-                {
-                    addIncomingTransition(transition);
-                }
-            }
+    public void setIncomingTransitions(Set<ITransition> transitions) {
+        for (ITransition transition : getIncomingTransitions().values()) {
+            removeIncomingTransition(transition.getModelComponentID());
+        }
+        if (transitions == null) return;
+        for (ITransition transition : transitions) {
+            addIncomingTransition(transition);
+        }
+    }
 
-
-            public void removeOutgoingTransition(String modelCompID)
-            {
+        public void removeOutgoingTransition(String modelCompID, int removeCascadeDepth) {
                 if (modelCompID == null) return;
                 ITransition transition = outgoingTransitions.get(modelCompID);
-                if(transition!=null){
-                    outgoingTransitions.remove(modelCompID);
-                    transition.unregister(this);
-                    transition.setSourceState(null);
-                    action.updateRemoved(transition, this);
-                    removeTriple(new IncompleteTriple(OWLTags.stdHasOutgoingTransition, transition.getUriModelComponentID()));
+                if (transition != null) {
+                        outgoingTransitions.remove(modelCompID);
+                        transition.unregister(this);
+                        transition.setSourceState(null);
+                        action.updateRemoved(transition, this);
+                        removeTriple(new IncompleteTriple(OWLTags.stdHasOutgoingTransition, transition.getUriModelComponentID()));
                 }
-            }
+        }
+    public void removeOutgoingTransition(String modelCompID) {
+        if (modelCompID == null) return;
+        ITransition transition = outgoingTransitions.get(modelCompID);
+        if (transition != null) {
+            outgoingTransitions.remove(modelCompID);
+            transition.unregister(this);
+            transition.setSourceState(null);
+            action.updateRemoved(transition, this);
+            removeTriple(new IncompleteTriple(OWLTags.stdHasOutgoingTransition, transition.getUriModelComponentID()));
+        }
+    }
 
-
-    public void removeIncomingTransition(String modelCompID)
-        {
+        public void removeIncomingTransition(String modelCompID, int removeCascadeDepth) {
+                if (modelCompID == null) return;
+                ITransition transition = incomingTransitions.get(modelCompID);
+                if (transition != null) {
+                        incomingTransitions.remove(modelCompID);
+                        transition.unregister(this);
+                        transition.setTargetState(null);
+                        removeTriple(new IncompleteTriple(OWLTags.stdHasIncomingTransition, transition.getUriModelComponentID()));
+                }
+        }
+    public void removeIncomingTransition(String modelCompID) {
         if (modelCompID == null) return;
         ITransition transition = incomingTransitions.get(modelCompID);
-        if(transition!=null){
-        incomingTransitions.remove(modelCompID);
-        transition.unregister(this);
-        transition.setTargetState(null);
-        removeTriple(new IncompleteTriple(OWLTags.stdHasIncomingTransition, transition.getUriModelComponentID()));
+        if (transition != null) {
+            incomingTransitions.remove(modelCompID);
+            transition.unregister(this);
+            transition.setTargetState(null);
+            removeTriple(new IncompleteTriple(OWLTags.stdHasIncomingTransition, transition.getUriModelComponentID()));
         }
-        }
+    }
 
-            /**
-             * Method that returns the outgoing transition attribute of the instance
-             * @return The outgoing transition attribute of the instance
-             */
-            public Map<String, ITransition> getOutgoingTransitions()
-        {
+    /**
+     * Method that returns the outgoing transition attribute of the instance
+     *
+     * @return The outgoing transition attribute of the instance
+     */
+    public Map<String, ITransition> getOutgoingTransitions() {
         return new HashMap<String, ITransition>(outgoingTransitions);
+    }
+
+        public void setFunctionSpecification(IFunctionSpecification funSpec, int removeCascadeDepth) {
+                IFunctionSpecification oldSpec = functionSpecification;
+                // Might set it to null
+                functionSpecification = funSpec;
+
+                if (oldSpec != null) {
+                        if (oldSpec.equals(funSpec)) return;
+                        oldSpec.unregister(this);
+                        removeTriple(new IncompleteTriple(OWLTags.stdHasFunctionSpecification, oldSpec.getUriModelComponentID()));
+                }
+
+                if (funSpec != null) {
+                        publishElementAdded(funSpec);
+                        funSpec.register(this);
+                        addTriple(new IncompleteTriple(OWLTags.stdHasFunctionSpecification, funSpec.getUriModelComponentID()));
+                }
         }
-
-
-public void setFunctionSpecification(IFunctionSpecification funSpec)
-        {
+    public void setFunctionSpecification(IFunctionSpecification funSpec) {
         IFunctionSpecification oldSpec = functionSpecification;
         // Might set it to null
         functionSpecification = funSpec;
 
-        if (oldSpec != null)
-        {
-        if (oldSpec.equals(funSpec)) return;
-        oldSpec.unregister(this);
-        removeTriple(new IncompleteTriple(OWLTags.stdHasFunctionSpecification, oldSpec.getUriModelComponentID()));
+        if (oldSpec != null) {
+            if (oldSpec.equals(funSpec)) return;
+            oldSpec.unregister(this);
+            removeTriple(new IncompleteTriple(OWLTags.stdHasFunctionSpecification, oldSpec.getUriModelComponentID()));
         }
 
-        if (funSpec != null)
-        {
-        publishElementAdded(funSpec);
-        funSpec.register(this);
-        addTriple(new IncompleteTriple(OWLTags.stdHasFunctionSpecification, funSpec.getUriModelComponentID()));
+        if (funSpec != null) {
+            publishElementAdded(funSpec);
+            funSpec.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdHasFunctionSpecification, funSpec.getUriModelComponentID()));
         }
-        }
+    }
 
 
-public IFunctionSpecification getFunctionSpecification()
-        {
+    public IFunctionSpecification getFunctionSpecification() {
         return functionSpecification;
-        }
+    }
 
 
-public void setGuardBehavior(IGuardBehavior guardBehav, int removeCascadeDepth)
-        {
+    public void setGuardBehavior(IGuardBehavior guardBehav, int removeCascadeDepth) {
         IGuardBehavior oldBehavior = guardBehavior;
         // Might set it to null
         guardBehavior = guardBehav;
 
-        if (oldBehavior != null)
-        {
-        if (oldBehavior.equals(guardBehav)) return;
-        oldBehavior.unregister(this, removeCascadeDepth);
-        oldBehavior.removeGuardedState(getModelComponentID());
-        removeTriple(new IncompleteTriple(OWLTags.stdGuardedBy, oldBehavior.getUriModelComponentID()));
+        if (oldBehavior != null) {
+            if (oldBehavior.equals(guardBehav)) return;
+            oldBehavior.unregister(this, removeCascadeDepth);
+            oldBehavior.removeGuardedState(getModelComponentID());
+            removeTriple(new IncompleteTriple(OWLTags.stdGuardedBy, oldBehavior.getUriModelComponentID()));
         }
 
-        if (guardBehav != null)
-        {
-        publishElementAdded(guardBehav);
-        guardBehav.register(this);
-        guardBehav.addGuardedState(this);
-        addTriple(new IncompleteTriple(OWLTags.stdGuardedBy, guardBehav.getUriModelComponentID()));
+        if (guardBehav != null) {
+            publishElementAdded(guardBehav);
+            guardBehav.register(this);
+            guardBehav.addGuardedState(this);
+            addTriple(new IncompleteTriple(OWLTags.stdGuardedBy, guardBehav.getUriModelComponentID()));
         }
+    }
+
+    public void setGuardBehavior(IGuardBehavior guardBehav) {
+        IGuardBehavior oldBehavior = guardBehavior;
+        // Might set it to null
+        guardBehavior = guardBehav;
+
+        if (oldBehavior != null) {
+            if (oldBehavior.equals(guardBehav)) return;
+            oldBehavior.unregister(this, 0);
+            oldBehavior.removeGuardedState(getModelComponentID());
+            removeTriple(new IncompleteTriple(OWLTags.stdGuardedBy, oldBehavior.getUriModelComponentID()));
         }
 
-            public void setGuardBehavior(IGuardBehavior guardBehav)
-            {
-                IGuardBehavior oldBehavior = guardBehavior;
-                // Might set it to null
-                guardBehavior = guardBehav;
-
-                if (oldBehavior != null)
-                {
-                    if (oldBehavior.equals(guardBehav)) return;
-                    oldBehavior.unregister(this, 0);
-                    oldBehavior.removeGuardedState(getModelComponentID());
-                    removeTriple(new IncompleteTriple(OWLTags.stdGuardedBy, oldBehavior.getUriModelComponentID()));
-                }
-
-                if (guardBehav != null)
-                {
-                    publishElementAdded(guardBehav);
-                    guardBehav.register(this);
-                    guardBehav.addGuardedState(this);
-                    addTriple(new IncompleteTriple(OWLTags.stdGuardedBy, guardBehav.getUriModelComponentID()));
-                }
-            }
+        if (guardBehav != null) {
+            publishElementAdded(guardBehav);
+            guardBehav.register(this);
+            guardBehav.addGuardedState(this);
+            addTriple(new IncompleteTriple(OWLTags.stdGuardedBy, guardBehav.getUriModelComponentID()));
+        }
+    }
 
 
-public IGuardBehavior getGuardBehavior()
-        {
+    public IGuardBehavior getGuardBehavior() {
         return guardBehavior;
-        }
+    }
 
-//TODO: neu implementieren ?
-protected void generateAction(IAction newGeneratedAction)
-        {
+    //TODO: neu implementieren ?
+    protected void generateAction(IAction newGeneratedAction) {
         IAction oldAction = action;
         // Might set it to null
         String label = (getModelComponentLabelsAsStrings().size() > 0) ? getModelComponentLabelsAsStrings().get(0) : getModelComponentID();
         this.action = (newGeneratedAction == null) ? new Action(this, "ActionFor" + label) : newGeneratedAction;
 
-        if (oldAction != null)
-        {
-        if (oldAction.equals(action)) return;
-        oldAction.unregister(this);
-        oldAction.removeFromEverything();
-        removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, oldAction.getUriModelComponentID()));
+        if (oldAction != null) {
+            if (oldAction.equals(action)) return;
+            oldAction.unregister(this);
+            oldAction.removeFromEverything();
+            removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, oldAction.getUriModelComponentID()));
         }
 
-        if (!(action == null))
-        {
-        publishElementAdded(action);
-        action.register(this);
-        addTriple(new IncompleteTriple(OWLTags.stdBelongsTo, action.getUriModelComponentID()));
+        if (!(action == null)) {
+            publishElementAdded(action);
+            action.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdBelongsTo, action.getUriModelComponentID()));
         }
+    }
+
+    protected void generateAction() {
+        IAction oldAction = action;
+        // Might set it to null
+        String label = (getModelComponentLabelsAsStrings().size() > 0) ? getModelComponentLabelsAsStrings().get(0) : getModelComponentID();
+        this.action = new Action(this, "ActionFor" + label);
+
+        if (oldAction != null) {
+            if (oldAction.equals(action)) return;
+            oldAction.unregister(this);
+            oldAction.removeFromEverything();
+            removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, oldAction.getUriModelComponentID()));
         }
 
-                protected void generateAction()
-                {
-                        IAction oldAction = action;
-                        // Might set it to null
-                        String label = (getModelComponentLabelsAsStrings().size() > 0) ? getModelComponentLabelsAsStrings().get(0) : getModelComponentID();
-                        this.action = (newGeneratedAction == null) ? new Action(this, "ActionFor" + label) : newGeneratedAction;
+        if (!(action == null)) {
+            publishElementAdded(action);
+            action.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdBelongsTo, action.getUriModelComponentID()));
+        }
+    }
 
-                        if (oldAction != null)
-                        {
-                                if (oldAction.equals(action)) return;
-                                oldAction.unregister(this);
-                                oldAction.removeFromEverything();
-                                removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, oldAction.getUriModelComponentID()));
-                        }
 
-                        if (!(action == null))
-                        {
-                                publishElementAdded(action);
-                                action.register(this);
-                                addTriple(new IncompleteTriple(OWLTags.stdBelongsTo, action.getUriModelComponentID()));
-                        }
+    public IAction getAction() {
+        return action;
+    }
+
+    public boolean isStateType(IState.StateType stateType) {
+        return stateTypes.contains(stateType);
+    }
+
+    //TODO: Out Param
+    public void setIsStateType(IState.StateType stateType) {
+        switch (stateType) {
+            case IState.StateType.InitialStateOfBehavior:
+                if (stateTypes.add(stateType))
+                    addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfBehavior"));
+                break;
+            case IState.StateType.InitialStateOfChoiceSegmentPath:
+                if (stateTypes.add(stateType))
+                    addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfChoiceSegmentPath"));
+                break;
+            case IState.StateType.EndState:
+                if (stateTypes.add(stateType)) {
+                    addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "EndState"));
+
+                    if (getContainedBy(out ISubjectBehavior behavior) && (behavior instanceof ISubjectBaseBehavior baseBehav)) {
+                        baseBehav.registerEndState(this);
+                    }
+                }
+                break;
+        }
+
+    }
+//TODO: out-Parameter
+    public void removeStateType(IState.StateType stateType) {
+        // If the type was removed successfully
+        if (stateTypes.remove(stateType)) {
+            switch (stateType) {
+                case IState.StateType.InitialStateOfBehavior:
+                    removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfBehavior"));
+                    if (getContainedBy(out ISubjectBehavior behav)) {
+                        behav.setInitialState(null);
+                    }
+                    break;
+                case IState.StateType.InitialStateOfChoiceSegmentPath:
+                    removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfChoiceSegmentPath"));
+                    break;
+                case IState.StateType.EndState:
+                    removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "EndState"));
+                    if (getContainedBy(out ISubjectBehavior behavior) && behavior instanceof ISubjectBaseBehavior baseBehav) {
+                        baseBehav.unregisterEndState(getModelComponentID());
+                    }
+                    break;
+            }
+
+        }
+    }
+
+    @Override
+    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+        if (implCapsule != null && implCapsule.parseAttribute(predicate, objectContent, lang, dataType, element))
+            return true;
+        else if (element != null) {
+            if (element instanceof ITransition transition) {
+                if (predicate.contains(OWLTags.hasIncomingTransition)) {
+                    addIncomingTransition(transition);
+                    return true;
+                } else if (predicate.contains(OWLTags.hasOutgoingTransition)) {
+                    addOutgoingTransition(transition);
+                    return true;
                 }
 
-
-public IAction getAction()
-        {
-        return action;
-        }
-
-public boolean isStateType(IState.StateType stateType)
-        {
-        return stateTypes.contains(stateType);
-        }
-//TODO: Out Param
-public void setIsStateType(IState.StateType stateType)
-        {
-        switch (stateType)
-        {
-        case IState.StateType.InitialStateOfBehavior:
-        if (stateTypes.add(stateType))
-        addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfBehavior"));
-        break;
-        case IState.StateType.InitialStateOfChoiceSegmentPath:
-        if (stateTypes.add(stateType))
-        addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfChoiceSegmentPath"));
-        break;
-        case IState.StateType.EndState:
-        if (stateTypes.add(stateType))
-        {
-        addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "EndState"));
-
-        if (getContainedBy(out ISubjectBehavior behavior) && (behavior instanceof ISubjectBaseBehavior baseBehav))
-        {
-        baseBehav.registerEndState(this);
-        }
-        }
-        break;
-        }
-
-        }
-
-public void removeStateType(IState.StateType stateType)
-        {
-        // If the type was removed successfully
-        if (stateTypes.remove(stateType))
-        {
-        switch (stateType)
-        {
-        case IState.StateType.InitialStateOfBehavior:
-        removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfBehavior"));
-        if (getContainedBy(out ISubjectBehavior behav))
-        {
-        behav.setInitialState(null);
-        }
-        break;
-        case IState.StateType.InitialStateOfChoiceSegmentPath:
-        removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfChoiceSegmentPath"));
-        break;
-        case IState.StateType.EndState:
-        removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "EndState"));
-        if (getContainedBy(out ISubjectBehavior behavior) && behavior instanceof ISubjectBaseBehavior baseBehav)
-        {
-        baseBehav.unregisterEndState(getModelComponentID());
-        }
-        break;
-        }
-
-        }
-        }
-
-@Override
-protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)
-        {
-        if (implCapsule != null && implCapsule.parseAttribute(predicate, objectContent, lang, dataType, element))
-        return true;
-        else if (element != null)
-        {
-        if (element instanceof ITransition transition)
-        {
-        if (predicate.contains(OWLTags.hasIncomingTransition))
-        {
-        addIncomingTransition(transition);
-        return true;
-        }
-        else if (predicate.contains(OWLTags.hasOutgoingTransition))
-        {
-        addOutgoingTransition(transition);
-        return true;
-        }
-
-        }
-        else if (predicate.contains(OWLTags.guardedBy) && element instanceof IGuardBehavior guard)
-        {
-        setGuardBehavior(guard);
-        return true;
-        }
-
-        else if (predicate.contains(OWLTags.hasFunctionSpecification) && element instanceof IFunctionSpecification specification)
-        {
-        setFunctionSpecification(specification);
-        return true;
-        }
-
-        else if (predicate.contains(OWLTags.belongsTo) && element instanceof IAction action)
-        {
-        generateAction(action);
-        return true;
-        }
-        else if (predicate.contains(OWLTags.type))
-        {
-        if (objectContent.toLowerCase().contains("endstate"))
-        {
-        setIsStateType(IState.StateType.EndState);
-        return true;
-        }
-        else if (objectContent.toLowerCase().contains("initialstateofbehavior"))
-        {
-        setIsStateType(IState.StateType.InitialStateOfBehavior);
-        return true;
-        }
-        else if (objectContent.toLowerCase().contains("initialstateofchoicesegmentpath"))
-        {
-        setIsStateType(IState.StateType.InitialStateOfChoiceSegmentPath);
-        return true;
-        }
-        }
+            } else if (predicate.contains(OWLTags.guardedBy) && element instanceof IGuardBehavior guard) {
+                setGuardBehavior(guard);
+                return true;
+            } else if (predicate.contains(OWLTags.hasFunctionSpecification) && element instanceof IFunctionSpecification specification) {
+                setFunctionSpecification(specification);
+                return true;
+            } else if (predicate.contains(OWLTags.belongsTo) && element instanceof IAction action) {
+                generateAction(action);
+                return true;
+            } else if (predicate.contains(OWLTags.type)) {
+                if (objectContent.toLowerCase().contains("endstate")) {
+                    setIsStateType(IState.StateType.EndState);
+                    return true;
+                } else if (objectContent.toLowerCase().contains("initialstateofbehavior")) {
+                    setIsStateType(IState.StateType.InitialStateOfBehavior);
+                    return true;
+                } else if (objectContent.toLowerCase().contains("initialstateofchoicesegmentpath")) {
+                    setIsStateType(IState.StateType.InitialStateOfChoiceSegmentPath);
+                    return true;
+                }
+            }
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
-        }
+    }
 
-@Override
-public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
-        {
+    @Override
+    public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification) {
         Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
         if (getAction() != null)
-        baseElements.add(getAction());
+            baseElements.add(getAction());
         if (getGuardBehavior() != null && specification == ConnectedElementsSetSpecification.ALL)
-        baseElements.add(getGuardBehavior());
+            baseElements.add(getGuardBehavior());
         if (getFunctionSpecification() != null && (specification == ConnectedElementsSetSpecification.ALL || specification == ConnectedElementsSetSpecification.TO_ADD))
-        baseElements.add(getFunctionSpecification());
+            baseElements.add(getFunctionSpecification());
         if (specification == ConnectedElementsSetSpecification.ALL || specification == ConnectedElementsSetSpecification.TO_ADD ||
-        specification == ConnectedElementsSetSpecification.TO_REMOVE_DIRECTLY_ADJACENT || specification == ConnectedElementsSetSpecification.TO_REMOVE_ADJACENT_AND_MORE)
-        {
-        for(ITransition transition: getOutgoingTransitions().values())
-        baseElements.add(transition);
+                specification == ConnectedElementsSetSpecification.TO_REMOVE_DIRECTLY_ADJACENT || specification == ConnectedElementsSetSpecification.TO_REMOVE_ADJACENT_AND_MORE) {
+            for (ITransition transition : getOutgoingTransitions().values())
+                baseElements.add(transition);
 
-        if (specification != ConnectedElementsSetSpecification.TO_REMOVE_DIRECTLY_ADJACENT)
-        for(ITransition transition: getIncomingTransitions().values())
-        baseElements.add(transition);
+            if (specification != ConnectedElementsSetSpecification.TO_REMOVE_DIRECTLY_ADJACENT)
+                for (ITransition transition : getIncomingTransitions().values())
+                    baseElements.add(transition);
         }
         return baseElements;
-        }
+    }
 
-@Override
-public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller, int removeCascadeDepth)
-        {
+    @Override
+    public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller, int removeCascadeDepth) {
         super.updateRemoved(update, caller);
         if (update == null) return;
-        if (update.equals(action))
-        {
-        // TODO what to do here?
-        }
-        else if (update.equals(guardBehavior))
-        {
-        setGuardBehavior(null, removeCascadeDepth);
-        }
-        else if (update.equals(functionSpecification))
-        {
-        setFunctionSpecification(null, removeCascadeDepth);
-        }
-        else
-        {
-        for(ITransition trans: incomingTransitions.values())
-        {
-        if (update.equals(trans))
-        {
-        removeIncomingTransition(trans.getModelComponentID(), removeCascadeDepth);
-        return;
-        }
-        }
-        for(ITransition trans: outgoingTransitions.values())
-        {
-        if (update.equals(trans))
-        {
-        removeOutgoingTransition(trans.getModelComponentID(), removeCascadeDepth);
-        return;
-        }
-        }
-        }
-        }
-
-                @Override
-                public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller) {
-                        super.updateRemoved(update, caller);
-                        if (update == null) return;
-                        if (update.equals(action)) {
-                                // TODO what to do here?
-                        } else if (update.equals(guardBehavior)) {
-                                setGuardBehavior(null, 0);
-                        } else if (update.equals(functionSpecification)) {
-                                setFunctionSpecification(null, 0);
-                        } else {
-                                for (ITransition trans : incomingTransitions.values()) {
-                                        if (update.equals(trans)) {
-                                                removeIncomingTransition(trans.getModelComponentID(), 0);
-                                                return;
-                                        }
-                                }
-                                for (ITransition trans : outgoingTransitions.values()) {
-                                        if (update.equals(trans)) {
-                                                removeOutgoingTransition(trans.getModelComponentID(), 0);
-                                                return;
-                                        }
-                                }
-                        }
+        if (update.equals(action)) {
+            // TODO what to do here?
+        } else if (update.equals(guardBehavior)) {
+            setGuardBehavior(null, removeCascadeDepth);
+        } else if (update.equals(functionSpecification)) {
+            setFunctionSpecification(null, removeCascadeDepth);
+        } else {
+            for (ITransition trans : incomingTransitions.values()) {
+                if (update.equals(trans)) {
+                    removeIncomingTransition(trans.getModelComponentID(), removeCascadeDepth);
+                    return;
                 }
-@Override
-public void notifyModelComponentIDChanged(String oldID, String newID)
-        {
-        if (incomingTransitions.containsKey(oldID))
-        {
-        ITransition element = incomingTransitions[oldID];
-        incomingTransitions.remove(oldID);
-        incomingTransitions.put(element.getModelComponentID(), element);
+            }
+            for (ITransition trans : outgoingTransitions.values()) {
+                if (update.equals(trans)) {
+                    removeOutgoingTransition(trans.getModelComponentID(), removeCascadeDepth);
+                    return;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller) {
+        super.updateRemoved(update, caller);
+        if (update == null) return;
+        if (update.equals(action)) {
+            // TODO what to do here?
+        } else if (update.equals(guardBehavior)) {
+            setGuardBehavior(null, 0);
+        } else if (update.equals(functionSpecification)) {
+            setFunctionSpecification(null, 0);
+        } else {
+            for (ITransition trans : incomingTransitions.values()) {
+                if (update.equals(trans)) {
+                    removeIncomingTransition(trans.getModelComponentID(), 0);
+                    return;
+                }
+            }
+            for (ITransition trans : outgoingTransitions.values()) {
+                if (update.equals(trans)) {
+                    removeOutgoingTransition(trans.getModelComponentID(), 0);
+                    return;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void notifyModelComponentIDChanged(String oldID, String newID) {
+        if (incomingTransitions.containsKey(oldID)) {
+            ITransition element = incomingTransitions.get(oldID);
+            incomingTransitions.remove(oldID);
+            incomingTransitions.put(element.getModelComponentID(), element);
         }
 
-        if (outgoingTransitions.containsKey(oldID))
-        {
-        ITransition element = outgoingTransitions[oldID];
-        outgoingTransitions.remove(oldID);
-        outgoingTransitions.put(element.getModelComponentID(), element);
+        if (outgoingTransitions.containsKey(oldID)) {
+            ITransition element = outgoingTransitions.get(oldID);
+            outgoingTransitions.remove(oldID);
+            outgoingTransitions.put(element.getModelComponentID(), element);
         }
         super.notifyModelComponentIDChanged(oldID, newID);
-        }
+    }
 
 
+    protected static final String STATE_REF_CLASS_NAME = "StateReference";
 
-protected static final String STATE_REF_CLASS_NAME = "StateReference";
-
-/**
- * Sets a state that is referenced by this state.
- * According to the PASS standard, this functionality belongs to the "StateReference" class.
- * Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
- * @param state The referenced state
- * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
- */
-        public void setReferencedState(IState state, int removeCascadeDepth)
-        {
+    /**
+     * Sets a state that is referenced by this state.
+     * According to the PASS standard, this functionality belongs to the "StateReference" class.
+     * Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
+     *
+     * @param state              The referenced state
+     * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+     */
+    public void setReferencedState(IState state, int removeCascadeDepth) {
         if (!(state.getClass().equals(this.getClass()))) return;
         IState oldReference = referenceState;
         // Might set it to null
         this.referenceState = state;
 
-        if (oldReference != null)
-        {
-        if (oldReference.equals(state)) return;
-        oldReference.unregister(this, removeCascadeDepth);
-        removeTriple(new IncompleteTriple(OWLTags.stdReferences, oldReference.getUriModelComponentID()));
-        addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
-        removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
+        if (oldReference != null) {
+            if (oldReference.equals(state)) return;
+            oldReference.unregister(this, removeCascadeDepth);
+            removeTriple(new IncompleteTriple(OWLTags.stdReferences, oldReference.getUriModelComponentID()));
+            addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
+            removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
         }
 
-        if (!(state == null))
-        {
-        state.register(this);
-        addTriple(new IncompleteTriple(OWLTags.stdReferences, state.getUriModelComponentID()));
-        removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
-        addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
+        if (!(state == null)) {
+            state.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdReferences, state.getUriModelComponentID()));
+            removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
+            addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
         }
+    }
+
+    /**
+     * Sets a state that is referenced by this state.
+     * According to the PASS standard, this functionality belongs to the "StateReference" class.
+     * Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
+     *
+     * @param state The referenced state
+     */
+    public void setReferencedState(IState state) {
+        if (!(state.getClass().equals(this.getClass()))) return;
+        IState oldReference = referenceState;
+        // Might set it to null
+        this.referenceState = state;
+
+        if (oldReference != null) {
+            if (oldReference.equals(state)) return;
+            oldReference.unregister(this, 0);
+            removeTriple(new IncompleteTriple(OWLTags.stdReferences, oldReference.getUriModelComponentID()));
+            addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
+            removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
         }
 
-                /**
-                 * Sets a state that is referenced by this state.
-                 * According to the PASS standard, this functionality belongs to the "StateReference" class.
-                 * Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
-                 * @param state The referenced state
-                 */
-                public void setReferencedState(IState state)
-                {
-                        if (!(state.getClass().equals(this.getClass()))) return;
-                        IState oldReference = referenceState;
-                        // Might set it to null
-                        this.referenceState = state;
+        if (!(state == null)) {
+            state.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdReferences, state.getUriModelComponentID()));
+            removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
+            addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
+        }
+    }
 
-                        if (oldReference != null)
-                        {
-                                if (oldReference.equals(state)) return;
-                                oldReference.unregister(this, 0);
-                                removeTriple(new IncompleteTriple(OWLTags.stdReferences, oldReference.getUriModelComponentID()));
-                                addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
-                                removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
-                        }
-
-                        if (!(state == null))
-                        {
-                                state.register(this);
-                                addTriple(new IncompleteTriple(OWLTags.stdReferences, state.getUriModelComponentID()));
-                                removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
-                                addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + STATE_REF_CLASS_NAME));
-                        }
-                }
-
-                /**
-                 * Gets the state that is referenced by this state.
-                 * According to the PASS standard, this functionality belongs to the "StateReference" class.
-                 * Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
-                 * @return The referenced state
-                 */
-        public IState getReferencedState()
-        {
+    /**
+     * Gets the state that is referenced by this state.
+     * According to the PASS standard, this functionality belongs to the "StateReference" class.
+     * Here, this functionality is inside the state class and should be used if the current instance should be a StateReference
+     *
+     * @return The referenced state
+     */
+    public IState getReferencedState() {
         return referenceState;
-        }
+    }
 
-public boolean isReference()
-        {
+    public boolean isReference() {
         return !(referenceState == null);
-        }
-@Override
-public boolean register(IValueChangedObserver<IPASSProcessModelElement> observer)
-        {
+    }
+
+    @Override
+    public boolean register(IValueChangedObserver<IPASSProcessModelElement> observer) {
         boolean added = super.register(observer);
         // Special case: State is parsed, action knows about state, state does not know action -> action registeres at the state, state sets reference to action
-        if (added && observer instanceof IAction action && getAction() == null)
-        {
-        generateAction(action);
+        if (added && observer instanceof IAction action && getAction() == null) {
+            generateAction(action);
         }
         return added;
-        }
-@Override
-public boolean unregister(IValueChangedObserver<IPASSProcessModelElement> observer, int removeCascadeDepth)
-        {
+    }
+
+    @Override
+    public boolean unregister(IValueChangedObserver<IPASSProcessModelElement> observer, int removeCascadeDepth) {
         boolean added = super.unregister(observer, removeCascadeDepth);
         // Special case: State is parsed, action knows about state, state does not know action -> action registeres at the state, state sets reference to action
-        if (added && observer instanceof IAction action && getAction().equals(action))
-        {
-        generateAction(null);
+        if (added && observer instanceof IAction action && getAction().equals(action)) {
+            generateAction(null);
         }
         return added;
+    }
+
+    @Override
+    public boolean unregister(IValueChangedObserver<IPASSProcessModelElement> observer) {
+        boolean added = super.unregister(observer, 0);
+        // Special case: State is parsed, action knows about state, state does not know action -> action registeres at the state, state sets reference to action
+        if (added && observer instanceof IAction action && getAction().equals(action)) {
+            generateAction(null);
         }
+        return added;
+    }
 
-                @Override
-                public boolean unregister(IValueChangedObserver<IPASSProcessModelElement> observer)
-                {
-                        boolean added = super.unregister(observer, 0);
-                        // Special case: State is parsed, action knows about state, state does not know action -> action registeres at the state, state sets reference to action
-                        if (added && observer instanceof IAction action && getAction().equals(action))
-                        {
-                                generateAction(null);
-                        }
-                        return added;
-                }
-
-public void setImplementedInterfacesIDReferences(Set<String> implementedInterfacesIDs)
-        {
+    public void setImplementedInterfacesIDReferences(Set<String> implementedInterfacesIDs) {
         implCapsule.setImplementedInterfacesIDReferences(implementedInterfacesIDs);
-        }
+    }
 
-public void addImplementedInterfaceIDReference(String implementedInterfaceID)
-        {
+    public void addImplementedInterfaceIDReference(String implementedInterfaceID) {
         implCapsule.addImplementedInterfaceIDReference(implementedInterfaceID);
-        }
+    }
 
-public void removeImplementedInterfacesIDReference(String implementedInterfaceID)
-        {
+    public void removeImplementedInterfacesIDReference(String implementedInterfaceID) {
         implCapsule.removeImplementedInterfacesIDReference(implementedInterfaceID);
-        }
+    }
 
-public Set<String> getImplementedInterfacesIDReferences()
-        {
+    public Set<String> getImplementedInterfacesIDReferences() {
         return implCapsule.getImplementedInterfacesIDReferences();
-        }
+    }
 
-public void setImplementedInterfaces(Set<IState> implementedInterface, int removeCascadeDepth)
-        {
+    public void setImplementedInterfaces(Set<IState> implementedInterface, int removeCascadeDepth) {
         implCapsule.setImplementedInterfaces(implementedInterface, removeCascadeDepth);
-        }
+    }
 
-                public void setImplementedInterfaces(Set<IState> implementedInterface)
-                {
-                        implCapsule.setImplementedInterfaces(implementedInterface, 0);
-                }
+    public void setImplementedInterfaces(Set<IState> implementedInterface) {
+        implCapsule.setImplementedInterfaces(implementedInterface, 0);
+    }
 
-public void addImplementedInterface(IState implementedInterface)
-        {
+    public void addImplementedInterface(IState implementedInterface) {
         implCapsule.addImplementedInterface(implementedInterface);
-        }
+    }
 
-public void removeImplementedInterfaces(String id, int removeCascadeDepth)
-        {
+    public void removeImplementedInterfaces(String id, int removeCascadeDepth) {
         implCapsule.removeImplementedInterfaces(id, removeCascadeDepth);
-        }
-                public void removeImplementedInterfaces(String id)
-                {
-                        implCapsule.removeImplementedInterfaces(id, 0);
-                }
-public Map<String, IState> getImplementedInterfaces()
-        {
+    }
+
+    public void removeImplementedInterfaces(String id) {
+        implCapsule.removeImplementedInterfaces(id, 0);
+    }
+
+    public Map<String, IState> getImplementedInterfaces() {
         return implCapsule.getImplementedInterfaces();
-        }
-        }
+    }
+}
 
 

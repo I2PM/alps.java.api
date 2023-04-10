@@ -11,19 +11,20 @@ import java.util.Map;
  * However, when imported, the correct actions should be loaded and parsed correctly.
  */
 
-public interface IAction extends IBehaviorDescribingComponent
-        {
+public interface IAction extends IBehaviorDescribingComponent {
 
-            /**
-             * Returns the state attribute of the action class
-             * @return The state attribute of the action class
-             */
-        IState getState();
+    /**
+     * Returns the state attribute of the action class
+     *
+     * @return The state attribute of the action class
+     */
+    IState getState();
 
-            /**
-             * Returns the outgoing transitions that are connected to the state
-             * @return The outgoing transitions
-             */
-            public Map<String, ITransition> getContainedTransitions();
+    /**
+     * Returns the outgoing transitions that are connected to the state
+     *
+     * @return The outgoing transitions
+     */
+    public Map<String, ITransition> getContainedTransitions();
 
-        }
+}

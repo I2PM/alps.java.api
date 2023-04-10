@@ -1,4 +1,6 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents;
 
-public interface ISubjectExecutionMapping {
+import alps.java.api.StandardPASS.PassProcessModelElements.IInteractionDescribingComponent;
+
+public interface ISubjectExecutionMapping extends IInteractionDescribingComponent {
 }

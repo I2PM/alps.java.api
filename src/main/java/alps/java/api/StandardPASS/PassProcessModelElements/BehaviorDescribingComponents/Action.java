@@ -52,14 +52,45 @@ protected Action() { }
              * @param additionalLabel
              * @param additionalAttribute
              */
-            //TODO: Konstruktor überladen, neu implemetnieren
-            ISubjectBehavior behavior=null;
+            //TODO: out-Parameter
 
             public Action(IState state, String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
-        super((state != null) ? (state.getContainedBy(behavior) ? behavior : null) : null,
+        super((state != null) ? (state.getContainedBy(out ISubjectBehavior behavior) ? behavior : null) : null,
         labelForID, comment, additionalLabel, additionalAttribute);
         setContainsState(state, false);
         }
+                /**
+                 * Constructor that creates a new fully specified instance of the action class
+                 * @param state
+                 * @param labelForID
+                 * @param comment
+                 * @param additionalLabel
+                 * @param additionalAttribute
+                 */
+                //TODO: Konstruktor überladen, neu implemetnieren
+                ISubjectBehavior behavior=null;
+
+                public Action(IState state){
+                        super((state != null) ? (state.getContainedBy(out ISubjectBehavior behavior) ? behavior : null) : null,
+                                null, null, null, null);
+                        setContainsState(state, false);
+                }
+                /**
+                 * Constructor that creates a new fully specified instance of the action class
+                 * @param state
+                 * @param labelForID
+                 * @param comment
+                 * @param additionalLabel
+                 * @param additionalAttribute
+                 */
+                //TODO: Konstruktor überladen, neu implemetnieren
+                ISubjectBehavior behavior=null;
+
+                public Action(IState state, String labelForID){
+                        super((state != null) ? (state.getContainedBy(out ISubjectBehavior behavior) ? behavior : null) : null,
+                                labelForID, null, null, null);
+                        setContainsState(state, false);
+                }
 
             /**
              * Sets the corresponding state.
@@ -98,7 +129,37 @@ protected Action() { }
         addTriple(new IncompleteTriple(OWLTags.stdContains, state.getUriModelComponentID()));
         }
         }
+                protected void setContainsState(IState state)
+                {
+                        IState oldState = this.state;
+                        // Might set it to null
+                        this.state = state;
 
+
+                        if (oldState != null)
+                        {
+                                if (oldState.equals(state)) return;
+                                oldState.unregister(this);
+                                //oldState.replaceGeneratedActionWithParsed(null);
+                                removeTriple(new IncompleteTriple(OWLTags.stdContains, oldState.getUriModelComponentID()));
+                        }
+
+                        if (!(state == null))
+                        {
+                                publishElementAdded(state);
+                                state.register(this);
+
+                                // Get all outgoing transitions from the state
+                                updateContainedTransitions();
+
+                                // Only if this action was parsed (and not created automatically),
+                                // overwrite the (previously automatically created) action of the state
+                                //if (state.getAction() is null)
+                                //if (parsed)
+                                //state.replaceGeneratedActionWithParsed(this);
+                                addTriple(new IncompleteTriple(OWLTags.stdContains, state.getUriModelComponentID()));
+                        }
+                }
 
 
 public IState getState()

@@ -9,38 +9,42 @@ import org.apache.commons.lang3.tuple.Pair;
  * This also represents Uni- and BiDirectionalCommunicationChannels
  * The direction can be set using the {@link "setIsUniDirectional(bool)"} Method.
  */
-public interface ICommunicationChannel extends IALPSSIDComponent
-        {
+public interface ICommunicationChannel extends IALPSSIDComponent {
 
-        void setCorrespondents(ISubject correspondentA, ISubject correspondentB, int removeCascadeDepth);
-        void setCorrespondents(ISubject correspondentA, ISubject correspondentB);
+    void setCorrespondents(ISubject correspondentA, ISubject correspondentB, int removeCascadeDepth);
 
-        void setCorrespondentA(ISubject correspondentA, int removeCascadeDepth);
-        void setCorrespondentA(ISubject correspondentA);
+    void setCorrespondents(ISubject correspondentA, ISubject correspondentB);
 
-        void setCorrespondentB(ISubject correspondentB, int removeCascadeDepth);
-        void setCorrespondentB(ISubject correspondentB);
+    void setCorrespondentA(ISubject correspondentA, int removeCascadeDepth);
 
-        ISubject getCorrespondentA();
+    void setCorrespondentA(ISubject correspondentA);
 
-        ISubject getCorrespondentB();
+    void setCorrespondentB(ISubject correspondentB, int removeCascadeDepth);
 
-        Pair<ISubject, ISubject> getCorrespondents();
+    void setCorrespondentB(ISubject correspondentB);
 
-            /**
-             * Sets the direction of the channel.
-             * This might be either Uni- or BiDirectional.
-             * In case of a UniDirectional, the CorrespondentA should be assumed as the Sender,
-             * and Correspondent should be assumed as the Receiver.
-             * @param isUniDirectional If true, this channel acts as UniDirectionalCommunicationChannel.<br></br>
-             * If false, this channel acts as BiDirectionalCommunicationChannel.
-             */
-        void setIsUniDirectional(boolean isUniDirectional);
+    ISubject getCorrespondentA();
 
-            /**
-             * Returns whether this channel is a Bi- or UniDirectionalCommunicationChannel.
-             * @return If true, the channel is UniDirectional, assuming the CorrespondentA as the Sender and CorrespondentB as Receiver.
-             * If false, the channel is BiDirectional
-             */
-        boolean isUniDirectional();
-        }
+    ISubject getCorrespondentB();
+
+    Pair<ISubject, ISubject> getCorrespondents();
+
+    /**
+     * Sets the direction of the channel.
+     * This might be either Uni- or BiDirectional.
+     * In case of a UniDirectional, the CorrespondentA should be assumed as the Sender,
+     * and Correspondent should be assumed as the Receiver.
+     *
+     * @param isUniDirectional If true, this channel acts as UniDirectionalCommunicationChannel.<br></br>
+     *                         If false, this channel acts as BiDirectionalCommunicationChannel.
+     */
+    void setIsUniDirectional(boolean isUniDirectional);
+
+    /**
+     * Returns whether this channel is a Bi- or UniDirectionalCommunicationChannel.
+     *
+     * @return If true, the channel is UniDirectional, assuming the CorrespondentA as the Sender and CorrespondentB as Receiver.
+     * If false, the channel is BiDirectional
+     */
+    boolean isUniDirectional();
+}
