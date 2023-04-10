@@ -10,30 +10,39 @@ import java.util.List;
 /**
  * Class that represents an ALPS model element
  */
-public class ALPSModelElement extends PASSProcessModelElement implements IALPSModelElement
-{
+public class ALPSModelElement extends PASSProcessModelElement implements IALPSModelElement {
     /**
      * Name of the class, needed for parsing
      */
     private final String className = "ALPSModelElement";
+
     @Override
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
+
     @Override
-    public IParseablePASSProcessModelElement getParsedInstance()
-    {
+    public IParseablePASSProcessModelElement getParsedInstance() {
         return new ALPSModelElement();
     }
 
-    protected ALPSModelElement() { }
-    public ALPSModelElement(String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
-        super(labelForID, comment, additionalLabel,additionalAttribute);
+    protected ALPSModelElement() {
     }
+
+    /**
+     * The default value of all Objects is null.
+     * @param labelForID
+     * @param comment
+     * @param additionalLabel
+     * @param additionalAttribute
+     */
+
+    public ALPSModelElement(String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
+        super(labelForID, comment, additionalLabel, additionalAttribute);
+    }
+
     @Override
-    protected String getExportTag()
-    {
+    protected String getExportTag() {
         return OWLTags.abstr;
     }
 }

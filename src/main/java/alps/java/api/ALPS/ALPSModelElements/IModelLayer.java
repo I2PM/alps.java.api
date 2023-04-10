@@ -18,14 +18,12 @@ import java.util.Map;
 /**
  * Defines an interface for a model layer
  */
-public interface IModelLayer implements IALPSModelElement, IPrioritizableElement, IContainableElement<IPASSProcessModel>,
-        IImplementingElement<IModelLayer>, IExtendingElement<IModelLayer>, IAbstractElement
-{
+public interface IModelLayer extends IALPSModelElement, IPrioritizableElement, IContainableElement<IPASSProcessModel>,
+        IImplementingElementT<IModelLayer>, IExtendingElement<IModelLayer>, IAbstractElement {
     /**
      * Represents the type of the layer
      */
-    public enum LayerType
-    {
+    public enum LayerType {
         STANDARD,
         BASE,
         EXTENSION,
@@ -36,12 +34,14 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
 
     /**
      * Sets the layertype for the layer
+     *
      * @param layerType
      */
     void setLayerType(LayerType layerType);
 
     /**
      * Returns the layer type for the current layer
+     *
      * @return
      */
     LayerType getLayerType();
@@ -50,34 +50,39 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns all elements contained inside the layer.
      * The key is the ModelComponentID to each value item.
+     *
      * @return A dictionary containing all elements
      */
     Map<String, IPASSProcessModelElement> getElements();
 
     /**
      * Adds an element to the layer
+     *
      * @param value
      */
     void addElement(IPASSProcessModelElement value);
 
     /**
-     *
      * @param id
      * @return
      */
     IPASSProcessModelElement getElement(String id);
 
     /**
-     *
      * @param extendedLayer
      * @param removeCascadeDepth
      */
     public void setExtendedLayer(IModelLayer extendedLayer, int removeCascadeDepth);
 
+    /**
+     * @param extendedLayer
+     */
+    public void setExtendedLayer(IModelLayer extendedLayer);
 
     /**
      * Returns a fully specified subject depending on its position
      * (inside the list of all fully specified subjects in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -87,6 +92,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns an interface subject depending on its position
      * (inside the list of interface subjects in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -95,6 +101,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns a multi subject depending on its position
      * (inside the list of interface subjects in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -104,6 +111,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns a single subject depending on its position
      * (inside the list of single subjects in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -113,6 +121,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns a message exchange depending on its position
      * (inside the list of message exchanges in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -122,6 +131,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns an input pool constraint depending on its position
      * (inside the list of input pool constraints in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -131,6 +141,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns a message sender type constraint depending on its position
      * (inside the list of message sender type constraints in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -140,6 +151,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns a message type constraint depending on its position
      * (inside the list of message type constraints in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -149,6 +161,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns a sender type constraint depending on its position
      * (inside the list of sender type constraints in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -158,6 +171,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns an input pool constraint handling strategy depending on its position
      * (inside the list of input pool constraint handling strategies in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -166,6 +180,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns a message exchange list depending on its position
      * (inside the list of message exchange lists in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -174,6 +189,7 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
     /**
      * Returns a message exchange list depending on its position
      * (inside the list of message exchange lists in the layer)
+     *
      * @param numberOfElement the position
      * @return
      */
@@ -181,11 +197,21 @@ public interface IModelLayer implements IALPSModelElement, IPrioritizableElement
 
     /**
      * Deletes an element depending on its id, if it is contained inside the layer
-     * @param modelComponentID the id of the element
+     *
+     * @param modelComponentID   the id of the element
      * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
      * @return
      */
     boolean removeContainedElement(String modelComponentID, int removeCascadeDepth);
+
+    /**
+     * Deletes an element depending on its id, if it is contained inside the layer
+     *
+     * @param modelComponentID the id of the element
+     * @return
+     */
+    boolean removeContainedElement(String modelComponentID);
+
 
 }
 

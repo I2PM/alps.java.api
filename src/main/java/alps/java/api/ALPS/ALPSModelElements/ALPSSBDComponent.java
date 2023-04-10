@@ -6,6 +6,7 @@ import alps.java.api.src.OWLTags;
 import alps.java.api.util.IIncompleteTriple;
 
 import java.util.List;
+
 import alps.java.api.StandardPASS.PassProcessModelElements.ISubjectBehavior;
 
 /**
@@ -26,6 +27,10 @@ public class ALPSSBDComponent extends BehaviorDescribingComponent implements IAL
     public ALPSSBDComponent(ISubjectBehavior subjectBehavior, String labelForID, String comment, String additionalLabel,
                             List<IIncompleteTriple> additionalAttribute) {
         super(subjectBehavior, labelForID, comment, additionalLabel, additionalAttribute);
+    }
+
+    public ALPSSBDComponent(ISubjectBehavior subjectBehavior) {
+        super(subjectBehavior);
     }
 
     @Override

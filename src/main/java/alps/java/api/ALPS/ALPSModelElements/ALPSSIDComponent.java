@@ -51,5 +51,9 @@ public class ALPSSIDComponent extends InteractionDescribingComponent implements 
         super(layer, label, comment, additionalLabel, additionalAttribute);
 
     }
+    public ALPSSIDComponent(IModelLayer layer) {
+        super(layer);
+
+    }
 
 }

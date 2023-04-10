@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 public class ModelLayer extends ALPSModelElement implements IModelLayer {
 
 protected ICompatibilityDictionary<String, IPASSProcessModelElement> elements = new CompatibilityDictionary<String, IPASSProcessModelElement>();
-protected final IImplementsFunctionalityCapsule<IModelLayer> implCapsule;
-protected final IExtendsFunctionalityCapsule<IModelLayer> extendsCapsule;
+protected IImplementsFunctionalityCapsule<IModelLayer> implCapsule;
+protected IExtendsFunctionalityCapsule<IModelLayer> extendsCapsule;
 protected int priorityNumber;
 protected IPASSProcessModel model;
 protected LayerType layerType = LayerType.STANDARD;
@@ -77,13 +77,16 @@ protected String getExportTag()
 
 public ModelLayer(IPASSProcessModel model, String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
         super(labelForID, comment, additionalLabel, additionalAttribute);
-        }
-        {
         extendsCapsule = new ExtendsFunctionalityCapsule<IModelLayer>(this);
         implCapsule = new ImplementsFunctionalityCapsule<IModelLayer>(this);
         setContainedBy(model);
         }
-
+    public ModelLayer(IPASSProcessModel model){
+        super(null, null, null, null);
+        extendsCapsule = new ExtendsFunctionalityCapsule<IModelLayer>(this);
+        implCapsule = new ImplementsFunctionalityCapsule<IModelLayer>(this);
+        setContainedBy(model);
+    }
 
     /**
      * Returns a dictionary of all elements saved in the model layer
@@ -98,73 +101,62 @@ public IPASSProcessModelElement getElement(String id)
         {
         if (elements.containsKey(id))
         {
-        return elements[id];
+        return elements.get(id);
         }
         return null;
         }
 
-protected void checkLayerTypes()
-        {
-        if (elements.stream().filter()(e -> instanceof IALPSModelElement).collect(Collectors.toList().size()== 0);
-        {
-        setIsAbstract(false);
+    protected void checkLayerTypes() {
+        if (elements.values().stream().filter(element -> element instanceof IALPSModelElement).count() == 0) {
+            setIsAbstract(false);
+        } else {
+            setIsAbstract(true);
         }
-        else
-        {
-        setIsAbstract(true);
-        }
-        for(IPASSProcessModelElement element: getElements().values())
-        {
-        if (element instanceof IGuardExtension)
-        {
-        setLayerType(LayerType.GUARD);
-        return;
-        }
-        else if (element instanceof IMacroExtension)
-        {
-        setLayerType(LayerType.MACRO);
-        return;
-        }
-        else if (element instanceof ISubjectExtension)
-        {
-        setLayerType(LayerType.EXTENSION);
-        return;
-        }
-
+        for (IPASSProcessModelElement element : elements.values()) {
+            if (element instanceof IGuardExtension) {
+                setLayerType(LayerType.GUARD);
+                return;
+            } else if (element instanceof IMacroExtension) {
+                setLayerType(LayerType.MACRO);
+                return;
+            } else if (element instanceof ISubjectExtension) {
+                setLayerType(LayerType.EXTENSION);
+                return;
+            }
         }
         setLayerType(LayerType.STANDARD);
-        }
+    }
 
 
 public void setLayerType(LayerType layerType)
         {
         switch (layerType)
         {
-        case LayerType.GUARD:
+        case GUARD:
         removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
         exportClassname = "Guard" + className;
         this.layerType = layerType;
         addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
         break;
-        case LayerType.EXTENSION:
+        case EXTENSION:
         removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
         this.layerType = layerType;
         exportClassname = "Extension" + className;
         addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
         break;
-        case LayerType.MACRO:
+        case MACRO:
         removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
         this.layerType = layerType;
         exportClassname = "Macro" + className;
         addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
         break;
-        case LayerType.BASE:
+        case BASE:
         removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
         this.layerType = layerType;
         exportClassname = "Base" + className;
         addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
         break;
-        case LayerType.STANDARD:
+        case STANDARD:
         removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
         this.layerType = layerType;
         exportClassname = className;
@@ -199,11 +191,11 @@ public boolean isAbstract()
         {
         return isAbstractType;
         }
-
+//TODO: out-Parameter
 public boolean removeContainedElement(String modelComponentID, int removeCascadeDepth)
         {
         if (modelComponentID == null) return false;
-        if (elements.tryGetValue(modelComponentID, out IPASSProcessModelElement element))
+        if (elements.getOrDefault(modelComponentID, out IPASSProcessModelElement element))
         {
         elements.remove(modelComponentID);
         element.unregister(this, removeCascadeDepth);
@@ -217,6 +209,24 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
 
 
         }
+    //TODO: out-Parameter
+    public boolean removeContainedElement(String modelComponentID)
+    {
+        if (modelComponentID == null) return false;
+        if (elements.getOrDefault(modelComponentID, out IPASSProcessModelElement element))
+        {
+            elements.remove(modelComponentID);
+            element.unregister(this, 0);
+            if (element instanceof IContainableElement<IModelLayer> containable && containable.getContainedBy(out IModelLayer layer) && layer == this)
+                containable.removeFromContainer();
+            removeTriple(new IncompleteTriple(OWLTags.stdContains, element.getUriModelComponentID()));
+            checkLayerTypes();
+
+        }
+        return false;
+
+
+    }
 
     /**
      * Adds an IPASSProcessModelElement to the layer.
@@ -244,9 +254,14 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
         elements.remove(element.getModelComponentID());
         return;
         }
-        for(ISubjectExtension ext: getElements().values().OfType<ISubjectExtension>())
+            List<ISubjectExtension> subjectExtensions = elements.values().stream()
+                    .filter(eelement -> element instanceof ISubjectExtension)
+                    .map(eelement -> (ISubjectExtension) element)
+                    .collect(Collectors.toList());
+
+            for (ISubjectExtension ext : subjectExtensions)
         {
-        if (ext.getExtendedSubject() != null && subjExt.getExtendedSubject() != null && ext.getExtendedSubject().Equals(subjExt.getExtendedSubject()))
+        if (ext.getExtendedSubject() != null && subjExt.getExtendedSubject() != null && ext.getExtendedSubject().equals(subjExt.getExtendedSubject()))
         {
         elements.remove(element.getModelComponentID());
         return;
@@ -269,10 +284,15 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      * @param numberOfElement the position in the list of subjects
      * @return
      */
-    public IFullySpecifiedSubject getFullySpecifiedSubject(int numberOfElement)
-        {
-        return elements.values().OfType<IFullySpecifiedSubject>().ElementAt(numberOfElement);
-        }
+
+    public IFullySpecifiedSubject getFullySpecifiedSubject(int numberOfElement) {
+        List<IFullySpecifiedSubject> fullySpecifiedSubjects = elements.values().stream()
+                .filter(element -> element instanceof IFullySpecifiedSubject)
+                .map(element -> (IFullySpecifiedSubject) element)
+                .collect(Collectors.toList());
+
+        return fullySpecifiedSubjects.get(numberOfElement);
+    }
 
 
     /**
@@ -281,7 +301,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public IInterfaceSubject getInterfaceSubject(int numberOfElement)
         {
-        return elements.values().OfType<IInterfaceSubject>().ElementAt(numberOfElement);
+            List<IInterfaceSubject> interfaceSubjects = elements.values().stream()
+                    .filter(element -> element instanceof IInterfaceSubject)
+                    .map(element -> (IInterfaceSubject) element)
+                    .collect(Collectors.toList());
+
+            return interfaceSubjects.get(numberOfElement);
         }
 
 
@@ -292,7 +317,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public IMultiSubject getMultiSubject(int numberOfElement)
         {
-        return elements.values().OfType<IMultiSubject>().ElementAt(numberOfElement);
+            List<IMultiSubject> multiSubjects = elements.values().stream()
+                    .filter(element -> element instanceof IMultiSubject)
+                    .map(element -> (IMultiSubject) element)
+                    .collect(Collectors.toList());
+
+            return multiSubjects.get(numberOfElement);
         }
 
 
@@ -303,7 +333,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public ISingleSubject getSingleSubject(int numberOfElement)
         {
-        return elements.values().OfType<ISingleSubject>().ElementAt(numberOfElement);
+            List<ISingleSubject> singleSubjects = elements.values().stream()
+                    .filter(element -> element instanceof ISingleSubject)
+                    .map(element -> (ISingleSubject) element)
+                    .collect(Collectors.toList());
+
+            return singleSubjects.get(numberOfElement);
         }
 
     /**
@@ -313,7 +348,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public IMessageExchange getMessageExchange(int numberOfElement)
         {
-        return elements.values().OfType<IMessageExchange>().ElementAt(numberOfElement);
+            List<IMessageExchange> messageExchanges = elements.values().stream()
+                    .filter(element -> element instanceof IMessageExchange)
+                    .map(element -> (IMessageExchange) element)
+                    .collect(Collectors.toList());
+
+            return messageExchanges.get(numberOfElement);
         }
 
 
@@ -324,7 +364,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public IInputPoolConstraint getInputPoolConstraint(int numberOfElement)
         {
-        return elements.values().OfType<IInputPoolConstraint>().ElementAt(numberOfElement);
+            List<IInputPoolConstraint> inputPoolConstraints = elements.values().stream()
+                    .filter(element -> element instanceof IInputPoolConstraint)
+                    .map(element -> (IInputPoolConstraint) element)
+                    .collect(Collectors.toList());
+
+            return inputPoolConstraints.get(numberOfElement);
         }
 
 
@@ -335,7 +380,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public IMessageSenderTypeConstraint getMessageSenderTypeConstraint(int numberOfElement)
         {
-        return elements.values().OfType<IMessageSenderTypeConstraint>().ElementAt(numberOfElement);
+            List<IMessageSenderTypeConstraint> messageSenderTypeConstraints = elements.values().stream()
+                    .filter(element -> element instanceof IMessageSenderTypeConstraint)
+                    .map(element -> (IMessageSenderTypeConstraint) element)
+                    .collect(Collectors.toList());
+
+            return messageSenderTypeConstraints.get(numberOfElement);
         }
 
 
@@ -346,7 +396,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public ISenderTypeConstraint getSenderTypeConstraint(int numberOfElement)
         {
-        return elements.values().OfType<ISenderTypeConstraint>().ElementAt(numberOfElement);
+            List<ISenderTypeConstraint> senderTypeConstraints = elements.values().stream()
+                    .filter(element -> element instanceof ISenderTypeConstraint)
+                    .map(element -> (ISenderTypeConstraint) element)
+                    .collect(Collectors.toList());
+
+            return senderTypeConstraints.get(numberOfElement);
         }
 
 
@@ -357,7 +412,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public IMessageTypeConstraint getMessageTypeConstraint(int numberOfElement)
         {
-        return elements.values().OfType<IMessageTypeConstraint>().ElementAt(numberOfElement);
+            List<IMessageTypeConstraint> messageTypeConstraints = elements.values().stream()
+                    .filter(element -> element instanceof IMessageTypeConstraint)
+                    .map(element -> (IMessageTypeConstraint) element)
+                    .collect(Collectors.toList());
+
+            return messageTypeConstraints.get(numberOfElement);
         }
 
 
@@ -368,7 +428,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public IInputPoolConstraintHandlingStrategy getInputPoolConstraintHandlingStrategy(int numberOfElement)
         {
-        return elements.values().OfType<IInputPoolConstraintHandlingStrategy>().ElementAt(numberOfElement);
+            List<IInputPoolConstraintHandlingStrategy> inputPoolConstraintHandlingStrategies = elements.values().stream()
+                    .filter(element -> element instanceof IInputPoolConstraintHandlingStrategy)
+                    .map(element -> (IInputPoolConstraintHandlingStrategy) element)
+                    .collect(Collectors.toList());
+
+            return inputPoolConstraintHandlingStrategies.get(numberOfElement);
         }
 
 
@@ -379,7 +444,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public IMessageExchangeList getMessageExchangeList(int numberOfElement)
         {
-        return elements.values().OfType<IMessageExchangeList>().ElementAt(numberOfElement);
+            List<IMessageExchangeList> messageExchangeLists = elements.values().stream()
+                    .filter(element -> element instanceof IMessageExchangeList)
+                    .map(element -> (IMessageExchangeList) element)
+                    .collect(Collectors.toList());
+
+            return messageExchangeLists.get(numberOfElement);
         }
 
 
@@ -390,7 +460,12 @@ public boolean removeContainedElement(String modelComponentID, int removeCascade
      */
     public IMessageSpecification getMessageSpecification(int numberOfElement)
         {
-        return elements.values().OfType<IMessageSpecification>().ElementAt(numberOfElement);
+            List<IMessageSpecification> messageSpecifications = elements.values().stream()
+                    .filter(element -> element instanceof IMessageSpecification)
+                    .map(element -> (IMessageSpecification) element)
+                    .collect(Collectors.toList());
+
+            return messageSpecifications.get(numberOfElement);
         }
 @Override
 protected void successfullyParsedElement(IParseablePASSProcessModelElement parsedElement)
@@ -454,7 +529,7 @@ protected boolean parseAttribute(String predicate, String objectContent, String 
         {
         String prio = objectContent;
         prio = prio.split("^")[0];
-        setPriorityNumber(Integer.parse(prio));
+        setPriorityNumber(Integer.parseInt(prio));
         return true;
         }
         }
@@ -469,7 +544,12 @@ public void updateAdded(IPASSProcessModelElement update, IPASSProcessModelElemen
         if (getContainedBy(out IPASSProcessModel model))
         {
         // If the element is already in another layer, do not add it
-        for(IModelLayer layer: model.getAllElements().values().OfType<IModelLayer>())
+            List<IModelLayer> modelLayers = elements.values().stream()
+                    .filter(element -> element instanceof IModelLayer)
+                    .map(element -> (IModelLayer) element)
+                    .collect(Collectors.toList());
+
+            for (IModelLayer layer : modelLayers)
         {
         if (layer.getElements().containsKey(update.getModelComponentID()))
         {
@@ -492,6 +572,12 @@ public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElem
         removeContainedElement(update.getModelComponentID(), removeCascadeDepth);
 
         }
+    public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller)
+    {
+        super.updateRemoved(update, caller);
+        removeContainedElement(update.getModelComponentID(), 0);
+
+    }
 
 
 @Override
@@ -508,10 +594,10 @@ public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSe
 
 public void setPriorityNumber(int nonNegativInteger)
         {
-        removeTriple(new IncompleteTriple(OWLTags.stdHasPriorityNumber, this.priorityNumber.toString(), IncompleteTriple.LiteralType.DATATYPE, OWLTags.xsdDataTypePositiveInteger));
+        removeTriple(new IncompleteTriple(OWLTags.stdHasPriorityNumber, Integer.toString(priorityNumber), IncompleteTriple.LiteralType.DATATYPE, OWLTags.xsdDataTypePositiveInteger));
         if (nonNegativInteger > 0) priorityNumber = nonNegativInteger;
         else priorityNumber = 1;
-        addTriple(new IncompleteTriple(OWLTags.stdHasPriorityNumber, priorityNumber.toString(), IncompleteTriple.LiteralType.DATATYPE, OWLTags.xsdDataTypePositiveInteger));
+        addTriple(new IncompleteTriple(OWLTags.stdHasPriorityNumber, Integer.toString(priorityNumber), IncompleteTriple.LiteralType.DATATYPE, OWLTags.xsdDataTypePositiveInteger));
         }
 
 public int getPriorityNumber()
@@ -520,7 +606,7 @@ public int getPriorityNumber()
         }
 
 
-public boolean getContainedBy(out IPASSProcessModel model)
+public boolean getContainedBy(IPASSProcessModel model)
         {
         model = this.model;
         return this.model != null;
@@ -543,9 +629,9 @@ public void notifyModelComponentIDChanged(String oldID, String newID)
         {
         if (elements.containsKey(oldID))
         {
-        IPASSProcessModelElement element = elements[oldID];
+        IPASSProcessModelElement element = elements.get(oldID);
         elements.remove(oldID);
-        elements.add(element.getModelComponentID(), element);
+        elements.put(element.getModelComponentID(), element);
         }
         super.notifyModelComponentIDChanged(oldID, newID);
         }
@@ -569,6 +655,23 @@ public void setExtendedLayer(IModelLayer extendedLayer, int removeCascadeDepth)
         addTriple(new IncompleteTriple(OWLTags.abstrExtends, extendedLayer.getUriModelComponentID()));
         }
         }
+    public void setExtendedLayer(IModelLayer extendedLayer)
+    {
+        IModelLayer oldExtendedLayer = this.extendedLayer;
+        // Might set it to null
+        this.extendedLayer = extendedLayer;
+
+        if (oldExtendedLayer != null)
+        {
+            if (oldExtendedLayer.equals(extendedLayer)) return;
+            removeTriple(new IncompleteTriple(OWLTags.abstrExtends, oldExtendedLayer.getUriModelComponentID()));
+        }
+
+        if (!(extendedLayer == null))
+        {
+            addTriple(new IncompleteTriple(OWLTags.abstrExtends, extendedLayer.getUriModelComponentID()));
+        }
+    }
 
 public void setImplementedInterfacesIDReferences(Set<String> implementedInterfacesIDs)
         {
@@ -594,6 +697,10 @@ public void setImplementedInterfaces(Set<IModelLayer> implementedInterface, int 
         {
         implCapsule.setImplementedInterfaces(implementedInterface, removeCascadeDepth);
         }
+    public void setImplementedInterfaces(Set<IModelLayer> implementedInterface)
+    {
+        implCapsule.setImplementedInterfaces(implementedInterface, 0);
+    }
 
 public void addImplementedInterface(IModelLayer implementedInterface)
         {
@@ -604,6 +711,10 @@ public void removeImplementedInterfaces(String id, int removeCascadeDepth)
         {
         implCapsule.removeImplementedInterfaces(id, removeCascadeDepth);
         }
+    public void removeImplementedInterfaces(String id)
+    {
+        implCapsule.removeImplementedInterfaces(id, 0);
+    }
 
 public Map<String, IModelLayer> getImplementedInterfaces()
         {
