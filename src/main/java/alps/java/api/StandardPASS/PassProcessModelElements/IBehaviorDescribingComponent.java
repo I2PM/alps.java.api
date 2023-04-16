@@ -7,6 +7,5 @@ import alps.java.api.util.*;
  * Interface to the BehaviorDescriptionComponent class
  */
 
-public interface IBehaviorDescribingComponent extends IPASSProcessModelElement, IContainableElement<ISubjectBehavior>
-    {
-            }
+public interface IBehaviorDescribingComponent extends IPASSProcessModelElement, IContainableElement<ISubjectBehavior> {
+}

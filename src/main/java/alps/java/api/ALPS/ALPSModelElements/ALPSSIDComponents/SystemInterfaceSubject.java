@@ -57,7 +57,6 @@ protected SystemInterfaceSubject() { }
                  * @param additionalLabel
                  * @param additionalAttribute
                  */
-                //TODO: Konstruktor überladen
                 public SystemInterfaceSubject(IModelLayer layer, String labelForId, Set<IMessageExchange> incomingMessageExchange,
                                               Set<IInterfaceSubject> containedInterfaceSubjects, Set<IMessageExchange> outgoingMessageExchange, int maxSubjectInstanceRestriction,
                                               IFullySpecifiedSubject referencedSubject, String comment, String additionalLabel,
@@ -66,6 +65,11 @@ protected SystemInterfaceSubject() { }
         comment, additionalLabel, additionalAttribute);
         setInterfaceSubjects(containedInterfaceSubjects);
         }
+                public SystemInterfaceSubject(IModelLayer layer){
+                        super(layer, null, null, null, 1, null,
+                                null, null, null);
+                        setInterfaceSubjects(null);
+                }
 
 
 public boolean addInterfaceSubject(IInterfaceSubject subject)
@@ -110,18 +114,18 @@ public void setInterfaceSubjects(Set<IInterfaceSubject> subjects, int removeCasc
 public boolean removeInterfaceSubject(String id, int removeCascadeDepth)
         {
         if (id == null) return false;
-        if (!containedInterfaceSubjects.tryGetValue(id, out IInterfaceSubject subject)) return false;
+        if (!containedInterfaceSubjects.getOrDefault(id, out IInterfaceSubject subject)) return false;
 
         containedInterfaceSubjects.remove(id);
         subject.unregister(this, removeCascadeDepth);
         removeTriple(new IncompleteTriple(OWLTags.stdContains, subject.getUriModelComponentID()));
         return true;
         }
-
+//TODO: out-Parameter
                 public boolean removeInterfaceSubject(String id)
                 {
                         if (id == null) return false;
-                        if (!containedInterfaceSubjects.tryGetValue(id, out IInterfaceSubject subject)) return false;
+                        if (!containedInterfaceSubjects.getOrDefault(id, out IInterfaceSubject subject)) return false;
 
                         containedInterfaceSubjects.remove(id);
                         subject.unregister(this, 0);

@@ -6,6 +6,5 @@ import alps.java.api.util.*;
 /**
  * Interface to the data describing component class
  */
-public interface IDataDescribingComponent extends IPASSProcessModelElement, IContainableElement<IPASSProcessModel>
-    {
-            }
+public interface IDataDescribingComponent extends IPASSProcessModelElement, IContainableElement<IPASSProcessModel> {
+}

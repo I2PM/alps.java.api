@@ -90,7 +90,7 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
         setSubject(null);
         setBehaviorDescribingComponents(null);
         setInitialState(null);
-        setPriorityNumber(null);
+        setPriorityNumber(0);
     }
 
 
@@ -110,8 +110,7 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
     @Override
     protected Map<String, IParseablePASSProcessModelElement> getDictionaryOfAllAvailableElements() {
         if (layer == null) return null;
-        IPASSProcessModel model = layer.getContainedBy();
-        if (model == null) return null;
+        if (!layer.getContainedBy(out IPASSProcessModel model)) return null;
         Map<String, IPASSProcessModelElement> allElements = model.getAllElements();
         Map<String, IParseablePASSProcessModelElement> allParseableElements = new HashMap<String, IParseablePASSProcessModelElement>();
         for (Map.Entry<String, IPASSProcessModelElement> pair : allElements.entrySet()) {
@@ -164,17 +163,17 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
         }
     }
 
-    //TODO: out-Parameter, keine Ahnung ob klammern stimmen
+    //TODO: out-Parameter
     public boolean removeBehaviorDescribingComponent(String id, int removeCascadeDepth) {
         if (id == null) return false;
-        if (behaviorDescriptionComponents.getOrDefault(id, IBehaviorDescribingComponent component)) {
+        if (behaviorDescriptionComponents.getOrDefault(id, out IBehaviorDescribingComponent component)) {
             behaviorDescriptionComponents.remove(id);
             component.unregister(this, removeCascadeDepth);
             if (layer != null)
-                if (layer.getContainedBy(IPASSProcessModel model))
+                if (layer.getContainedBy( outIPASSProcessModel model))
                     model.removeElement(id);
 
-            for (IBehaviorDescribingComponent otherComponent : getBehaviorDescribingComponents().Values) {
+            for (IBehaviorDescribingComponent otherComponent : getBehaviorDescribingComponents().values()) {
                 otherComponent.updateRemoved(component, this, removeCascadeDepth);
             }
             if (component.equals(initialStateOfBehavior)) {
@@ -192,7 +191,7 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
         return false;
     }
 
-    //TODO: out-Parameter, keine Ahnung ob klammern stimmen
+    //TODO: out-Parameter
     public boolean removeBehaviorDescribingComponent(String id) {
         if (id == null) return false;
         if (behaviorDescriptionComponents.getOrDefault(id, IBehaviorDescribingComponent component)) {
@@ -377,6 +376,30 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
     }
 
     public void setSubject(ISubject subj, int removeCascadeDepth) {
+        if (subj instanceof IFullySpecifiedSubject) {
+            IFullySpecifiedSubject fullySpecified = (IFullySpecifiedSubject) subj;
+            ISubject oldSubj = this.subj;
+
+            // Might set it to null
+            this.subj = subj;
+
+            if (oldSubj != null) {
+                if (oldSubj.equals(subj)) return;
+                if (oldSubj instanceof IParseablePASSProcessModelElement parseable)
+                    removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, parseable.getUriModelComponentID()));
+                if (oldSubj instanceof IFullySpecifiedSubject oldFullySpecified) {
+                    oldFullySpecified.removeBehavior(getModelComponentID());
+                }
+            }
+
+            if (fullySpecified != null) {
+                if (fullySpecified instanceof IParseablePASSProcessModelElement parseable)
+                    addTriple(new IncompleteTriple(OWLTags.stdBelongsTo, parseable.getUriModelComponentID()));
+                fullySpecified.addBehavior(this);
+            }
+        }
+    }
+    public void setSubject(ISubject subj) {
         if (subj instanceof IFullySpecifiedSubject) {
             IFullySpecifiedSubject fullySpecified = (IFullySpecifiedSubject) subj;
             ISubject oldSubj = this.subj;

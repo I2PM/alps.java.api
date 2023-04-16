@@ -15,133 +15,121 @@ import java.util.Set;
  * Class that represents a BehaviorDescriptionComponent
  */
 
-    public class BehaviorDescribingComponent extends
+public class BehaviorDescribingComponent extends
         PASSProcessModelElement implements IBehaviorDescribingComponent {
 
-        protected ISubjectBehavior subjectBehavior;
+    protected ISubjectBehavior subjectBehavior;
 
     /**
      * Name of the class, needed for parsing
      */
     private final String className = "BehaviorDescribingComponent";
 
-        @Override
-        public String getClassName() {
-            return className;
-        }
+    @Override
+    public String getClassName() {
+        return className;
+    }
 
-        @Override
-        public IParseablePASSProcessModelElement getParsedInstance() {
-            return new BehaviorDescribingComponent();
-        }
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
+        return new BehaviorDescribingComponent();
+    }
 
-        protected BehaviorDescribingComponent() {
-        }
+    protected BehaviorDescribingComponent() {
+    }
 
     /**
      * Constructor that creates an instance of the behavior description component
+     *
      * @param subjectBehavior
      * @param labelForID
      * @param comment
      * @param additionalLabel
      * @param additionalAttribute
      */
-        public BehaviorDescribingComponent(ISubjectBehavior subjectBehavior, String labelForID, String comment,
-                                           String additionalLabel, java.util.List<IIncompleteTriple> additionalAttribute) {
+    public BehaviorDescribingComponent(ISubjectBehavior subjectBehavior, String labelForID, String comment,
+                                       String additionalLabel, java.util.List<IIncompleteTriple> additionalAttribute) {
 
         super(labelForID, comment, additionalLabel, additionalAttribute);
-            setContainedBy(subjectBehavior);
-
-    }
-    public BehaviorDescribingComponent(ISubjectBehavior subjectBehavior) {
-        super();
         setContainedBy(subjectBehavior);
 
     }
 
-        public void setContainedBy(ISubjectBehavior subjectBehavior)
-                {
-                if (this.subjectBehavior != null)
-                {
-                if (this.subjectBehavior.equals(subjectBehavior)) return;
-                removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, this.subjectBehavior.getUriModelComponentID()));
-                }
+    public BehaviorDescribingComponent(ISubjectBehavior subjectBehavior) {
+        super(null, null, null, null);
+        setContainedBy(subjectBehavior);
 
-                // Might set it to null
-                this.subjectBehavior = subjectBehavior;
-                if (!(subjectBehavior == null))
-                {
-                subjectBehavior.addBehaviorDescribingComponent(this);
-                addTriple(new IncompleteTriple(OWLTags.stdBelongsTo, subjectBehavior.getUriModelComponentID()));
-                }
-                }
+    }
+
+    public void setContainedBy(ISubjectBehavior subjectBehavior) {
+        if (this.subjectBehavior != null) {
+            if (this.subjectBehavior.equals(subjectBehavior)) return;
+            removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, this.subjectBehavior.getUriModelComponentID()));
+        }
+
+        // Might set it to null
+        this.subjectBehavior = subjectBehavior;
+        if (!(subjectBehavior == null)) {
+            subjectBehavior.addBehaviorDescribingComponent(this);
+            addTriple(new IncompleteTriple(OWLTags.stdBelongsTo, subjectBehavior.getUriModelComponentID()));
+        }
+    }
 
     //TODO: fertig implementieren ist eig. Methode mit Out Parameter
-        public boolean getContainedBy(ISubjectBehavior behavior)
-                {
-                behavior = subjectBehavior;
-                return subjectBehavior != null;
-                }
-        @Override
-        protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)
-                {
-                if (element != null)
-                {
-                if (predicate.contains(OWLTags.belongsTo) && element instanceof ISubjectBehavior)
-                {
+    public boolean getContainedBy(ISubjectBehavior behavior) {
+        behavior = subjectBehavior;
+        return subjectBehavior != null;
+    }
+
+    @Override
+    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+        if (element != null) {
+            if (predicate.contains(OWLTags.belongsTo) && element instanceof ISubjectBehavior) {
                 ISubjectBehavior behavior = (ISubjectBehavior) element;
                 setContainedBy(behavior);
                 return true;
-                }
-                }
-                return super.parseAttribute(predicate, objectContent, lang, dataType, element);
-                }
+            }
+        }
+        return super.parseAttribute(predicate, objectContent, lang, dataType, element);
+    }
 
     //TODO: hat eigentlich out-Parameter Aufruf
-        @Override
-        public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
-                {
-                Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
-                    if (specification == ConnectedElementsSetSpecification.ALL) {
-                        ISubjectBehavior behavior = getContainedBy();
-                        if (behavior != null) {
-                            baseElements.add(behavior);
-                        }
-                    }
+    @Override
+    public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification) {
+        Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
+        if (specification == ConnectedElementsSetSpecification.ALL) {
+            ISubjectBehavior behavior = getContainedBy(out ISubjectBehavior behavior);
+            if (behavior != null) {
+                baseElements.add(behavior);
+            }
+        }
 
-                    return baseElements;
-                }
-    //TODO: eig. out-ParameterAufruf
-        @Override
-        protected Map<String, IParseablePASSProcessModelElement> getDictionaryOfAllAvailableElements()
-                {
-                    ISubjectBehavior behavior = getContainedBy();
-                    if (behavior == null) return null;
+        return baseElements;
+    }
 
-                    IModelLayer layer = behavior.getContainedBy();
-                    if (layer == null) return null;
+    //TODO: out-Parameter
+    @Override
+    protected Map<String, IParseablePASSProcessModelElement> getDictionaryOfAllAvailableElements() {
+        if (!getContainedBy(out ISubjectBehavior behavior)) return null;
+        if (!behavior.getContainedBy(out IModelLayer layer)) return null;
+        if (!layer.getContainedBy(out IPASSProcessModel model)) return null;
+        Map<String, IPASSProcessModelElement> allElements = model.getAllElements();
+        Map<String, IParseablePASSProcessModelElement> allParseableElements = new HashMap<>();
 
-                    IPASSProcessModel model = layer.getContainedBy();
-                    if (model == null) return null;
+        for (Map.Entry<String, IPASSProcessModelElement> pair : allElements.entrySet()) {
+            if (pair.getValue() instanceof IParseablePASSProcessModelElement) {
+                IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) pair.getValue();
+                allParseableElements.put(pair.getKey(), parseable);
+            }
+        }
 
-                    Map<String, IPASSProcessModelElement> allElements = model.getAllElements();
-                    Map<String, IParseablePASSProcessModelElement> allParseableElements = new HashMap<>();
+        return allParseableElements;
 
-                    for (Map.Entry<String, IPASSProcessModelElement> pair : allElements.entrySet()) {
-                        if (pair.getValue() instanceof IParseablePASSProcessModelElement) {
-                            IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) pair.getValue();
-                            allParseableElements.put(pair.getKey(), parseable);
-                        }
-                    }
+    }
 
-                    return allParseableElements;
-
-                }
-
-        public void removeFromContainer()
-                {
-                if (subjectBehavior != null)
-                subjectBehavior.removeBehaviorDescribingComponent(getModelComponentID());
-                subjectBehavior = null;
-                }
-                }
+    public void removeFromContainer() {
+        if (subjectBehavior != null)
+            subjectBehavior.removeBehaviorDescribingComponent(getModelComponentID());
+        subjectBehavior = null;
+    }
+}

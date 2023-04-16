@@ -16,32 +16,36 @@ import java.util.List;
  * A finalized message exchange defines that a subject is not allowed to comunicate with the corresponding subject in any other way than this message exchange or similiar messages in the same model in any other way.
  * If an finalized message connection is used on a subject no other normal or abstract Message Exchange is allowed(while Communication Restrictions are not necessary).
  */
-public class FinalizedMessageExchange extends MessageExchange implements IFinalizedMessageExchange
-        {
-            /**
-             * Name of the class, needed for parsing
-             */
-            private final String CLASS_NAME = "FinalizedMessageExchange";
-@Override
-public String getClassName()
-        {
-        return CLASS_NAME;
-        }
-@Override
-public IParseablePASSProcessModelElement getParsedInstance()
-        {
-        return new FinalizedMessageExchange();
-        }
+public class FinalizedMessageExchange extends MessageExchange implements IFinalizedMessageExchange {
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String CLASS_NAME = "FinalizedMessageExchange";
 
-protected FinalizedMessageExchange() { }
-//TODO: Konstruktor überladen
-public FinalizedMessageExchange(IModelLayer layer, String label, IMessageSpecification messageSpecification, ISubject senderSubject,
-                                ISubject receiverSubject, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
+    @Override
+    public String getClassName() {
+        return CLASS_NAME;
+    }
+
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
+        return new FinalizedMessageExchange();
+    }
+
+    protected FinalizedMessageExchange() {
+    }
+
+    public FinalizedMessageExchange(IModelLayer layer, String label, IMessageSpecification messageSpecification, ISubject senderSubject,
+                                    ISubject receiverSubject, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
         super(layer, label, messageSpecification, senderSubject, receiverSubject, comment, additionalLabel, additionalAttribute);
-        }
-@Override
-protected String getExportTag()
-        {
+    }
+
+    public FinalizedMessageExchange(IModelLayer layer) {
+        super(layer, null, null, null, null, null, null, null);
+    }
+
+    @Override
+    protected String getExportTag() {
         return OWLTags.abstr;
-        }
-        }
+    }
+}

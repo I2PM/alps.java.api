@@ -12,6 +12,7 @@ import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.StandardPASS.PASSProcessModelElement;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IState;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IStateReference;
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.ParsedStateReferenceStub;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.IMessageExchange;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubject;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.Subjects.IFullySpecifiedSubject;
@@ -20,29 +21,28 @@ import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors.IMac
 import alps.java.api.parsing.IPASSGraph;
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.parsing.PASSGraph;
+import alps.java.api.src.OWLTags;
 import alps.java.api.util.*;
 import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.Statement;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-/// <summary>
-/// Class that represents a PASS Process Model
-/// This model contains all elements known in the current context.
-/// </summary>
-public class PASSProcessModel extends PASSProcessModelElement, implements IPASSProcessModel {
-    /// <summary>
-    /// All elements held by the model (sum of all elements held by the layers)
-    /// </summary>
+/**
+ * Class that represents a PASS Process Model
+ * This model contains all elements known in the current context.
+ */
+public class PASSProcessModel extends PASSProcessModelElement implements IPASSProcessModel {
+    /**
+     * All elements held by the model (sum of all elements held by the layers)
+     */
     protected ICompatibilityDictionary<String, IPASSProcessModelElement> allModelElements = new CompatibilityDictionary<String, IPASSProcessModelElement>();
 
-    /// <summary>
-    /// A default layer, created when an element is added but no layer is specified.
-    /// Might be null
-    /// </summary>
+    /**
+     * A default layer, created when an element is added but no layer is specified.
+     * Might be null
+     */
     protected IModelLayer baseLayer;
 
     protected ICompatibilityDictionary<String, ISubject> startSubjects = new CompatibilityDictionary<String, ISubject>();
@@ -51,9 +51,9 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
     protected boolean layered;
     protected final IImplementsFunctionalityCapsule<IPASSProcessModel> implCapsule;
 
-    /// <summary>
-    /// Name of the class, needed for parsing
-    /// </summary>
+    /**
+     * Name of the class, needed for parsing
+     */
     private final String className = "PASSProcessModel";
 
     @Override
@@ -70,9 +70,9 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
         implCapsule = new ImplementsFunctionalityCapsule<IPASSProcessModel>(this);
     }
 
-    /// <summary>
-    /// Constructor that creates a new fully specified instance of the pass process modell class
-    /// </summary>
+    /**
+     * Constructor that creates a new fully specified instance of the pass process modell class
+     */
     public PASSProcessModel(String baseURI, String labelForID, Set<IMessageExchange> messageExchanges, Set<ISubject> relationsToModelComponent,
                             Set<ISubject> startSubject, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
         super(labelForID, comment, additionalLabel, additionalAttribute);
@@ -118,9 +118,17 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
             addElement(element);
         }
     }
+    public void setAllElements(Set<IPASSProcessModelElement> elements) {
+        for (IPASSProcessModelElement element : this.getAllElements().values()) {
+            removeElement(element.getModelComponentID(),0);
+        }
+        if (elements == null) return;
+        for (IPASSProcessModelElement element : elements) {
+            addElement(element);
+        }
+    }
 
 
-    //TODO: Count
     public void addElement(IPASSProcessModelElement pASSProcessModelElement, String layerID) {
         if (pASSProcessModelElement == null) return;
 
@@ -130,7 +138,7 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
         if (justAddElement(pASSProcessModelElement)) {
 
             if (pASSProcessModelElement instanceof IModelLayer) {
-                if (getModelLayers().Count > 1) setIsLayered(true);
+                if (getModelLayers().size() > 1) setIsLayered(true);
 
             } else {
                 if (pASSProcessModelElement instanceof IInteractionDescribingComponent || pASSProcessModelElement instanceof ISubjectBehavior) {
@@ -138,11 +146,10 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
                         layerID = getBaseLayer().getModelComponentID();
                     }
                     justAddElementToLayer(pASSProcessModelElement, layerID);
-                    if (pASSProcessModelElement instanceof ISubject) {
-                        ISubject subj = (ISubject) pASSProcessModelElement;
-                    }
-                    if (subj.isRole(ISubject.Role.StartSubject) {
+                    if (pASSProcessModelElement instanceof ISubject subj && subj.isRole(ISubject.Role.StartSubject))
+                    {
                         addStartSubject(subj);
+                    }
                     }
                 }
             }
@@ -157,26 +164,56 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
                 addTriple(new IncompleteTriple(OWLTags.stdContains, pASSProcessModelElement.getUriModelComponentID()));
             }
         }
+    public void addElement(IPASSProcessModelElement pASSProcessModelElement) {
+        if (pASSProcessModelElement == null) return;
+
+
+        // Check for layer, create default if non matches
+
+        if (justAddElement(pASSProcessModelElement)) {
+
+            if (pASSProcessModelElement instanceof IModelLayer) {
+                if (getModelLayers().size() > 1) setIsLayered(true);
+
+            } else {
+                if (pASSProcessModelElement instanceof IInteractionDescribingComponent || pASSProcessModelElement instanceof ISubjectBehavior) {
+                   String layerID = getBaseLayer().getModelComponentID();
+                    justAddElementToLayer(pASSProcessModelElement, layerID);
+                    if (pASSProcessModelElement instanceof ISubject subj && subj.isRole(ISubject.Role.StartSubject))
+                    {
+                        addStartSubject(subj);
+                    }
+                }
+            }
+        }
+        // if added, register and send signal to next higher observers so they can add and register as well
+        pASSProcessModelElement.register(this);
+        publishElementAdded(pASSProcessModelElement);
+        if (exportGraph != null && pASSProcessModelElement instanceof IParseablePASSProcessModelElement) {
+            IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) pASSProcessModelElement;
+            parseable.setExportGraph(exportGraph);
+        }
+        if (pASSProcessModelElement instanceof IInteractionDescribingComponent || pASSProcessModelElement instanceof IModelLayer || pASSProcessModelElement instanceof ISubjectBehavior) {
+            addTriple(new IncompleteTriple(OWLTags.stdContains, pASSProcessModelElement.getUriModelComponentID()));
+        }
     }
 
-    /// <summary>
-    /// this method is used to just add the element to the list, and not trigger any observers etc.
-    /// </summary>
-    /// <param name="pASSProcessModelElement">the element that should be added</param>
-    /// <returns>true if it could be added, false if not</returns>
+    /**
+     * this method is used to just add the element to the list, and not trigger any observers etc.
+     * @param pASSProcessModelElement the element that should be added
+     * @return true if it could be added, false if not
+     */
     protected boolean justAddElement(IPASSProcessModelElement pASSProcessModelElement) {
         if (pASSProcessModelElement == null) {
             return false;
         }
-        if (pASSProcessModelElement.equals(this)) return false;
+        if (pASSProcessModelElement.equals(this)){ return false;}
         if (!allModelElements.containsKey(pASSProcessModelElement.getModelComponentID())) {
             allModelElements.tryAdd(pASSProcessModelElement.getModelComponentID(), pASSProcessModelElement);
-            if (pASSProcessModelElement instanceof IContainableElement<IPASSProcessModel>) {
-                IContainableElement<IPASSProcessModel> containable = (IContainableElement<IPASSProcessModel>) pASSProcessModelElement;
+            if (pASSProcessModelElement instanceof IContainableElement<IPASSProcessModel> containable) {
                 containable.setContainedBy(this);
             }
-            if (pASSProcessModelElement instanceof IParseablePASSProcessModelElement) {
-                IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) pASSProcessModelElement;
+            if (pASSProcessModelElement instanceof IParseablePASSProcessModelElement parseable) {
                 parseable.setExportGraph(baseGraph);
             }
 
@@ -185,7 +222,6 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
         return false;
     }
 
-    //TODO: trygetvalue() Methode ersatz finden, Count Ersatz finden, Ersatz getModelComponentID
     public void removeElement(String modelComponentID, int removeCascadeDepth) {
         if (modelComponentID == null) {
             return;
@@ -194,7 +230,7 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
         if (element != null) {
             if (justRemoveElement(element)) {
                 if (element instanceof IModelLayer) {
-                    if (getModelLayers().Count < 2) setIsLayered(false);
+                    if (getModelLayers().size() < 2) setIsLayered(false);
                 }
 
                 // Might be a start subj
@@ -210,7 +246,38 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
                 }
                 element.removeFromEverything();
                 if (getBaseLayer() != null)
-                    if (getBaseLayer().getElements().Count() == 0) {
+                    if (getBaseLayer().getElements().size() == 0) {
+                        baseLayer.removeFromEverything();
+                    }
+
+            }
+        }
+    }
+    public void removeElement(String modelComponentID) {
+        if (modelComponentID == null) {
+            return;
+        }
+        IPASSProcessModelElement element = allModelElements.get(modelComponentID);
+        if (element != null) {
+            if (justRemoveElement(element)) {
+                if (element instanceof IModelLayer) {
+                    if (getModelLayers().size() < 2) setIsLayered(false);
+                }
+
+                // Might be a start subj
+                if (element instanceof ISubject) {
+                    ISubject subj = (ISubject) element;
+                    removeStartSubject(subj.getModelComponentID());
+                }
+
+                removeTriple(new IncompleteTriple(OWLTags.stdContains, element.getUriModelComponentID()));
+                element.unregister(this, 0);
+                for (IPASSProcessModelElement otherComponent : getAllElements().values()) {
+                    otherComponent.updateRemoved(element, this,0);
+                }
+                element.removeFromEverything();
+                if (getBaseLayer() != null)
+                    if (getBaseLayer().getElements().size() == 0) {
                         baseLayer.removeFromEverything();
                     }
 
@@ -219,16 +286,17 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
     }
 
 
-    /// <summary>
-    /// this method is used to just remove the element from the list, and not trigger any observers etc.
-    /// </summary>
-    /// <param name="element">the element being removed</param>
-    /// <returns>true if it could be removed, false if not</returns>
+    /**
+     * this method is used to just remove the element from the list, and not trigger any observers etc.
+     * @param element the element being removed
+     * @return true if it could be removed, false if not
+     */
     protected boolean justRemoveElement(IPASSProcessModelElement element) {
         if (element == null) {
             return false;
         }
-        if (allModelElements.remove(element.getModelComponentID())) {
+        Object removedElement = allModelElements.remove(element.getModelComponentID());
+        if (removedElement != null) {
             for (IModelLayer layer : getModelLayers().values())
                 if (layer.getElements().containsKey(element.getModelComponentID()))
                     layer.removeContainedElement(element.getModelComponentID());
@@ -261,8 +329,28 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
             addStartSubject(startSubj);
         }
     }
+    public void setStartSubjects(Set<ISubject> startSubjects) {
+        for (ISubject startSubj : this.startSubjects.values()) {
+            removeStartSubject(startSubj.getModelComponentID(),0);
+        }
+        if (startSubjects == null) return;
+        for (ISubject startSubj : startSubjects) {
+            addStartSubject(startSubj);
+        }
+    }
 
     public void removeStartSubject(String id, int removeCascadeDepth) {
+        if (id == null) return;
+        ISubject subj = startSubjects.get(id);
+        if (subj != null) {
+            // Do not remove the element completely, only remove it as start subject
+            //removeElement(id, removeCascadeDepth);
+            subj.removeRole(ISubject.Role.StartSubject);
+            startSubjects.remove(id);
+            removeTriple(new IncompleteTriple(OWLTags.stdHasStartSubject, subj.getUriModelComponentID()));
+        }
+    }
+    public void removeStartSubject(String id) {
         if (id == null) return;
         ISubject subj = startSubjects.get(id);
         if (subj != null) {
@@ -291,16 +379,30 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
             addLayer(layer);
         }
     }
+    public void setLayers(Set<IModelLayer> modelLayers) {
+        for (IModelLayer layer : getModelLayers().values()) {
+            removeLayer(layer.getModelComponentID(), 0);
+        }
+        if (modelLayers == null) return;
+        for (IModelLayer layer : modelLayers) {
+            addLayer(layer);
+        }
+    }
 
     public void removeLayer(String id, int removeCascadeDepth) {
         removeElement(id);
     }
+    public void removeLayer(String id) {
+        removeElement(id);
+    }
 
-    //TODO: ofTType() Ersatz und getModelComponentID
     public Map<String, IModelLayer> getModelLayers() {
         Map<String, IModelLayer> resultDict = new HashMap<String, IModelLayer>();
-        for (IModelLayer layer : getAllElements().values().ofType < IModelLayer > ()) {
-            resultDict.add(layer.getModelComponentID(), layer);
+        for (Object element : getAllElements().values()) {
+            if (element instanceof IModelLayer) {
+                IModelLayer layer = (IModelLayer) element;
+                resultDict.put(layer.getModelComponentID(), layer);
+            }
         }
         return resultDict;
     }
@@ -324,11 +426,12 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
     }
 
 
-    /// <summary>
-    /// this method is used to just add the element to the list, and not trigger any observers etc.
-    /// </summary>
-    /// <param name="pASSProcessModelElement">the element that should be added</param>
-    /// <returns>true if it could be added, false if not</returns>
+    /**
+     * this method is used to just add the element to the list, and not trigger any observers etc.
+     * @param pASSProcessModelElement the element that should be added
+     * @param layerID
+     * @return true if it could be added, false if not
+     */
     protected boolean justAddElementToLayer(IPASSProcessModelElement pASSProcessModelElement, String layerID) {
         if (pASSProcessModelElement == null) {
             return false;
@@ -340,12 +443,11 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
             IPASSProcessModelElement element = getAllElements().get(layerID);
             if (element != null) {
                 if (element instanceof IModelLayer layer) {
-                    IModelLayer layer = (IModelLayer) element;
-
                     layer.addElement(pASSProcessModelElement);
                     return true;
                 }
             }
+        }
             return false;
         }
 
@@ -353,7 +455,7 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
         public void setBaseURI (String baseURI)
         {
             if (baseURI != null) {
-                String formattedBaseURI = baseURI.trim().Replace(" ", "_");
+                String formattedBaseURI = baseURI.trim().replace(" ", "_");
                 this.baseURI = formattedBaseURI;
                 if (getBaseGraph() == null) {
                     this.baseGraph = new PASSGraph(baseURI);
@@ -374,132 +476,133 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
             return layered;
         }
 
-
+//TODO: out-Parameter, ref-Parameter usw
         @Override
-        public void completeObject (Map < String, IParseablePASSProcessModelElement > allElements)
-        {
+        public void completeObject (Map < String, IParseablePASSProcessModelElement > allElements) {
             boolean checkLayers = false;
 
-            List<IStateReference> refList = new List<IStateReference>();
-            List<IState> newStates = new List<IState>();
-            for (ParsedStateReferenceStub reference : allElements.Values.OfType < ParsedStateReferenceStub > ()) {
-                newStates.add(reference.transformToState(allElements));
-                refList.add(reference);
-            }
-
-            for (IStateReference reference : refList)
-                allElements.remove(reference.getModelComponentID());
-
-            for (IState state : newStates)
-                if (state instanceof IParseablePASSProcessModelElement parseabelState) {
-                    IParseablePASSProcessModelElement parseableState = (IParseablePASSProcessModelElement) state;
-                    allElements.Add(state.getModelComponentID(), parseabelState);
+            List<IStateReference> refList = new ArrayList<IStateReference>();
+            List<IState> newStates = new ArrayList<IState>();
+            for (Object element : allElements.values()) {
+                if (element instanceof ParsedStateReferenceStub) {
+                    ParsedStateReferenceStub reference = (ParsedStateReferenceStub) element;
+                    newStates.add(reference.transformToState(allElements));
+                    refList.add(reference);
                 }
 
-            // Go through triples, filter all Layers
-            for (Triple triple : getTriples()) {
-                String predicateContent = NodeHelper.getNodeContent(triple.Predicate);
-                if (predicateContent.contains(OWLTags.contains)) {
-                    String objectContent = NodeHelper.getNodeContent(triple.Object);
+                for (IStateReference reference : refList)
+                    allElements.remove(reference.getModelComponentID());
 
-                    String possibleID = objectContent;
-                    String[] splitted = possibleID.split('#');
-                    if (splitted.length > 1)
-                        possibleID = splitted[splitted.length - 1];
+                for (IState state : newStates)
+                    if (state instanceof IParseablePASSProcessModelElement parseabelState) {
+                        IParseablePASSProcessModelElement parseableState = (IParseablePASSProcessModelElement) state;
+                        allElements.put(state.getModelComponentID(), parseabelState);
+                    }
 
-                    if (allElements.ContainsKey(possibleID)) {
-                        if (allElements.get(possibleID) instanceof IModelLayer && allElements.get(possibleID) instanceof IParseablePASSProcessModelElement) {
-                            IModelLayer layer = (IModelLayer) allElements.get(possibleID);
-                            IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) allElements.get(possibleID);
-                            // Parse the layer
-                            String lang = NodeHelper.getLangIfContained(triple.Object);
-                            String dataType = NodeHelper.getDataTypeIfContained(triple.Object);
-                            parseAttribute(predicateContent, possibleID, lang, dataType, parseable);
+                // Go through triples, filter all Layers
+                for (Statement triple : getTriples()) {
+                    String predicateContent = NodeHelper.getNodeContent(triple.getPredicate());
+                    if (predicateContent.contains(OWLTags.ccontains)) {
+                        String objectContent = NodeHelper.getNodeContent(triple.getObject());
+
+                        String possibleID = objectContent;
+                        String[] splitted = possibleID.split("#");
+                        if (splitted.length > 1)
+                            possibleID = splitted[splitted.length - 1];
+
+                        if (allElements.containsKey(possibleID)) {
+                            if (allElements.get(possibleID) instanceof IModelLayer && allElements.get(possibleID) instanceof IParseablePASSProcessModelElement) {
+                                IModelLayer layer = (IModelLayer) allElements.get(possibleID);
+                                IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) allElements.get(possibleID);
+                                // Parse the layer
+                                String lang = NodeHelper.getLangIfContained(triple.getObject());
+                                String dataType = NodeHelper.getDataTypeIfContained(triple.getObject());
+                                parseAttribute(predicateContent, possibleID, lang, dataType, parseable);
+                            }
                         }
                     }
                 }
-            }
-            if (getModelLayers().Count == 0) {
-                getBaseLayer();
-                checkLayers = true;
-            } else {
-                setIsLayered(true);
-                for (IModelLayer layer : getModelLayers().values()) {
-
-                    // Complete the layer first
-                    if (layer instanceof IParseablePASSProcessModelElement) {
-                        IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) layer;
-                        parseable.completeObject(allElements);
-                    }
-
-                    // Find non-abstract layer that is marked as baselayer
-                    if (!layer.isAbstract() && layer.getLayerType() == IModelLayer.LayerType.BASE) {
-                        this.baseLayer = layer;
-                    }
-
-                }
-                if (baseLayer == null) {
-                    // if there was no explicit base layer, find a standard layer and make it base layer
-                    for (IModelLayer layer : getModelLayers().values()) {
-                        if (!layer.isAbstract() && layer.getLayerType() == IModelLayer.LayerType.STANDARD) {
-                            this.baseLayer = layer;
-                            break;
-                        }
-
-                    }
-                }
-            }
-
-            for (Triple triple : getTriples()) {
-                IParseablePASSProcessModelElement element = new IParseablePASSProcessModelElement();
-                parseAttribute(triple, allElements, element);
-                // Calling parsing method
-                // If attribute contains a reference to a PassProcessModelElement, pass this to the method
-
-            }
-
-
-            //foreach (IParseablePASSProcessModelElement element in getAllElements().Values)
-            for (IParseablePASSProcessModelElement element : allElements.Values) {
-                if (!(element instanceof IPASSProcessModel))
-                    element.completeObject(allElements);
-            }
-
-            if (checkLayers) {
-                Map<String, List<String>> doubleBehaviors = new HashMap<String, List<String>>();
-                if (getAllElements().values().fType < ISubjectBehavior > ().Count() > 1)
-                    for (ISubjectBehavior behavior : getAllElements().values().OfType < ISubjectBehavior > ()) {
-                        if (behavior.getSubject() != null && behavior.getSubject() instanceof IFullySpecifiedSubject) {
-                            IFullySpecifiedSubject subject = (IFullySpecifiedSubject) behavior.getSubject();
-                            if (doubleBehaviors.containsKey(subject.getModelComponentID()))
-                                doubleBehaviors[subject.getModelComponentID()].Add(behavior.getModelComponentID());
-                                //TODO: else statement neu
-                            else doubleBehaviors.add(subject.getModelComponentID(), new List<String> {
-                                behavior.getModelComponentID()
-                            });
-                        }
-                    }
-                for (Map<String, List<String>> pair : doubleBehaviors) {
-                    if (pair.Value.Count > 1)
-                        fixLayers(pair.Key, pair.Value);
-
-                }
-                if (getModelLayers().Count > 1) {
+                if (getModelLayers().size() == 0) {
+                    getBaseLayer();
+                    checkLayers = true;
+                } else {
                     setIsLayered(true);
-                }
-            }
+                    for (IModelLayer layer : getModelLayers().values()) {
 
-            for (IParseablePASSProcessModelElement element : getAllElements().values()) {
-                element.setExportGraph(baseGraph);
+                        // Complete the layer first
+                        if (layer instanceof IParseablePASSProcessModelElement) {
+                            IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) layer;
+                            parseable.completeObject(allElements);
+                        }
+
+                        // Find non-abstract layer that is marked as baselayer
+                        if (!layer.isAbstract() && layer.getLayerType() == IModelLayer.LayerType.BASE) {
+                            this.baseLayer = layer;
+                        }
+
+                    }
+                    if (baseLayer == null) {
+                        // if there was no explicit base layer, find a standard layer and make it base layer
+                        for (IModelLayer layer : getModelLayers().values()) {
+                            if (!layer.isAbstract() && layer.getLayerType() == IModelLayer.LayerType.STANDARD) {
+                                this.baseLayer = layer;
+                                break;
+                            }
+
+                        }
+                    }
+                }
+
+                for (Statement triple : getTriples()) {
+                    parseAttribute(triple, allElements, out IParseablePASSProcessModelElement element);
+                    // Calling parsing method
+                    // If attribute contains a reference to a PassProcessModelElement, pass this to the method
+
+                }
+
+
+                //foreach (IParseablePASSProcessModelElement element in getAllElements().Values)
+                for (IParseablePASSProcessModelElement element : allElements.values()) {
+                    if (!(element instanceof IPASSProcessModel))
+                        element.completeObject(ref allElements);
+                }
+
+                if (checkLayers) {
+                    Map<String, List<String>> doubleBehaviors = new HashMap<String, List<String>>();
+                    if (getAllElements().values().fType < ISubjectBehavior > ().Count() > 1)
+                        for (ISubjectBehavior behavior : getAllElements().values().OfType < ISubjectBehavior > ()) {
+                            if (behavior.getSubject() != null && behavior.getSubject() instanceof IFullySpecifiedSubject) {
+                                IFullySpecifiedSubject subject = (IFullySpecifiedSubject) behavior.getSubject();
+                                if (doubleBehaviors.containsKey(subject.getModelComponentID()))
+                                    doubleBehaviors[subject.getModelComponentID()].Add(behavior.getModelComponentID());
+                                    //TODO: else statement neu
+                                else doubleBehaviors.put(subject.getModelComponentID(), new List<String> {
+                                    behavior.getModelComponentID()
+                                });
+                            }
+                        }
+                    for (Map.Entry<String, List<String>> pair : doubleBehaviors.entrySet()) {
+                        if (pair.getValue().size() > 1)
+                            fixLayers(pair.getKey(), pair.getValue());
+
+                    }
+                    if (getModelLayers().size() > 1) {
+                        setIsLayered(true);
+                    }
+                }
+
+                for (IParseablePASSProcessModelElement element : getAllElements().values()) {
+                    element.setExportGraph(baseGraph);
+                }
             }
         }
 
-        /// <summary>
-        /// Fix the layers if the imported model is not multi-layered.
-        /// All elements get loaded into one layer, afterwards this method is called to split the elements onto multiple layers.
-        /// </summary>
-        /// <param name="idOfSubject"></param>
-        /// <param name="idsOfBehaviors"></param>
+    /**
+     * Fix the layers if the imported model is not multi-layered.
+     * All elements get loaded into one layer, afterwards this method is called to split the elements onto multiple layers.
+     * @param idOfSubject
+     * @param idsOfBehaviors
+     */
         private void fixLayers (String idOfSubject, List < String > idsOfBehaviors)
         {
             /*
@@ -510,16 +613,16 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
              */
 
             // Case: A subject holds multiple behaviors in one layer -> split the behaviors up to several layers
-            IFullySpecifiedSubject extendedSubject = (IFullySpecifiedSubject) getAllElements()[idOfSubject];
+            IFullySpecifiedSubject extendedSubject = (IFullySpecifiedSubject) getAllElements().get(idOfSubject);
             ISubjectBehavior baseBehavior = null;
             if (extendedSubject.getSubjectBaseBehavior() != null) {
                 // If there is an explicit base behavior, keep this in base layer
                 baseBehavior = extendedSubject.getSubjectBaseBehavior();
             } else {
                 // find a "normal" behavior with the lowest priority number to keep in base layer
-                int lowestPrio = int.MaxValue;
+                int lowestPrio = Integer.MAX_VALUE;
                 for (String id : idsOfBehaviors) {
-                    ISubjectBehavior behavior = (ISubjectBehavior) getAllElements()[id];
+                    ISubjectBehavior behavior = (ISubjectBehavior) getAllElements().get(id);
                     if (!(behavior instanceof IGuardBehavior || behavior instanceof IMacroBehavior)) {
                         if (behavior.getPriorityNumber() < lowestPrio)
                             baseBehavior = behavior;
@@ -531,7 +634,7 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
             getBaseLayer().addElement(baseBehavior);
             for (String id : idsOfBehaviors) {
                 if (!id.equals(baseBehavior.getModelComponentID())) {
-                    ISubjectBehavior behaviorOfSubjectExtension = (ISubjectBehavior) getAllElements()[id];
+                    ISubjectBehavior behaviorOfSubjectExtension = (ISubjectBehavior) getAllElements().get(id);
                     IModelLayer layer = new ModelLayer(this);
                     ISubjectExtension subjectExtension;
 
@@ -560,17 +663,15 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
                     //addLayer(layer);
                 }
             }
-            // TODO
         }
         @Override
-        protected boolean parseAttribute (String predicate, String objectContent, String lang, sSring
+        protected boolean parseAttribute (String predicate, String objectContent, String lang, String
         dataType, IParseablePASSProcessModelElement element)
         {
             if (implCapsule != null && implCapsule.parseAttribute(predicate, objectContent, lang, dataType, element))
                 return true;
-            else if (predicate.Contains(OWLTags.contains) && element != null) {
+            else if (predicate.contains(OWLTags.ccontains) && element != null) {
                 if (element instanceof IModelLayer layer) {
-                    IModelLayer layer = (IModelLayer) element;
                     addLayer(layer);
                 } else addElement(element);
 
@@ -629,7 +730,7 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
                             }
                         }
                     }*/
-            if (baseLayer != null && baseLayer.getElements().Count() == 0) {
+            if (baseLayer != null && baseLayer.getElements().size() == 0) {
                 baseLayer.removeFromEverything();
             }
 
@@ -643,13 +744,18 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
             removeElement(update.getModelComponentID(), removeCascadeDepth);
 
         }
+    public void updateRemoved (IPASSProcessModelElement update, IPASSProcessModelElement caller)
+    {
+        super.updateRemoved(update, caller,0);
+        removeElement(update.getModelComponentID(), 0);
+
+    }
 
 
         @Override
         protected void successfullyParsedElement (IParseablePASSProcessModelElement parsedElement)
         {
-            if (parsedElement instanceof IContainableElement<IPASSProcessModel>) {
-                IContainableElement<IPASSProcessModel> containable = (IContainableElement<IPASSProcessModel>) parsedElement;
+            if (parsedElement instanceof IContainableElement<IPASSProcessModel> containable) {
                 containable.setContainedBy(this);
             }
             parsedElement.setExportGraph(baseGraph);
@@ -663,9 +769,9 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
         public void notifyModelComponentIDChanged (String oldID, String newID)
         {
             if (allModelElements.containsKey(oldID)) {
-                IPASSProcessModelElement element = allModelElements[oldID];
+                IPASSProcessModelElement element = allModelElements.get(oldID);
                 allModelElements.remove(oldID);
-                allModelElements.add(element.getModelComponentID(), element);
+                allModelElements.put(element.getModelComponentID(), element);
             }
             super.notifyModelComponentIDChanged(oldID, newID);
         }
@@ -673,10 +779,12 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
         public String export (String filepath)
         {
             // Get the graph hold by the model and use the export function given by the library
-            String fullPath = (filepath.EndsWith(".owl")) ? filepath : filepath + ".owl";
+            String fullPath = (filepath.endsWith(".owl")) ? filepath : filepath + ".owl";
             getBaseGraph().exportTo(fullPath);
-            FileInfo writtenFile = new FileInfo(fullPath);
-            if (File.Exists(fullPath)) return writtenFile.FullName;
+            File writtenFile = new File(fullPath);
+            if (writtenFile.exists()) {
+                return writtenFile.getAbsolutePath();
+            }
             return "";
         }
 
@@ -704,6 +812,10 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
         {
             implCapsule.setImplementedInterfaces(implementedInterface, removeCascadeDepth);
         }
+    public void setImplementedInterfaces (Set < IPASSProcessModel > implementedInterface)
+    {
+        implCapsule.setImplementedInterfaces(implementedInterface, 0);
+    }
 
         public void addImplementedInterface (IPASSProcessModel implementedInterface)
         {
@@ -714,11 +826,15 @@ public class PASSProcessModel extends PASSProcessModelElement, implements IPASSP
         {
             implCapsule.removeImplementedInterfaces(id, removeCascadeDepth);
         }
+    public void removeImplementedInterfaces (String id)
+    {
+        implCapsule.removeImplementedInterfaces(id, 0);
+    }
 
         public Map<String, IPASSProcessModel> getImplementedInterfaces ()
         {
             return implCapsule.getImplementedInterfaces();
         }
     }
-}
+
 

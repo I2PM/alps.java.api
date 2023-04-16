@@ -87,6 +87,12 @@ public ModelLayer(IPASSProcessModel model, String labelForID, String comment, St
         implCapsule = new ImplementsFunctionalityCapsule<IModelLayer>(this);
         setContainedBy(model);
     }
+    public ModelLayer(IPASSProcessModel model, String labelForID){
+        super(labelForID, null, null, null);
+        extendsCapsule = new ExtendsFunctionalityCapsule<IModelLayer>(this);
+        implCapsule = new ImplementsFunctionalityCapsule<IModelLayer>(this);
+        setContainedBy(model);
+    }
 
     /**
      * Returns a dictionary of all elements saved in the model layer

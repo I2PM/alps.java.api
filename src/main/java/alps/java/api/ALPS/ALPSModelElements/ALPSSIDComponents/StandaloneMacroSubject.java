@@ -12,60 +12,63 @@ import alps.java.api.util.IncompleteTriple;
 import java.util.List;
 import java.util.Set;
 
-public class StandaloneMacroSubject extends Subject implements IStandaloneMacroSubject
-        {
-private IMacroBehavior macroBehavior;
+public class StandaloneMacroSubject extends Subject implements IStandaloneMacroSubject {
+    private IMacroBehavior macroBehavior;
 
-/**
- * Name of the class, needed for parsing
- */
-            private final String className = "StandaloneMacroSubject";
-@Override
-public String getClassName()
-        {
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String className = "StandaloneMacroSubject";
+
+    @Override
+    public String getClassName() {
         return className;
-        }
-@Override
-public IParseablePASSProcessModelElement getParsedInstance()
-        {
+    }
+
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
         return new StandaloneMacroSubject();
-        }
+    }
 
-protected StandaloneMacroSubject() { }
+    protected StandaloneMacroSubject() {
+    }
 
-            /**
-             *
-             * @param layer
-             * @param labelForID
-             * @param incomingMessageExchange
-             * @param macroBehavior
-             * @param outgoingMessageExchange
-             * @param maxSubjectInstanceRestriction
-             * @param comment
-             * @param additionalLabel
-             * @param additionalAttribute
-             */
-            //TODO: Konstruktor überladen
-            public StandaloneMacroSubject(IModelLayer layer, String labelForID, Set<IMessageExchange> incomingMessageExchange,
-                                          IMacroBehavior macroBehavior, Set<IMessageExchange> outgoingMessageExchange, int maxSubjectInstanceRestriction,
-                                          String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
+    /**
+     * @param layer
+     * @param labelForID
+     * @param incomingMessageExchange
+     * @param macroBehavior
+     * @param outgoingMessageExchange
+     * @param maxSubjectInstanceRestriction
+     * @param comment
+     * @param additionalLabel
+     * @param additionalAttribute
+     */
+
+    public StandaloneMacroSubject(IModelLayer layer, String labelForID, Set<IMessageExchange> incomingMessageExchange,
+                                  IMacroBehavior macroBehavior, Set<IMessageExchange> outgoingMessageExchange, int maxSubjectInstanceRestriction,
+                                  String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
         super(layer, labelForID, incomingMessageExchange, outgoingMessageExchange, maxSubjectInstanceRestriction,
-        comment, additionalLabel, additionalAttribute);
+                comment, additionalLabel, additionalAttribute);
         setBehavior(macroBehavior);
-        }
+    }
 
-public void setBehavior(IMacroBehavior behavior, int removeCascadeDepth)
-        {
+    public StandaloneMacroSubject(IModelLayer layer) {
+        super(layer, null, null, null, 1,
+                null, null, null);
+        setBehavior(null);
+    }
+
+    public void setBehavior(IMacroBehavior behavior, int removeCascadeDepth) {
         IMacroBehavior oldDef = this.macroBehavior;
         // Might set it to null
         this.macroBehavior = behavior;
 
-        if (oldDef != null)
-        {
-        if (oldDef.equals(behavior)) return;
-        oldDef.unregister(this, removeCascadeDepth);
-        behavior.setSubject(null);
-        removeTriple(new IncompleteTriple(OWLTags.stdContainsBehavior, oldDef.getUriModelComponentID()));
+        if (oldDef != null) {
+            if (oldDef.equals(behavior)) return;
+            oldDef.unregister(this, removeCascadeDepth);
+            behavior.setSubject(null);
+            removeTriple(new IncompleteTriple(OWLTags.stdContainsBehavior, oldDef.getUriModelComponentID()));
         }
 
         if (behavior == null) return;
@@ -74,43 +77,40 @@ public void setBehavior(IMacroBehavior behavior, int removeCascadeDepth)
         behavior.register(this);
         behavior.setSubject(this);
         addTriple(new IncompleteTriple(OWLTags.stdContainsBehavior, behavior.getUriModelComponentID()));
+    }
+
+    public void setBehavior(IMacroBehavior behavior) {
+        IMacroBehavior oldDef = this.macroBehavior;
+        // Might set it to null
+        this.macroBehavior = behavior;
+
+        if (oldDef != null) {
+            if (oldDef.equals(behavior)) return;
+            oldDef.unregister(this, 0);
+            behavior.setSubject(null);
+            removeTriple(new IncompleteTriple(OWLTags.stdContainsBehavior, oldDef.getUriModelComponentID()));
         }
-            public void setBehavior(IMacroBehavior behavior)
-            {
-                IMacroBehavior oldDef = this.macroBehavior;
-                // Might set it to null
-                this.macroBehavior = behavior;
 
-                if (oldDef != null)
-                {
-                    if (oldDef.equals(behavior)) return;
-                    oldDef.unregister(this, 0);
-                    behavior.setSubject(null);
-                    removeTriple(new IncompleteTriple(OWLTags.stdContainsBehavior, oldDef.getUriModelComponentID()));
-                }
+        if (behavior == null) return;
 
-                if (behavior == null) return;
+        publishElementAdded(behavior);
+        behavior.register(this);
+        behavior.setSubject(this);
+        addTriple(new IncompleteTriple(OWLTags.stdContainsBehavior, behavior.getUriModelComponentID()));
+    }
 
-                publishElementAdded(behavior);
-                behavior.register(this);
-                behavior.setSubject(this);
-                addTriple(new IncompleteTriple(OWLTags.stdContainsBehavior, behavior.getUriModelComponentID()));
-            }
-@Override
-protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)
-        {
-        if (element instanceof IMacroBehavior subjectBehavior && predicate.contains(OWLTags.containsBehavior))
-        {
-        setBehavior(subjectBehavior);
-        return true;
+    @Override
+    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+        if (element instanceof IMacroBehavior subjectBehavior && predicate.contains(OWLTags.containsBehavior)) {
+            setBehavior(subjectBehavior);
+            return true;
         }
 
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
-        }
+    }
 
 
-public IMacroBehavior getBehavior()
-        {
+    public IMacroBehavior getBehavior() {
         return macroBehavior;
-        }
-        }
+    }
+}

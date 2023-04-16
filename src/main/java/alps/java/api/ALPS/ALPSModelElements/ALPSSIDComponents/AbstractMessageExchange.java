@@ -17,44 +17,47 @@ import java.util.List;
  * On an implementing layer though it is allowed to unite the two subjects and thus ignore this communication. (e.g.because in the real process a human being is doing both tasks unitedly
  * In contrast a standard MessageExchange would defined that two subjects (abstract or not) are not to be united.
  */
-public class AbstractMessageExchange extends MessageExchange implements IAbstractMessageExchange
-        {
-/**
- * Name of the class, needed for parsing
- */
-private final String CLASS_NAME = "AbstractMessageExchange";
- @Override
-public String getClassName()
-        {
+public class AbstractMessageExchange extends MessageExchange implements IAbstractMessageExchange {
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String CLASS_NAME = "AbstractMessageExchange";
+
+    @Override
+    public String getClassName() {
         return CLASS_NAME;
-        }
-@Override
-public IParseablePASSProcessModelElement getParsedInstance()
-        {
+    }
+
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
         return new AbstractMessageExchange();
-        }
+    }
 
-protected AbstractMessageExchange() { }
+    protected AbstractMessageExchange() {
+    }
 
-            /**
-             * Constructor that creates a fully specified empty instance of the abstract message exchange class
-             * @param layer
-             * @param labelForId
-             * @param messageSpecification the type of message
-             * @param senderSubject
-             * @param receiverSubject
-             * @param comment the comment
-             * @param additionalLabel
-             * @param additionalAttribute list of additional attributes
-             */
-            //TODO: Konstruktor überladen
-            public AbstractMessageExchange(IModelLayer layer, String labelForId, IMessageSpecification messageSpecification , ISubject senderSubject,
-                                           ISubject receiverSubject, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
+    /**
+     * Constructor that creates a fully specified empty instance of the abstract message exchange class
+     *
+     * @param layer
+     * @param labelForId
+     * @param messageSpecification the type of message
+     * @param senderSubject
+     * @param receiverSubject
+     * @param comment              the comment
+     * @param additionalLabel
+     * @param additionalAttribute  list of additional attributes
+     */
+    //TODO: Konstruktor überladen
+    public AbstractMessageExchange(IModelLayer layer, String labelForId, IMessageSpecification messageSpecification, ISubject senderSubject,
+                                   ISubject receiverSubject, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
         super(layer, labelForId, messageSpecification, senderSubject, receiverSubject, comment, additionalLabel, additionalAttribute);
-            }
-@Override
-protected String getExportTag()
-        {
+    }
+    public AbstractMessageExchange(IModelLayer layer) {
+        super(layer, null, null, null, null, null, null, null);
+    }
+    @Override
+    protected String getExportTag() {
         return OWLTags.abstr;
-        }
-        }
+    }
+}
