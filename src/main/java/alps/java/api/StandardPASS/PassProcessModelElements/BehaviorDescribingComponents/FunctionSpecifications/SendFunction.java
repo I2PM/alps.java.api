@@ -1,5 +1,6 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.FunctionSpecifications;
 
+
 import alps.java.api.StandardPASS.PassProcessModelElements.ISubjectBehavior;
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.util.IIncompleteTriple;
@@ -7,13 +8,13 @@ import alps.java.api.util.IIncompleteTriple;
 import java.util.List;
 
 /**
- * Class that represents a receive function class
+ * Class that represents a send function
  */
-public class ReceiveFunction extends CommunicationAct implements IReceiveFunction {
+public class SendFunction extends CommunicationAct implements ISendFunction {
     /**
-     * Name of the class, needed for parsin
+     * Name of the class, needed for parsing
      */
-    private final String className = "ReceiveFunction";
+    private final String className = "SendFunction";
 
     @Override
     public String getClassName() {
@@ -22,17 +23,22 @@ public class ReceiveFunction extends CommunicationAct implements IReceiveFunctio
 
     @Override
     public IParseablePASSProcessModelElement getParsedInstance() {
-        return new ReceiveFunction();
+        return new SendFunction();
     }
 
-    protected ReceiveFunction() {
+    protected SendFunction() {
     }
 
-    public ReceiveFunction(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,
-                           String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
+    public SendFunction(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,
+                        String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
         super(behavior, labelForID, toolSpecificDefinition, comment, additionalLabel, additionalAttribute);
+
+
     }
-    public ReceiveFunction(ISubjectBehavior behavior) {
-        super(behavior);
+
+    public SendFunction(ISubjectBehavior behavior) {
+        super(behavior, null, null, null, null, null);
+
+
     }
 }

@@ -10,36 +10,36 @@ import java.util.List;
 /**
  * Class that represents a receive type
  */
-public class ReceiveType extends BehaviorDescribingComponent implements IReceiveType
-        {
-/**
- * Name of the class, needed for parsing
- */
-            private final String className = "ReceiveType";
-@Override
-public String getClassName()
-        {
+public class ReceiveType extends BehaviorDescribingComponent implements IReceiveType {
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String className = "ReceiveType";
+
+    @Override
+    public String getClassName() {
         return className;
-        }
-@Override
-public IParseablePASSProcessModelElement getParsedInstance()
-        {
+    }
+
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
         return new ReceiveType();
-        }
+    }
 
-protected ReceiveType() { }
+    protected ReceiveType() {
+    }
 
-            /**
-             *
-             * @param behavior
-             * @param label
-             * @param comment
-             * @param additionalLabel
-             * @param additionalAttribute
-             */
-            //TODO: Konstruktor überladen
-            public ReceiveType(ISubjectBehavior behavior, String label, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
-        super(behavior, label, comment, additionalLabel, additionalAttribute); }
+    /**
+     * @param behavior
+     * @param label
+     */
+    //TODO: Konstruktor überladen
+    public ReceiveType(ISubjectBehavior behavior, String label) {
+        super(behavior, label, null, null, null);
+    }
 
+    public ReceiveType(ISubjectBehavior behavior, String label, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
+        super(behavior, label, comment, additionalLabel, additionalAttribute);
+    }
 
-        }
+}

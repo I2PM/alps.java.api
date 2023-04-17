@@ -170,7 +170,7 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
             behaviorDescriptionComponents.remove(id);
             component.unregister(this, removeCascadeDepth);
             if (layer != null)
-                if (layer.getContainedBy( outIPASSProcessModel model))
+                if (layer.getContainedBy(outIPASSProcessModel model))
                     model.removeElement(id);
 
             for (IBehaviorDescribingComponent otherComponent : getBehaviorDescribingComponents().values()) {
@@ -399,6 +399,7 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
             }
         }
     }
+
     public void setSubject(ISubject subj) {
         if (subj instanceof IFullySpecifiedSubject) {
             IFullySpecifiedSubject fullySpecified = (IFullySpecifiedSubject) subj;

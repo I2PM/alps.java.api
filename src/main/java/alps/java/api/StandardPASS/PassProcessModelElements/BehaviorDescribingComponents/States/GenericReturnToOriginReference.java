@@ -37,5 +37,8 @@ public GenericReturnToOriginReference(ISubjectBehavior behavior, String labelFor
                                       Set<ITransition> incomingTransition, Set<ITransition> outgoingTransition, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
     super(behavior, labelForID, guardBehavior, functionSpecification, incomingTransition, outgoingTransition, comment, additionalLabel, additionalAttribute);
          }
+            public GenericReturnToOriginReference(ISubjectBehavior behavior){
+                super(behavior, null, null, null, null, null, null, null, null);
+            }
 
         }

@@ -5,18 +5,19 @@ import alps.java.api.StandardPASS.PassProcessModelElements.IBehaviorDescribingCo
 /**
  * Interface to the FunctionSpecification class
  */
-public interface IFunctionSpecification extends IBehaviorDescribingComponent
-        {
-            /**
-             * Sets a tool-specific Definition
-             * @param toolSpecificDefinition a tool-specific Definition
-             */
-        void setToolSpecificDefinition(String toolSpecificDefinition);
+public interface IFunctionSpecification extends IBehaviorDescribingComponent {
+    /**
+     * Sets a tool-specific Definition
+     *
+     * @param toolSpecificDefinition a tool-specific Definition
+     */
+    void setToolSpecificDefinition(String toolSpecificDefinition);
 
-            /**
-             * Returns the tool-specific Definition
-             * @return the tool-specific Definition
-             */
-        String getToolSpecificDefinition();
+    /**
+     * Returns the tool-specific Definition
+     *
+     * @return the tool-specific Definition
+     */
+    String getToolSpecificDefinition();
 
-        }
+}

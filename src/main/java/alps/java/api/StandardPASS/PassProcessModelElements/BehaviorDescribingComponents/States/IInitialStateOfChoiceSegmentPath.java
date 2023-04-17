@@ -5,17 +5,18 @@ import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCom
 /**
  * Interface to the InitialStateOfChoiceSegmentPath class
  */
-public interface IInitialStateOfChoiceSegmentPath extends IState
-        {
-            /**
-             * Sets the choice segment path that contains this state as initial state
-             * @param choiceSegmentPath the choice segment path
-             */
-        void setBelongsToChoiceSegmentPath(IChoiceSegmentPath choiceSegmentPath);
+public interface IInitialStateOfChoiceSegmentPath extends IState {
+    /**
+     * Sets the choice segment path that contains this state as initial state
+     *
+     * @param choiceSegmentPath the choice segment path
+     */
+    void setBelongsToChoiceSegmentPath(IChoiceSegmentPath choiceSegmentPath);
 
-            /**
-             * Gets the choice segment path that contains this state as initial state
-             * @return the choice segment path
-             */
-        IChoiceSegmentPath getChoiceSegmentPath();
-        }
+    /**
+     * Gets the choice segment path that contains this state as initial state
+     *
+     * @return the choice segment path
+     */
+    IChoiceSegmentPath getChoiceSegmentPath();
+}

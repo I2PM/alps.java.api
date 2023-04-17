@@ -33,26 +33,27 @@ public IParseablePASSProcessModelElement getParsedInstance()
 
 protected TransitionCondition() { }
 
-            /**
-             *
-             * @param transition
-             * @param label
-             * @param toolSpecificDefintion
-             * @param comment
-             * @param additionalLabel
-             * @param additionalAttribute
-             */
-            //TODO: Konstruktor überladen. neu implementieren
-            public TransitionCondition(ITransition transition, String label, String toolSpecificDefintion, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
-        super(null, label, comment, additionalLabel, additionalAttribute);
+            //TODO: out-Parameter
+            public TransitionCondition(ITransition transition){
+        super(null, null, null, null, null);
         if (transition != null)
         {
         if (transition.getContainedBy(out ISubjectBehavior behavior))
         setContainedBy(behavior);
         transition.setTransitionCondition(this);
         }
-        setToolSpecificDefinition(toolSpecificDefintion);
+        setToolSpecificDefinition(null);
         }
+                public TransitionCondition(ITransition transition, String label, String toolSpecificDefintion, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
+                        super(null, label, comment, additionalLabel, additionalAttribute);
+                        if (transition != null)
+                        {
+                                if (transition.getContainedBy(out ISubjectBehavior behavior))
+                                        setContainedBy(behavior);
+                                transition.setTransitionCondition(this);
+                        }
+                        setToolSpecificDefinition(toolSpecificDefintion);
+                }
 
 //TODO: ? ist nicht dasselbe
 public void setToolSpecificDefinition(String toolSpecificDefinition)

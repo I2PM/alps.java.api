@@ -43,14 +43,16 @@ protected FunctionSpecification() { }
              * @param additionalLabel
              * @param additionalAttribute
              */
-            //TODO: Konatrukto überladen
             public FunctionSpecification(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,
                                          String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
         super(behavior, labelForID, comment, additionalLabel, additionalAttribute);
         setToolSpecificDefinition(toolSpecificDefinition);
         }
+                public FunctionSpecification(ISubjectBehavior behavior){
+                        super(behavior, null, null, null, null);
+                        setToolSpecificDefinition(null);
+                }
 
-//TODO: ? ist nicht dasselbe
 public void setToolSpecificDefinition(String toolSpecificDefinition)
         {
         if (toolSpecificDefinition != null && toolSpecificDefinition.equals(this.toolSpecificDefinition)) return;

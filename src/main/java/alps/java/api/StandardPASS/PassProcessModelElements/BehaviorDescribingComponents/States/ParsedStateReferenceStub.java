@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *  Class that represents a StateReference
+ * Class that represents a StateReference
  * Because a StateReference acts the same as the class of the state it references,
  * it s not possible to use the StateReference as standalone C#-class.<br></br>
  * Example: SendTransition from a StateReference would not work, because the Transition needs a SendState as Origin.
@@ -23,68 +23,61 @@ import java.util.Map;
  * to use the functionality the state must be casted to IStateReference.
  * This class is only for parsing reasons (loads references and converts them to states) and should not be used to model!
  */
-public class ParsedStateReferenceStub extends State implements IStateReference
-        {
+public class ParsedStateReferenceStub extends State implements IStateReference {
 //protected IState referenceState;
-            /**
-             * Name of the class, needed for parsing
-             */
-            private final String className = "StateReference";
-@Override
-public String getClassName()
-        {
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String className = "StateReference";
+
+    @Override
+    public String getClassName() {
         return className;
-        }
-        @Override
-public IParseablePASSProcessModelElement getParsedInstance()
-        {
+    }
+
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
         return new ParsedStateReferenceStub();
-        }
+    }
 
-public ParsedStateReferenceStub() { }
+    public ParsedStateReferenceStub() {
+    }
 
 
-
-public void setReferencesState(IState state, int removeCascadeDepth)
-        {
+    public void setReferencesState(IState state, int removeCascadeDepth) {
         return;
-        }
-            public void setReferencesState(IState state)
-            {
-                return;
-            }
+    }
+
+    public void setReferencesState(IState state) {
+        return;
+    }
 
 
-public IState getReferencesState()
-        {
+    public IState getReferencesState() {
         return null;
-        }
+    }
 
-//TODO: out-Parameter
-public IState transformToState(Map<String, IParseablePASSProcessModelElement> allElements)
-        {
+    //TODO: out-Parameter
+    public IState transformToState(Map<String, IParseablePASSProcessModelElement> allElements) {
         List<IIncompleteTriple> allTriples = getIncompleteTriples();
-        for(Statement t:  getTriples())
-        allTriples.add(new IncompleteTriple(t));
+        for (Statement t : getTriples())
+            allTriples.add(new IncompleteTriple(t));
 
-        for(IIncompleteTriple t: allTriples)
-        {
-        if (t.getPredicate().toString().contains(OWLTags.references))
-        {
-        String objID = StaticFunctions.removeBaseUri(t.getObject().toString(), null);
-        if (allElements.getOrDefault(objID, out IParseablePASSProcessModelElement element))
-        {
-        IState state = (IState)element.getParsedInstance();
+        for (IIncompleteTriple t : allTriples) {
+            if (t.getPredicate().toString().contains(OWLTags.references)) {
+                String objID = StaticFunctions.removeBaseUri(t.getObject().toString(), null);
+                if (allElements.getOrDefault(objID, out IParseablePASSProcessModelElement element)) {
+                    IState state = (IState) element.getParsedInstance();
 
-        if (state instanceof IParseablePASSProcessModelElement parseable)
-        parseable.addTriples(allTriples);
-        state.setModelComponentID(getModelComponentID());
-        if (state instanceof IStateReference reference)
-        reference.setReferencedState((IState)element);
-        return state;
-        }
-        }
+                    if (state instanceof IParseablePASSProcessModelElement parseable)
+                        parseable.addTriples(allTriples);
+                    state.setModelComponentID(getModelComponentID());
+                    if (state instanceof IStateReference reference)
+                        reference.setReferencedState((IState) element);
+                    return state;
+                }
+            }
         }
         return null;
-        }
-        }
+    }
+}

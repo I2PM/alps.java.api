@@ -1,9 +1,19 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States;
 
 
+import alps.java.api.StandardPASS.IPASSProcessModelElement;
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IFunctionSpecification;
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.ITransition;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.State;
 import alps.java.api.StandardPASS.PassProcessModelElements.ISubjectBehavior;
+import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors.IGuardBehavior;
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
+import alps.java.api.src.OWLTags;
+import alps.java.api.util.IIncompleteTriple;
+import alps.java.api.util.IncompleteTriple;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Class that represents InitialStateOfChoiceSegmentPath
@@ -27,14 +37,17 @@ public IParseablePASSProcessModelElement getParsedInstance()
         }
 
 protected InitialStateOfChoiceSegmentPath() { }
-public InitialStateOfChoiceSegmentPath(ISubjectBehavior behavior, string labelForID = null, IGuardBehavior guardBehavior = null,
-                                       IFunctionSpecification functionSpecification = null,
-                                       ISet<ITransition> incomingTransition = null, ISet<ITransition> outgoingTransition = null,
-                                       IChoiceSegmentPath choiceSegmentPath = null, string comment = null, string additionalLabel = null, IList<IIncompleteTriple> additionalAttribute = null)
-        : base(behavior, labelForID, guardBehavior, functionSpecification, incomingTransition, outgoingTransition, comment, additionalLabel, additionalAttribute)
-        {
+public InitialStateOfChoiceSegmentPath(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,
+                                       IFunctionSpecification functionSpecification,
+                                       Set<ITransition> incomingTransition, Set<ITransition> outgoingTransition,
+                                       IChoiceSegmentPath choiceSegmentPath, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
+        super(behavior, labelForID, guardBehavior, functionSpecification, incomingTransition, outgoingTransition, comment, additionalLabel, additionalAttribute);
         setBelongsToChoiceSegmentPath(choiceSegmentPath);
         }
+                public InitialStateOfChoiceSegmentPath(ISubjectBehavior behavior){
+                        super(behavior, null, null, null, null, null, null, null, null);
+                        setBelongsToChoiceSegmentPath(null);
+                }
 
 public void setBelongsToChoiceSegmentPath(IChoiceSegmentPath choiceSegmentPath)
         {
@@ -44,12 +57,12 @@ public void setBelongsToChoiceSegmentPath(IChoiceSegmentPath choiceSegmentPath)
 
         if (oldPath != null)
         {
-        if (oldPath.Equals(choiceSegmentPath)) return;
+        if (oldPath.equals(choiceSegmentPath)) return;
         oldPath.unregister(this);
         removeTriple(new IncompleteTriple(OWLTags.stdBelongsTo, oldPath.getModelComponentID()));
         }
 
-        if (!(choiceSegmentPath is null))
+        if (!(choiceSegmentPath == null))
         {
         publishElementAdded(choiceSegmentPath);
         choiceSegmentPath.register(this);
@@ -63,26 +76,26 @@ public IChoiceSegmentPath getChoiceSegmentPath()
         return choiceSegmentPath;
         }
 
-
-protected override bool parseAttribute(string predicate, string objectContent, string lang, string dataType, IParseablePASSProcessModelElement element)
+@Override
+protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)
         {
         if (element != null)
         {
-        if (predicate.Contains(OWLTags.belongsTo) && element is IChoiceSegmentPath path)
+        if (predicate.contains(OWLTags.belongsTo) && element instanceof IChoiceSegmentPath path)
         {
         setBelongsToChoiceSegmentPath(path);
         return true;
         }
         }
-        return base.parseAttribute(predicate, objectContent, lang, dataType, element);
+        return super.parseAttribute(predicate, objectContent, lang, dataType, element);
         }
 
-
-public override ISet<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
+@Override
+public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification)
         {
-        ISet<IPASSProcessModelElement> baseElements = base.getAllConnectedElements(specification);
+        Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
         if (getChoiceSegmentPath() != null)
-        baseElements.Add(getChoiceSegmentPath());
+        baseElements.add(getChoiceSegmentPath());
         return baseElements;
         }
 

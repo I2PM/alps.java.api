@@ -6,6 +6,5 @@ import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCom
  * Interface to the GenericReturnToOriginReference class
  */
 
-public interface IGenericReturnToOriginReference extends IState
-        {
-        }
+public interface IGenericReturnToOriginReference extends IState {
+}

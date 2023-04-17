@@ -1,4 +1,9 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.TransitionConditions;
 
-public interface ISendingFailedCondition {
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.ITransitionCondition;
+
+/**
+ * Interface to the sending failed condition class
+ */
+public interface ISendingFailedCondition extends ITransitionCondition {
 }

@@ -10,31 +10,32 @@ import java.util.List;
 /**
  * Class that represents a communication act
  */
-public class CommunicationAct extends FunctionSpecification implements ICommunicationAct
-        {
-/**
- * Name of the class, needed for parsing
- */
-private final String className = "CommunicationAct";
-@Override
-public String getClassName()
-        {
-        return className;
-        }
-@Override
-public IParseablePASSProcessModelElement getParsedInstance()
-        {
-        return new CommunicationAct();
-        }
+public class CommunicationAct extends FunctionSpecification implements ICommunicationAct {
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String className = "CommunicationAct";
 
-protected CommunicationAct() { }
-public CommunicationAct(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,
-                        String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
-    super(behavior, labelForID, toolSpecificDefinition, comment, additionalLabel, additionalAttribute);
+    @Override
+    public String getClassName() {
+        return className;
     }
 
-            public CommunicationAct(ISubjectBehavior behavior) {
-                super(behavior);
-            }
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
+        return new CommunicationAct();
+    }
+
+    protected CommunicationAct() {
+    }
+
+    public CommunicationAct(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,
+                            String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
+        super(behavior, labelForID, toolSpecificDefinition, comment, additionalLabel, additionalAttribute);
+    }
+
+    public CommunicationAct(ISubjectBehavior behavior) {
+        super(behavior, null, null, null, null, null);
+    }
 
 }

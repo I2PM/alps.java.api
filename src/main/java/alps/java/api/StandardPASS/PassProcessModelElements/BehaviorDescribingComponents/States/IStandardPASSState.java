@@ -5,6 +5,5 @@ import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCom
 /**
  * Interface to the standard PASS state class
  */
-public interface IStandardPASSState extends IState
-        {
-        }
+public interface IStandardPASSState extends IState {
+}

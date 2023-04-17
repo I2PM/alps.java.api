@@ -14,34 +14,34 @@ import java.util.Set;
 /**
  * Class that represents a standart PASS state
  */
-public class StandardPASSState extends State implements IStandardPASSState
-        {
-/**
- * Name of the class, needed for parsing
- */
-            private final String className = "StandardPASSState";
+public class StandardPASSState extends State implements IStandardPASSState {
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String className = "StandardPASSState";
 
 
-@Override
-public String getClassName()
-        {
+    @Override
+    public String getClassName() {
         return className;
-        }
-        @Override
-public IParseablePASSProcessModelElement getParsedInstance()
-        {
+    }
+
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
         return new StandardPASSState();
-        }
+    }
 
-protected StandardPASSState() { }
+    protected StandardPASSState() {
+    }
 
-public StandardPASSState(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,
-                         IFunctionSpecification functionSpecification,
-                         Set<ITransition> incomingTransition, Set<ITransition> outgoingTransition, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
+    public StandardPASSState(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,
+                             IFunctionSpecification functionSpecification,
+                             Set<ITransition> incomingTransition, Set<ITransition> outgoingTransition, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
         super(behavior, labelForID, guardBehavior, functionSpecification, incomingTransition, outgoingTransition, comment, additionalLabel, additionalAttribute);
-         }
-            public StandardPASSState(ISubjectBehavior behavior){
-                super(behavior, null, null, null, null, null, null, null, null);
-            }
+    }
 
-        }
+    public StandardPASSState(ISubjectBehavior behavior) {
+        super(behavior, null, null, null, null, null, null, null, null);
+    }
+
+}

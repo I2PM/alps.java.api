@@ -32,14 +32,12 @@ protected SendType() { }
             /**
              *
              * @param behavior
-             * @param labelForID
-             * @param comment
-             * @param additionalLabel
-             * @param additionalAttribute
              */
             //TODO: Konstruktor überladen
-            public SendType(ISubjectBehavior behavior, String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
-        super(behavior, labelForID, comment, additionalLabel, additionalAttribute);}
+            public SendType(ISubjectBehavior behavior){
+        super(behavior, null, null,null, null);}
 
+            public SendType(ISubjectBehavior behavior, String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
+                super(behavior, labelForID, comment, additionalLabel, additionalAttribute);}
 
         }

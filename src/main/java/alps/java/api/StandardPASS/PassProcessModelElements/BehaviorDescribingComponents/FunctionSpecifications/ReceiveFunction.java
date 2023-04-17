@@ -9,30 +9,33 @@ import java.util.List;
 /**
  * Class that represents a receive function class
  */
-public class ReceiveFunction extends CommunicationAct implements IReceiveFunction
-        {
-/**
- * Name of the class, needed for parsing
- */
-private final String className = "ReceiveFunction";
-@Override
-public String getClassName()
-        {
+public class ReceiveFunction extends CommunicationAct implements IReceiveFunction {
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String className = "ReceiveFunction";
+
+    @Override
+    public String getClassName() {
         return className;
-        }
-@Override
-public IParseablePASSProcessModelElement getParsedInstance()
-        {
+    }
+
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
         return new ReceiveFunction();
-        }
+    }
 
-protected ReceiveFunction() { }
-public ReceiveFunction(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,
-                       String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
-        super(behavior, labelForID, toolSpecificDefinition, comment, additionalLabel, additionalAttribute); }
+    protected ReceiveFunction() {
+    }
 
-            public ReceiveFunction(ISubjectBehavior behavior){
-                super(behavior); }
+    public ReceiveFunction(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,
+                           String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
+        super(behavior, labelForID, toolSpecificDefinition, comment, additionalLabel, additionalAttribute);
+    }
+
+    public ReceiveFunction(ISubjectBehavior behavior) {
+        super(behavior, null, null,null, null, null );
+    }
 
 
-        }
+}
