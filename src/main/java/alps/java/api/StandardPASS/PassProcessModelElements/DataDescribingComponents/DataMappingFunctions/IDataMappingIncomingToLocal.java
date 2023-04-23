@@ -1,4 +1,6 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataMappingFunctions;
 
-public interface IDataMappingIncomingToLocal {
+import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.IDataMappingFunction;
+
+public interface IDataMappingIncomingToLocal extends IDataMappingFunction {
 }
