@@ -1,4 +1,10 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataObjectDefinitions;
 
-public interface ISubjectDataDefinition {
-}
+import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.IDataObjectDefinition;
+
+/**
+ * Interface of the subject data definition class
+ */
+public interface ISubjectDataDefinition extends IDataObjectDefinition
+        {
+        }

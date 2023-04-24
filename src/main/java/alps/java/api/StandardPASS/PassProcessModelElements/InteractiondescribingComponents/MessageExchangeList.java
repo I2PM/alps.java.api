@@ -94,20 +94,20 @@ public class MessageExchangeList extends InteractionDescribingComponent implemen
         }
     }
 
-    //TODO: out-Parameter
     public void removeMessageExchange(String id, int removeCascadeDepth) {
         if (id == null) return;
-        if (messageExchanges.getOrDefault(id, out IMessageExchange exchange)) {
+        IMessageExchange exchange = messageExchanges.get(id);
+        if (exchange!=null) {
             messageExchanges.remove(id);
             exchange.unregister(this, removeCascadeDepth);
             removeTriple(new IncompleteTriple(OWLTags.stdContains, exchange.getUriModelComponentID()));
         }
     }
 
-    //TODO: out-Parameter
     public void removeMessageExchange(String id) {
         if (id == null) return;
-        if (messageExchanges.getOrDefault(id, out IMessageExchange exchange)) {
+        IMessageExchange exchange = messageExchanges.get(id);
+        if (exchange!=null) {
             messageExchanges.remove(id);
             exchange.unregister(this, 0);
             removeTriple(new IncompleteTriple(OWLTags.stdContains, exchange.getUriModelComponentID()));
@@ -132,7 +132,7 @@ public class MessageExchangeList extends InteractionDescribingComponent implemen
     @Override
     public void notifyModelComponentIDChanged(String oldID, String newID) {
         if (messageExchanges.containsKey(oldID)) {
-            IMessageExchange element = messageExchanges[oldID];
+            IMessageExchange element = messageExchanges.get(oldID);
             messageExchanges.remove(oldID);
             messageExchanges.put(element.getModelComponentID(), element);
         }

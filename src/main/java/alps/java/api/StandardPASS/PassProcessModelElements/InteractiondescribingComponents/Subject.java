@@ -7,6 +7,7 @@ import alps.java.api.FunctionalityCapsules.IExtendsFunctionalityCapsule;
 import alps.java.api.FunctionalityCapsules.IImplementsFunctionalityCapsule;
 import alps.java.api.FunctionalityCapsules.ImplementsFunctionalityCapsule;
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
+import alps.java.api.StandardPASS.PassProcessModelElements.IPASSProcessModel;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractionDescribingComponent;
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.src.OWLTags;
@@ -78,7 +79,7 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
     }
 
     public Subject(IModelLayer layer) {
-        super(layer, null, null, null, nulle);
+        super(layer, null, null, null, null);
 
         extendsCapsule = new ExtendsFunctionalityCapsule<ISubject>(this);
         implCapsule = new ImplementsFunctionalityCapsule<ISubject>(this);
@@ -172,10 +173,10 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         }
     }
 
-    //TODO: Out Parameter
     public void removeIncomingMessageExchange(String id, int removeCascadeDepth) {
         if (id == null) return;
-        if (incomingExchange.getOrDefault(id, out IMessageExchange exchange)) {
+        IMessageExchange exchange = incomingExchange.get(id);
+        if (exchange != null) {
             incomingExchange.remove(id);
             exchange.unregister(this, removeCascadeDepth);
             exchange.setReceiver(null);
@@ -183,10 +184,10 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         }
     }
 
-    //TODO: Out Parameter
     public void removeIncomingMessageExchange(String id) {
         if (id == null) return;
-        if (incomingExchange.getOrDefault(id, out IMessageExchange exchange)) {
+        IMessageExchange exchange = incomingExchange.get(id);
+        if (exchange != null) {
             incomingExchange.remove(id);
             exchange.unregister(this, 0);
             exchange.setReceiver(null);
@@ -194,10 +195,10 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         }
     }
 
-    //TODO: out-Parameter
     public void removeOutgoingMessageExchange(String id, int removeCascadeDepth) {
         if (id == null) return;
-        if (outgoingExchange.getOrDefault(id, out IMessageExchange exchange)) {
+        IMessageExchange exchange = outgoingExchange.get(id);
+        if (exchange != null) {
             outgoingExchange.remove(id);
             exchange.unregister(this, removeCascadeDepth);
             exchange.setSender(null);
@@ -205,10 +206,10 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         }
     }
 
-    //TODO: out-Parameter
     public void removeOutgoingMessageExchange(String id) {
         if (id == null) return;
-        if (outgoingExchange.getOrDefault(id, out IMessageExchange exchange)) {
+        IMessageExchange exchange = outgoingExchange.get(id);
+        if (exchange != null) {
             outgoingExchange.remove(id);
             exchange.unregister(this, 0);
             exchange.setSender(null);
@@ -224,7 +225,7 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
             return true;
         else if (predicate.contains(OWLTags.hasInstanceRestriction)) {
             String restr = objectContent;
-            setInstanceRestriction(int.Parse(restr));
+            setInstanceRestriction(Integer.parseInt(restr));
             return true;
         } else if (predicate.contains(OWLTags.type) && objectContent.contains("StartSubject")) {
             assignRole(ISubject.Role.StartSubject);
@@ -250,14 +251,15 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
 
-    //TODO: out-Parameter
     public void assignRole(ISubject.Role role) {
         if (!roles.contains(role)) {
             roles.add(role);
             if (role == ISubject.Role.StartSubject) {
                 addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.stdStartSubject));
-                if (getContainedBy(out IModelLayer layer)) {
-                    if (layer.getContainedBy(out IPASSProcessModel model))
+                IModelLayer layer = getContainedBy();
+                if (layer != null) {
+                    IPASSProcessModel model = layer.getContainedBy();
+                    if (model != null)
                         model.addStartSubject(this);
                 }
             }
@@ -274,8 +276,10 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
             roles.remove(role);
             if (role == ISubject.Role.StartSubject) {
                 removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.stdStartSubject));
-                if (getContainedBy(out IModelLayer layer)) {
-                    if (layer.getContainedBy(out IPASSProcessModel model))
+                IModelLayer layer = getContainedBy();
+                if (layer != null) {
+                    IPASSProcessModel model = layer.getContainedBy();
+                    if (model != null)
                         model.removeStartSubject(getModelComponentID());
                 }
             }

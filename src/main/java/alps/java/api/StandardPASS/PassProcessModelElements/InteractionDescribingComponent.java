@@ -34,9 +34,8 @@ public class InteractionDescribingComponent extends PASSProcessModelElement impl
         layer.addElement(this);
     }
 
-    public boolean getContainedBy(IModelLayer subject) {
-        subject = layer;
-        return layer != null;
+    public IModelLayer getContainedBy() {
+        return layer;
     }
 
     @Override
@@ -64,11 +63,12 @@ public class InteractionDescribingComponent extends PASSProcessModelElement impl
         setContainedBy(layer);
     }
 
-    //TODO: out-Parameter
     @Override
     protected Map<String, IParseablePASSProcessModelElement> getDictionaryOfAllAvailableElements() {
-        if (!getContainedBy(out IModelLayer layer)) return null;
-        if (!layer.getContainedBy(out IPASSProcessModel model)) return null;
+        IModelLayer layer = getContainedBy();
+        if (layer == null) return null;
+        IPASSProcessModel model = layer.getContainedBy();
+        if (model == null) return null;
         Map<String, IPASSProcessModelElement> allElements = model.getAllElements();
         Map<String, IParseablePASSProcessModelElement> allParseableElements = new HashMap<String, IParseablePASSProcessModelElement>();
         for (Map.Entry<String, IPASSProcessModelElement> pair : allElements.entrySet()) {
@@ -81,14 +81,15 @@ public class InteractionDescribingComponent extends PASSProcessModelElement impl
         return allParseableElements;
     }
 
-    //TODO: out-Parameter
     @Override
     public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification) {
         Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
-        if (specification == ConnectedElementsSetSpecification.ALL)
-            if (getContainedBy(out IModelLayer layer)) {
+        if (specification == ConnectedElementsSetSpecification.ALL) {
+            IModelLayer layer = getContainedBy();
+            if (layer != null) {
                 baseElements.add(layer);
             }
+        }
 
         return baseElements;
     }

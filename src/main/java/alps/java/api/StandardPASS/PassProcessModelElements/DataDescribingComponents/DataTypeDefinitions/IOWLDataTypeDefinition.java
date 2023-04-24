@@ -1,4 +1,7 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataTypeDefinitions;
 
-public interface IOWLDataTypeDefinition {
+/**
+ * Interface to the OWL data type definition class
+ */
+public interface IOWLDataTypeDefinition extends ICustomOrExternalDataTypeDefinition {
 }

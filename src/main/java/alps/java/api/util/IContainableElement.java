@@ -18,10 +18,9 @@ public interface IContainableElement<T> {
     /**
      * Returns the container this element belongs to
      * "out" method
-     * @param container the container instance
      * @return true if the container is not null and the element is currently contained by another instance
      */
-    boolean getContainedBy(T container);
+    T getContainedBy();
 
     /**
      * Removes this element from its container

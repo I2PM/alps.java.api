@@ -1,4 +1,10 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents;
 
-public interface IPayloadDescription {
+import alps.java.api.StandardPASS.PassProcessModelElements.IDataDescribingComponent;
+
+/**
+ * Interface of the payload description class
+ */
+public interface IPayloadDescription extends IDataDescribingComponent {
+
 }
