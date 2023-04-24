@@ -106,11 +106,12 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
         layer.addElement(this);
     }
 
-    //ToDO: out-Parameter
     @Override
     protected Map<String, IParseablePASSProcessModelElement> getDictionaryOfAllAvailableElements() {
         if (layer == null) return null;
-        if (!layer.getContainedBy(out IPASSProcessModel model)) return null;
+        IPASSProcessModel model = layer.getContainedBy();
+        ;
+        if (model == null) return null;
         Map<String, IPASSProcessModelElement> allElements = model.getAllElements();
         Map<String, IParseablePASSProcessModelElement> allParseableElements = new HashMap<String, IParseablePASSProcessModelElement>();
         for (Map.Entry<String, IPASSProcessModelElement> pair : allElements.entrySet()) {
@@ -163,15 +164,17 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
         }
     }
 
-    //TODO: out-Parameter
     public boolean removeBehaviorDescribingComponent(String id, int removeCascadeDepth) {
         if (id == null) return false;
-        if (behaviorDescriptionComponents.getOrDefault(id, out IBehaviorDescribingComponent component)) {
+        IBehaviorDescribingComponent component = behaviorDescriptionComponents.get(id);
+        if (component != null) {
             behaviorDescriptionComponents.remove(id);
             component.unregister(this, removeCascadeDepth);
-            if (layer != null)
-                if (layer.getContainedBy(outIPASSProcessModel model))
+            if (layer != null) {
+                IPASSProcessModel model = layer.getContainedBy();
+                if (model != null)
                     model.removeElement(id);
+            }
 
             for (IBehaviorDescribingComponent otherComponent : getBehaviorDescribingComponents().values()) {
                 otherComponent.updateRemoved(component, this, removeCascadeDepth);
@@ -194,14 +197,17 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
     //TODO: out-Parameter
     public boolean removeBehaviorDescribingComponent(String id) {
         if (id == null) return false;
-        if (behaviorDescriptionComponents.getOrDefault(id, IBehaviorDescribingComponent component)) {
+        IBehaviorDescribingComponent component = behaviorDescriptionComponents.get(id);
+        if (component != null) {
             behaviorDescriptionComponents.remove(id);
             component.unregister(this, 0);
-            if (layer != null)
-                if (layer.getContainedBy(IPASSProcessModel model))
+            if (layer != null) {
+                IPASSProcessModel model = layer.getContainedBy();
+                if (model != null)
                     model.removeElement(id);
+            }
 
-            for (IBehaviorDescribingComponent otherComponent : getBehaviorDescribingComponents().Values) {
+            for (IBehaviorDescribingComponent otherComponent : getBehaviorDescribingComponents().values()) {
                 otherComponent.updateRemoved(component, this, 0);
             }
             if (component.equals(initialStateOfBehavior)) {
