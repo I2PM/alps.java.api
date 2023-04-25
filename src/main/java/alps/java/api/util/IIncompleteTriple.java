@@ -5,7 +5,7 @@ import org.apache.jena.rdf.model.*;
 
 
 /**
- * This interface simplifies the use of {@link Triple}when no {@link Model } is currently given to create a real triple,
+ * This interface simplifies the use of {@link Statement}when no {@link Model } is currently given to create a real triple,
  * or as quick mock for a real triple.
  * An incomplete triple is only valid when bound to a class that acts as subject,
  * because the incomplete triple does not parse subject information (only object and predicate).

@@ -144,13 +144,24 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
     }
 
     //TODO: Fehlermeldung Methode mit generischem Datentyp
-    private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node) {
+   /* private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node) {
         // Get all classes that are known to the current project and that extend the given node
         List<IParseablePASSProcessModelElement> enumerable = ReflectiveEnumerator.getEnumerableOfType(node.getContent());
         for (IParseablePASSProcessModelElement element : enumerable) {
             node.addChild(new TreeNode<IParseablePASSProcessModelElement>(element));
         }
         for (ITreeNode<IParseablePASSProcessModelElement> childNode : node.getChildNodes()) {
+            findChildsAndAdd(childNode);
+        }
+    }
+    */
+    private void findChildsAndAdd(TreeNode<IParseablePASSProcessModelElement> node) {
+        // Get all classes that are known to the current project and that extend the given node
+        List<IParseablePASSProcessModelElement> enumerable = ReflectiveEnumerator.getEnumerableOfType(node.getContent());
+        for (IParseablePASSProcessModelElement element : enumerable) {
+            node.addChild(new TreeNode<>(element));
+        }
+        for (TreeNode<IParseablePASSProcessModelElement> childNode : node.getChildNodes()) {
             findChildsAndAdd(childNode);
         }
     }
