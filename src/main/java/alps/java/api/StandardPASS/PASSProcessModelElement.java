@@ -497,13 +497,12 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         comments.clear();
     }
 
-    //TODO: out-Parameter
     public void completeObject(Map<String, IParseablePASSProcessModelElement> allElements) {
         if (parsingStarted) return;
         parsingStarted = true;
         List<IParseablePASSProcessModelElement> successfullyParsedElements = new ArrayList<IParseablePASSProcessModelElement>();
         for (Statement triple : getTriples()) {
-            parseAttribute(triple, allElements, IParseablePASSProcessModelElement parsedElement);
+            IParseablePASSProcessModelElement parsedElement=parseAttribute(triple, allElements);
             if (parsedElement != null) {
                 successfullyParsedElements.add(parsedElement);
             }
@@ -516,21 +515,19 @@ public class PASSProcessModelElement implements ICapsuleCallback {
 
     protected boolean parsingStarted = false;
 
-    //TODO: out Parameter Methode
-    protected boolean parseAttribute(Statement triple, IParseablePASSProcessModelElement parsedElement) {
+    protected IParseablePASSProcessModelElement parseAttribute(Statement triple) {
 
         // Calling parsing method
         // If attribute contains a reference to a PassProcessModelElement, pass this to the method
         Map<String, IParseablePASSProcessModelElement> allElements = getDictionaryOfAllAvailableElements();
-        return parseAttribute(triple, allElements, parsedElement);
+        return parseAttribute(triple, allElements);
     }
     //TODO: out Methode
 
-    protected boolean parseAttribute(Statement triple, Map<String, IParseablePASSProcessModelElement> allElements, IParseablePASSProcessModelElement parsedElement) {
+    protected IParseablePASSProcessModelElement parseAttribute(Statement triple, Map<String, IParseablePASSProcessModelElement> allElements) {
 
         // Calling parsing method
         // If attribute contains a reference to a PassProcessModelElement, pass this to the method
-        parsedElement = null;
         setExportXMLName(NodeHelper.getNodeContent(triple.getSubject()));
         String predicateContent = NodeHelper.getNodeContent(triple.getPredicate());
         String objectContent = NodeHelper.getNodeContent(triple.getObject());
@@ -546,11 +543,9 @@ public class PASSProcessModelElement implements ICapsuleCallback {
 
         if (allElements != null && allElements.containsKey(possibleID)) {
             if (parseAttribute(predicateContent, possibleID, lang, dataType, allElements.get(possibleID)) && allElements.get(possibleID) != this) {
-                parsedElement = allElements.get(possibleID);
-                successfullyParsedElement(parsedElement);
-                return true;
+                return allElements.get(possibleID);
             }
-            return false;
+            return null;
         } else {
             return parseAttribute(predicateContent, objectContent, lang, dataType, null);
         }
@@ -584,6 +579,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      * @param element       the element the objectContent points to (if it does and the element exists)
      * @return
      */
+    //TODO: weiter out-Methode
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
         if (predicate.toLowerCase().contains(OWLTags.rdfsComment)) {
             addComment(new LanguageSpecificString(objectContent, lang));

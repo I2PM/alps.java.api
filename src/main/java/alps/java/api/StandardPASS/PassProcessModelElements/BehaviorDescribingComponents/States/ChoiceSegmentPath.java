@@ -71,14 +71,15 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
         setIsOptionalToStartChoiceSegmentPath(isOptionalToStartChoiceSegmentPath);
     }
 
-//TODO: out-Parameter
+    //TODO: out-Parameter
     public ChoiceSegmentPath(IChoiceSegment choiceSegment, String labelForID, IGuardBehavior guardBehavior,
                              IFunctionSpecification functionSpecification, Set<ITransition> incomingTransition, Set<ITransition> outgoingTransition,
                              Set<IState> containedStates, IState endState,
                              IInitialStateOfChoiceSegmentPath initialStateOfChoiceSegmentPath, boolean isOptionalToEndChoiceSegmentPath,
                              boolean isOptionalToStartChoiceSegmentPath, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
-        super(choiceSegment == null ? null : choiceSegment.getContainedBy(out ISubjectBehavior behavior) ? behavior : null, labelForID, guardBehavior,
-                functionSpecification, incomingTransition, outgoingTransition, comment, additionalLabel, additionalAttribute);
+        super(choiceSegment == null ? null : (ISubjectBehavior behavior = choiceSegment.getContainedBy() != null) ? behavior : null, labelForID, guardBehavior,
+                functionSpecification, incomingTransition, outgoingTransition, comment, additionalLabel, additionalAttribute)
+        ;
         setEndState(endState);
         setInitialState(initialStateOfChoiceSegmentPath);
         setContainedStates(containedStates);
@@ -88,7 +89,8 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
     }
 
     public ChoiceSegmentPath(IChoiceSegment choiceSegment) {
-        super(choiceSegment == null ? null : choiceSegment.getContainedBy(out ISubjectBehavior behavior) ? behavior : null);
+        super(choiceSegment == null ? null : (ISubjectBehavior behavior = choiceSegment.getContainedBy() != null) ? behavior : null)
+        ;
         setEndState(null);
         setInitialState(null);
         setContainedStates(null);
@@ -132,10 +134,10 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
         return new HashMap<String, IState>(containedStates);
     }
 
-    //TODO: out-Parameter
     public void removeContainedState(String id, int removeCascadeDepth) {
         if (id == null) return;
-        if (containedStates.getOrDefault(id, out IState state)) {
+        IState state = containedStates.get(id);
+        if (state != null) {
             containedStates.remove(id);
             state.unregister(this, removeCascadeDepth);
             removeTriple(new IncompleteTriple(OWLTags.stdContains, state.getUriModelComponentID()));
@@ -143,10 +145,11 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
             if (state.equals(getEndState())) setEndState(null, removeCascadeDepth);
         }
     }
-    //TODO: out-Parameter
+
     public void removeContainedState(String id) {
         if (id == null) return;
-        if (containedStates.getOrDefault(id, out IState state)) {
+        IState state = containedStates.get(id);
+        if (state != null) {
             containedStates.remove(id);
             state.unregister(this, 0);
             removeTriple(new IncompleteTriple(OWLTags.stdContains, state.getUriModelComponentID()));
@@ -285,13 +288,14 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
-//TODO: out-Parameter
+
     @Override
     public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification) {
         Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
         for (IState component : getContainedStates().values())
             baseElements.add(component);
-        if (getContainedBy(out IChoiceSegment segment))
+        IChoiceSegment segment = getContainedBy();
+        if (segment != null)
             baseElements.add(segment);
         if (getEndState() != null)
             baseElements.add(getEndState());
@@ -299,7 +303,7 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
             baseElements.add(getInitialState());
         return baseElements;
     }
-//TODO: out-Parameter
+
     @Override
     public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller, int removeCascadeDepth) {
         super.updateRemoved(update, caller, removeCascadeDepth);
@@ -311,12 +315,12 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
                     setInitialState(null, removeCascadeDepth);
                 else removeContainedState(state.getModelComponentID(), removeCascadeDepth);
             }
-            getContainedBy(out IChoiceSegment localSegment);
+            IChoiceSegment localSegment = getContainedBy();
             if (update instanceof IChoiceSegment segment && segment.equals(localSegment))
-                setContainedBy(null);
+                setContainedBy((IChoiceSegment) null);
         }
     }
-//TODO: out-Parameter
+
     @Override
     public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller) {
         super.updateRemoved(update, caller, 0);
@@ -328,9 +332,9 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
                     setInitialState(null, 0);
                 else removeContainedState(state.getModelComponentID(), 0);
             }
-            getContainedBy(out IChoiceSegment localSegment);
+            IChoiceSegment localSegment = getContainedBy();
             if (update instanceof IChoiceSegment segment && segment.equals(localSegment))
-                setContainedBy(null);
+                setContainedBy((IChoiceSegment) null);
         }
     }
 
@@ -363,9 +367,8 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
     }
 
 
-    public boolean getContainedBy(IChoiceSegment choiceSegment) {
-        choiceSegment = segment;
-        return segment != null;
+    public IChoiceSegment getContainedBy() {
+        return segment;
     }
 
     public void removeFromContainer() {

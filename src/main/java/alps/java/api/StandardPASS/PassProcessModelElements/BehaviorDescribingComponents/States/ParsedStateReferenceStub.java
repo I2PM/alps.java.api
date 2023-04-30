@@ -57,7 +57,6 @@ public class ParsedStateReferenceStub extends State implements IStateReference {
         return null;
     }
 
-    //TODO: out-Parameter
     public IState transformToState(Map<String, IParseablePASSProcessModelElement> allElements) {
         List<IIncompleteTriple> allTriples = getIncompleteTriples();
         for (Statement t : getTriples())
@@ -66,11 +65,12 @@ public class ParsedStateReferenceStub extends State implements IStateReference {
         for (IIncompleteTriple t : allTriples) {
             if (t.getPredicate().toString().contains(OWLTags.references)) {
                 String objID = StaticFunctions.removeBaseUri(t.getObject().toString(), null);
-                if (allElements.getOrDefault(objID, out IParseablePASSProcessModelElement element)) {
+                IParseablePASSProcessModelElement element = allElements.get(objID);
+                if (element != null) {
                     IState state = (IState) element.getParsedInstance();
 
                     if (state instanceof IParseablePASSProcessModelElement parseable)
-                        parseable.addTriples(allTriples);
+                        parseable.addIncompleteTriples(allTriples);
                     state.setModelComponentID(getModelComponentID());
                     if (state instanceof IStateReference reference)
                         reference.setReferencedState((IState) element);

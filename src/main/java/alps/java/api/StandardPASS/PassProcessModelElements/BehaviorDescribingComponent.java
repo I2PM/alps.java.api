@@ -75,10 +75,9 @@ public class BehaviorDescribingComponent extends
         }
     }
 
-    //TODO: fertig implementieren ist eig. Methode mit Out Parameter
-    public boolean getContainedBy(ISubjectBehavior behavior) {
-        behavior = subjectBehavior;
-        return subjectBehavior != null;
+
+    public ISubjectBehavior getContainedBy() {
+        return subjectBehavior;
     }
 
     @Override
@@ -93,12 +92,11 @@ public class BehaviorDescribingComponent extends
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
 
-    //TODO: hat eigentlich out-Parameter Aufruf
     @Override
     public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification) {
         Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
         if (specification == ConnectedElementsSetSpecification.ALL) {
-            ISubjectBehavior behavior = getContainedBy(out ISubjectBehavior behavior);
+            ISubjectBehavior behavior = getContainedBy();
             if (behavior != null) {
                 baseElements.add(behavior);
             }
@@ -107,12 +105,14 @@ public class BehaviorDescribingComponent extends
         return baseElements;
     }
 
-    //TODO: out-Parameter
     @Override
     protected Map<String, IParseablePASSProcessModelElement> getDictionaryOfAllAvailableElements() {
-        if (!getContainedBy(out ISubjectBehavior behavior)) return null;
-        if (!behavior.getContainedBy(out IModelLayer layer)) return null;
-        if (!layer.getContainedBy(out IPASSProcessModel model)) return null;
+        ISubjectBehavior behavior = getContainedBy();
+        if (behavior == null) return null;
+        IModelLayer layer = behavior.getContainedBy();
+        if (layer == null) return null;
+        IPASSProcessModel model = layer.getContainedBy();
+        if (model == null) return null;
         Map<String, IPASSProcessModelElement> allElements = model.getAllElements();
         Map<String, IParseablePASSProcessModelElement> allParseableElements = new HashMap<>();
 

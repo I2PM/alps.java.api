@@ -63,6 +63,7 @@ public interface IParseablePASSProcessModelElement extends IPASSProcessModelElem
      */
     void addTriples(List<Statement> triples);
 
+
     /**
      * Adds a complete triple to the element.
      * If the element contains an Incomplete Triple containing the same information, it will be deleted.

@@ -111,8 +111,8 @@ public class ReceiveTransitionCondition extends MessageExchangeCondition impleme
 
         if (oldType.equals(receiveType)) return;
 
-        removeTriple(new IncompleteTriple(OWLTags.stdHasReceiveType, receiveTypeOWLExportNames[(int) oldType]));
-        addTriple(new IncompleteTriple(OWLTags.stdHasReceiveType, receiveTypeOWLExportNames[(int) receiveType]));
+        removeTriple(new IncompleteTriple(OWLTags.stdHasReceiveType, receiveTypeOWLExportNames[(int) oldType.ordinal()]));
+        addTriple(new IncompleteTriple(OWLTags.stdHasReceiveType, receiveTypeOWLExportNames[(int) receiveType.ordinal()]));
     }
 
 
@@ -216,16 +216,16 @@ public class ReceiveTransitionCondition extends MessageExchangeCondition impleme
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
         if (predicate.contains(OWLTags.hasMultiReceiveLowerBound)) {
             String tmpLowerBound = objectContent;
-            setMultipleReceiveLowerBound(int.Parse(tmpLowerBound));
+            setMultipleReceiveLowerBound(Integer.parseInt(tmpLowerBound));
             return true;
         } else if (predicate.contains(OWLTags.hasMultiReceiveUpperBound)) {
             String tmpUpperBound = objectContent;
-            setMultipleReceiveUpperBound(int.Parse(tmpUpperBound));
+            setMultipleReceiveUpperBound(Integer.parseInt(tmpUpperBound));
             return true;
         } else if (predicate.contains(OWLTags.hasReceiveType)) {
-            for (int i : Enum.GetValues(typeof(ReceiveTypes))) {
-                if (objectContent.contains(receiveTypeOWLNames[i])) {
-                    setReceiveType((ReceiveTypes) i);
+            for (ReceiveTypes receiveTypes : ReceiveTypes.values()) {
+                if (objectContent.contains(receiveTypeOWLNames[Integer.parseInt(String.valueOf(receiveTypes))])) {
+                    setReceiveType(receiveTypes);
                     return true;
                 }
             }

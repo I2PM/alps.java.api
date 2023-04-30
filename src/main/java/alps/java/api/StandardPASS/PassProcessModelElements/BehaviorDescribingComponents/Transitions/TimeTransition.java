@@ -33,11 +33,11 @@ public class TimeTransition extends Transition implements ITimeTransition {
     public static final Map<Integer, String> timeTransitionTypesExportNames = new HashMap<>();
 
     static {
-        timeTransitionTypesExportNames.put((int) TimeTransitionType.CalendarBasedReminder, OWLTags.CalendarBasedReminderTransitionClassName);
-        timeTransitionTypesExportNames.put((int) TimeTransitionType.TimeBasedReminder, OWLTags.TimeBasedReminderTransitionClassName);
-        timeTransitionTypesExportNames.put((int) TimeTransitionType.BusinessDayTimer, OWLTags.BusinessDayTimerTransitionClassName);
-        timeTransitionTypesExportNames.put((int) TimeTransitionType.DayTimeTimer, OWLTags.DayTimeTimerTransitionClassName);
-        timeTransitionTypesExportNames.put((int) TimeTransitionType.YearMonthTimer, OWLTags.YearMonthTimerTransitionClassName);
+        timeTransitionTypesExportNames.put((int) TimeTransitionType.CalendarBasedReminder.ordinal(), OWLTags.CalendarBasedReminderTransitionClassName);
+        timeTransitionTypesExportNames.put((int) TimeTransitionType.TimeBasedReminder.ordinal(), OWLTags.TimeBasedReminderTransitionClassName);
+        timeTransitionTypesExportNames.put((int) TimeTransitionType.BusinessDayTimer.ordinal(), OWLTags.BusinessDayTimerTransitionClassName);
+        timeTransitionTypesExportNames.put((int) TimeTransitionType.DayTimeTimer.ordinal(), OWLTags.DayTimeTimerTransitionClassName);
+        timeTransitionTypesExportNames.put((int) TimeTransitionType.YearMonthTimer.ordinal(), OWLTags.YearMonthTimerTransitionClassName);
     }
 
 
@@ -74,10 +74,10 @@ public class TimeTransition extends Transition implements ITimeTransition {
         removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
 
         // Removes the export tag (if it exists) which defines the element as instance of the previously specified transition type
-        removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + timeTransitionTypesExportNames[(int) oldType]));
+        removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + timeTransitionTypesExportNames.get((int) oldType.ordinal())));
 
         // Adds the export tag which defines the element as instance of the newly specified transition type
-        addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + timeTransitionTypesExportNames[(int) timeTransitionType]));
+        addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + timeTransitionTypesExportNames.get((int) timeTransitionType.ordinal())));
     }
 
     public TimeTransitionType getTimeTransitionType() {
@@ -138,7 +138,7 @@ public class TimeTransition extends Transition implements ITimeTransition {
         if (predicate.contains(OWLTags.type)) {
             for (Map.Entry<Integer, String> specificPair : timeTransitionTypesExportNames.entrySet()) {
                 if (objectContent.contains(specificPair.getValue())) {
-                    setTimeTransitionType((TimeTransitionType) specificPair.getKey());
+                    setTimeTransitionType(TimeTransitionType.values()[specificPair.getKey()]);
                     return true;
                 }
             }

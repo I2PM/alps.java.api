@@ -125,7 +125,6 @@ public class PASSReaderWriter implements IPASSReaderWriter {
             } catch (RiotException parseException) {
                 LOGGER.log(Level.INFO, "Parser Error when reading the new File " + parseException);
                 System.out.println();
-                // TODO error loggen
             }
         }
         LOGGER.info("Read all structure defining ontology graphs.");
@@ -187,7 +186,58 @@ public class PASSReaderWriter implements IPASSReaderWriter {
 
         return passProcessModels;
     }
+    public List<IPASSProcessModel> loadModels(List<String> filepaths) {
+        System.out.println("Reading input owl files...");
 
+        //IList<IPASSProcessModel> passProcessModels = new List<IPASSProcessModel>();
+        List<OntModel> loadedModelGraphs = new ArrayList<>();
+        List<OntModel> owlStructureGraphs = new ArrayList<>();
+
+        for (String filepath : filepaths) {
+            try {
+                // Create a new OntologyGraph
+                OntModel owlGraph = ModelFactory.createOntologyModel();
+                // Load files into it
+                owlGraph.read(filepath);
+                owlStructureGraphs.add(owlGraph);
+                //TODO: Die zeile neu implementieren
+                if (!isStandardPass(owlGraph.getNsPrefixURI(""))) {
+                    loadedModelGraphs.add(owlGraph);
+                }
+                LOGGER.info("Done reading the new File: " + filepath);
+            } catch (RiotException parseException) {
+                LOGGER.log(Level.INFO, "Parser Error when reading the new File " + parseException);
+                System.out.println("Error reading file.");
+                return null;
+            }
+        }
+
+        System.out.println("Done.");
+
+        // Stores all found models across all graphs
+        List<IPASSProcessModel> passProcessModels = new LinkedList<IPASSProcessModel>();
+
+        System.out.println("Instantiating in memory models...");
+        ConsoleProgressBar bar = new ConsoleProgressBar();
+        int count = 0;
+
+        for (OntModel graph : loadedModelGraphs) {
+            Map<String, List<String>> namedIndividualsDict = findAllNamedIndividualTriples(graph);
+            count++;
+            bar.report((double) count / filepaths.size() * 2);
+
+            // Get models with elements from the current graph and merge it in the list of all models
+            List<IPASSProcessModel> createdInstances = createClassInstancesFromNamedIndividuals(graph, namedIndividualsDict);
+            passProcessModels.addAll(createdInstances);
+            passProcessModels = passProcessModels.stream().distinct().collect(Collectors.toList());
+            count++;
+            bar.report((double) count / filepaths.size() * 2);
+        }
+        System.out.println("Done.");
+        System.out.println("Finished in-memory model creation");
+
+        return passProcessModels;
+    }
     /**
      * Verifies whether a triple (as string) is part of a standard pass definition owl or a model
      *
@@ -220,14 +270,11 @@ public class PASSReaderWriter implements IPASSReaderWriter {
         Map<String, List<String>> namedIndividualsDict = new HashMap<>();
 
         // Iterate over triples in the graph
-        while (stmtIterator.hasNext()) {
-            Statement statement = stmtIterator.next();
-            Resource subject = statement.getSubject();
-            RDFNode object = statement.getObject();
+        for(Statement triple: graph.listStatements().toList()){
 
             // Add named individuals
-            if (object.toString().contains("NamedIndividual") && subject.toString().contains("#") && !isStandardPass(statement.asTriple())) {
-                namedIndividualsList.add(statement);
+            if (triple.getObject().toString().contains("NamedIndividual") && triple.getSubject().toString().contains("#") && !isStandardPass(triple)) {
+                namedIndividualsList.add(triple);
             }
         }
 
@@ -341,7 +388,7 @@ public class PASSReaderWriter implements IPASSReaderWriter {
         return passProcessModels;
     }
 
-
+// TODO: Out-Methode
     public String exportModel(IPASSProcessModel model, String filepath, Model exportGraph) {
         // Get the graph hold by the model and use the export function given by the library
         String fullPath = (filepath.endsWith(".owl")) ? filepath : filepath + ".owl";
@@ -351,7 +398,7 @@ public class PASSReaderWriter implements IPASSReaderWriter {
         else exportGraph = null;
         return fullPath;
     }
-
+//TODO Out-Methode
     public String exportModel(IPASSProcessModel model, String filepath) {
         return exportModel(model, filepath, Model graph);
     }

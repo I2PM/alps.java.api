@@ -15,6 +15,12 @@ public class ImplementsFunctionalityCapsule<T extends IPASSProcessModelElement> 
     protected final ICompatibilityDictionary<String, T> implementedInterfaces = new CompatibilityDictionary<String, T>();
     protected final Set<String> implementedInterfacesIDs = new HashSet<String>();
     protected final ICapsuleCallback callback;
+    private Class<T> elementClass;
+
+    public ImplementsFunctionalityCapsule(ICapsuleCallback callback, Class<T> elementClass) {
+        this.callback = callback;
+        this.elementClass = elementClass;
+    }
 
     public ImplementsFunctionalityCapsule(ICapsuleCallback callback) {
         this.callback = callback;
@@ -22,11 +28,9 @@ public class ImplementsFunctionalityCapsule<T extends IPASSProcessModelElement> 
 
 
     public boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
-        if (predicate.contains(OWLTags.iimplements))
-        {
-            if (element instanceof T) {
-                T fittingElement = (T) element;
-                addImplementedInterface(fittingElement);
+        if (predicate.contains(OWLTags.iimplements)) {
+            if (elementClass.isInstance(element)) {
+                addImplementedInterface((T) element);
                 return true;
             } else {
                 addImplementedInterfaceIDReference(objectContent);
@@ -47,16 +51,16 @@ public class ImplementsFunctionalityCapsule<T extends IPASSProcessModelElement> 
         }
     }
 
-        public void setImplementedInterfaces(Set<T> implementedInterface) {
+    public void setImplementedInterfaces(Set<T> implementedInterface) {
 
-                for (T implInterface : getImplementedInterfaces().values()) {
-                        removeImplementedInterfaces(implInterface.getModelComponentID(), 0);
-                }
-                if (implementedInterface == null) return;
-                for (T implInterface : implementedInterface) {
-                        addImplementedInterface(implInterface);
-                }
+        for (T implInterface : getImplementedInterfaces().values()) {
+            removeImplementedInterfaces(implInterface.getModelComponentID(), 0);
         }
+        if (implementedInterface == null) return;
+        for (T implInterface : implementedInterface) {
+            addImplementedInterface(implInterface);
+        }
+    }
 
     public void addImplementedInterface(T implementedInterface) {
         if (implementedInterface == null) {
@@ -68,24 +72,27 @@ public class ImplementsFunctionalityCapsule<T extends IPASSProcessModelElement> 
             callback.addTriple(new IncompleteTriple(OWLTags.abstrImplements, implementedInterface.getUriModelComponentID()));
         }
     }
-//TODO: out-Parameter
+
+    //TODO: out-Parameter
     public void removeImplementedInterfaces(String id, int removeCascadeDepth) {
         if (id == null) return;
-        if (implementedInterfaces.getOrDefault(id, T implInterface)) {
+        T implInterface = implementedInterfaces.get(id);
+        if (implInterface != null) {
             implementedInterfaces.remove(id);
             implInterface.unregister(callback, removeCascadeDepth);
             callback.removeTriple(new IncompleteTriple(OWLTags.abstrImplements, implInterface.getUriModelComponentID()));
         }
     }
 
-        public void removeImplementedInterfaces(String id) {
-                if (id == null) return;
-                if (implementedInterfaces.getOrDefault(id, T implInterface)) {
-                        implementedInterfaces.remove(id);
-                        implInterface.unregister(callback, 0);
-                        callback.removeTriple(new IncompleteTriple(OWLTags.abstrImplements, implInterface.getUriModelComponentID()));
-                }
+    public void removeImplementedInterfaces(String id) {
+        if (id == null) return;
+        T implInterface = implementedInterfaces.get(id);
+        if (implInterface != null) {
+            implementedInterfaces.remove(id);
+            implInterface.unregister(callback, 0);
+            callback.removeTriple(new IncompleteTriple(OWLTags.abstrImplements, implInterface.getUriModelComponentID()));
         }
+    }
 
     public Map<String, T> getImplementedInterfaces() {
         return new HashMap<String, T>(implementedInterfaces);

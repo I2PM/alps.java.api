@@ -35,10 +35,8 @@ public class DataDescribingComponent extends PASSProcessModelElement implements 
         }
     }
 
-    //TODO: out _Paramater
-    public boolean getContainedBy(IPASSProcessModel model) {
-        model = this.model;
-        return this.model != null;
+    public IPASSProcessModel getContainedBy() {
+        return this.model;
     }
 
     @Override
@@ -83,12 +81,13 @@ public class DataDescribingComponent extends PASSProcessModelElement implements 
 
     }
 
-    //TODO: out-Parametef
     @Override
     public Set<IPASSProcessModelElement> getAllConnectedElements(ConnectedElementsSetSpecification specification) {
         Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
-        if (specification == ConnectedElementsSetSpecification.ALL)
-            if (getContainedBy(out IPASSProcessModel model)) baseElements.add(model);
+        if (specification == ConnectedElementsSetSpecification.ALL) {
+            IPASSProcessModel model = getContainedBy();
+            if (model != null) baseElements.add(model);
+        }
         return baseElements;
     }
 

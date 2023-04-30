@@ -1,7 +1,7 @@
 package alps.java.api.parsing;
 
 import alps.java.api.util.ITreeNode;
-import org.apache.jena.atlas.lib.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.Model;
 

@@ -61,6 +61,7 @@ public class SubjectExtension extends Subject implements ISubjectExtension {
         setExtendedSubject(extendedSubject);
         setExtensionBehaviors(extensionBehavior);
     }
+
     public SubjectExtension(IModelLayer layer) {
         super(layer, null, null, null, 1, null, null, null);
         setExtendedSubject(null);
@@ -116,7 +117,7 @@ public class SubjectExtension extends Subject implements ISubjectExtension {
     }
 
     public void addExtensionBehavior(ISubjectBehavior behavior) {
-        if (behavior instanceof null){
+        if (behavior == null) {
             return;
         }
         if (extensionBehavior.tryAdd(behavior.getModelComponentID(), behavior)) {
@@ -151,19 +152,21 @@ public class SubjectExtension extends Subject implements ISubjectExtension {
             addExtensionBehavior(behavior);
         }
     }
-//TODO: out-Parameter
+
     public void removeExtensionBehavior(String id, int removeCascadeDepth) {
         if (id == null) return;
-        if (extensionBehavior.getOrDefault(id, out ISubjectBehavior behavior)) {
+        ISubjectBehavior behavior = extensionBehavior.get(id);
+        if (behavior != null) {
             extensionBehavior.remove(id);
             behavior.unregister(this, removeCascadeDepth);
             removeTriple(new IncompleteTriple(OWLTags.stdContainsBehavior, behavior.getUriModelComponentID()));
         }
     }
-//TODO: out-Parameter
+
     public void removeExtensionBehavior(String id) {
         if (id == null) return;
-        if (extensionBehavior.getOrDefault(id, out ISubjectBehavior behavior)) {
+        ISubjectBehavior behavior = extensionBehavior.get(id);
+        if (behavior != null) {
             extensionBehavior.remove(id);
             behavior.unregister(this, 0);
             removeTriple(new IncompleteTriple(OWLTags.stdContainsBehavior, behavior.getUriModelComponentID()));

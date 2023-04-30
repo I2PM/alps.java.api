@@ -73,11 +73,13 @@ public class SubjectBaseBehavior extends SubjectBehavior implements ISubjectBase
 
     public Map<String, IState> getEndStates() {
         Map<String, IState> endStates = new HashMap<>();
-        for (IState state : getBehaviorDescribingComponents().values().stream().filter(component -> component instanceof IState).collect(Collectors.toList())) {
-            if (state.isStateType(IState.StateType.EndState)) {
+
+        for (IState state : getBehaviorDescribingComponents().values()) {
+            if (state instanceof IState && state.isStateType(IState.StateType.EndState)) {
                 endStates.put(state.getModelComponentID(), state);
             }
         }
+
         return new HashMap<>(endStates);
     }
 

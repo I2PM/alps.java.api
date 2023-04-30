@@ -112,20 +112,20 @@ public class DoState extends StandardPASSState implements IDoState {
         return new HashMap<String, IDataMappingIncomingToLocal>(dataMappingIncomingToLocalDict);
     }
 
-    //TODO: out-Parameter
     public void removeDataMappingFunctionIncomingToLocal(String id, int removeCascadeDepth) {
         if (id == null) return;
-        if (dataMappingIncomingToLocalDict.getOrDefault(id, out IDataMappingIncomingToLocal mapping)) {
+        IDataMappingIncomingToLocal mapping = dataMappingIncomingToLocalDict.get(id);
+        if (mapping != null) {
             dataMappingIncomingToLocalDict.remove(id);
             mapping.unregister(this, removeCascadeDepth);
             removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
         }
     }
 
-    //TODO: out-Parameter
     public void removeDataMappingFunctionIncomingToLocal(String id) {
         if (id == null) return;
-        if (dataMappingIncomingToLocalDict.getOrDefault(id, out IDataMappingIncomingToLocal mapping)) {
+        IDataMappingIncomingToLocal mapping = dataMappingIncomingToLocalDict.get(id);
+        if (mapping != null) {
             dataMappingIncomingToLocalDict.remove(id);
             mapping.unregister(this, 0);
             removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
@@ -169,7 +169,8 @@ public class DoState extends StandardPASSState implements IDoState {
 
     public void removeDataMappingFunctionLocalToOutgoing(String id, int removeCascadeDepth) {
         if (id == null) return;
-        if (dataMappingLocalToOutgoingDict.getOrDefault(id, out IDataMappingLocalToOutgoing mapping)) {
+        IDataMappingLocalToOutgoing mapping = dataMappingLocalToOutgoingDict.get(id);
+        if (mapping != null) {
             dataMappingLocalToOutgoingDict.remove(id);
             mapping.unregister(this, removeCascadeDepth);
             removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
@@ -178,7 +179,8 @@ public class DoState extends StandardPASSState implements IDoState {
 
     public void removeDataMappingFunctionLocalToOutgoing(String id) {
         if (id == null) return;
-        if (dataMappingLocalToOutgoingDict.getOrDefault(id, out IDataMappingLocalToOutgoing mapping)) {
+        IDataMappingLocalToOutgoing mapping = dataMappingLocalToOutgoingDict.get(id);
+        if (mapping != null) {
             dataMappingLocalToOutgoingDict.remove(id);
             mapping.unregister(this, 0);
             removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
@@ -243,7 +245,7 @@ public class DoState extends StandardPASSState implements IDoState {
     public void setIsStateType(StateType stateType) {
         if (!stateTypes.contains(stateType)) {
             switch (stateType) {
-                case StateType.Abstract:
+                case Abstract:
                     removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
                     exportTag = OWLTags.abstr;
                     exportClassname = "Abstract" + className;
@@ -251,7 +253,7 @@ public class DoState extends StandardPASSState implements IDoState {
                     if (isStateType(StateType.Finalized))
                         removeStateType(StateType.Finalized);
                     break;
-                case StateType.Finalized:
+                case Finalized:
                     removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
                     exportTag = OWLTags.abstr;
                     exportClassname = "Finalized" + className;
@@ -271,14 +273,14 @@ public class DoState extends StandardPASSState implements IDoState {
     public void removeStateType(StateType stateType) {
         if (stateTypes.contains(stateType)) {
             switch (stateType) {
-                case StateType.Abstract:
+                case Abstract:
                     removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "Abstract" + getExportTag() + getClassName()));
                     stateTypes.remove(stateType);
                     exportTag = OWLTags.std;
                     exportClassname = className;
                     addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
                     break;
-                case StateType.Finalized:
+                case Finalized:
                     removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "Finalized" + getExportTag() + getClassName()));
                     stateTypes.remove(stateType);
                     exportTag = OWLTags.std;

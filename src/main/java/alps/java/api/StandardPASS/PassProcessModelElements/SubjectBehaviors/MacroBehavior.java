@@ -55,17 +55,19 @@ public class MacroBehavior extends SubjectBehavior implements IMacroBehavior {
 
     public Map<String, IStateReference> getStateReferences() {
         Map<String, IStateReference> output = new HashMap<>();
-        for (Map.Entry<String, IStateReference> pair : getBehaviorDescribingComponents().entrySet().stream().filter(entry -> entry.getValue() instanceof IStateReference).collect(Collectors.toList())) {
-            output.put(pair.getKey(), pair.getValue());
-        }
+
+        Map<String, IStateReference> filteredComponents = getBehaviorDescribingComponents().entrySet().stream()
+                .filter(entry -> entry.getValue() instanceof IStateReference)
+                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> (IStateReference) entry.getValue()));
+
+        output.putAll(filteredComponents);
         return output;
     }
 
     public Map<String, IGenericReturnToOriginReference> getReturnReferences() {
         Map<String, IGenericReturnToOriginReference> output = new HashMap<String, IGenericReturnToOriginReference>();
-        for (Map.Entry<String, IGenericReturnToOriginReference> pair : getBehaviorDescribingComponents().entrySet().stream().filter(entry -> entry.getValue() instanceof IGenericReturnToOriginReference).collect(Collectors.toList()))
-            ;
-        output.put(pair.getKey(), pair.getValue());
+        Map<String, IGenericReturnToOriginReference> filteredComponents = getBehaviorDescribingComponents().entrySet().stream().filter(entry -> entry.getValue() instanceof IGenericReturnToOriginReference).collect(Collectors.toMap(entry -> entry.getKey(), entry -> (IGenericReturnToOriginReference) entry.getValue()));
+        output.putAll(filteredComponents);
         return output;
         //return new Dictionary<string, IGenericReturnToOriginReference>(getBehaviorDescribingComponents().OfType<KeyValuePair<string, IGenericReturnToOriginReference>>());
     }

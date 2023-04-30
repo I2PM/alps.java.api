@@ -55,7 +55,7 @@ public class Action extends BehaviorDescribingComponent implements IAction {
      */
     //TODO: out-Parameter
     public Action(IState state, String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
-        super((state != null) ? (state.getContainedBy(out ISubjectBehavior behavior) ? behavior : null) : null,
+        super(state != null ? (ISubjectBehavior behavior = state.getContainedBy()!=null ? behavior : null) : null,
                 labelForID, comment, additionalLabel, additionalAttribute);
         setContainsState(state, false);
     }

@@ -148,20 +148,20 @@ public class SendState extends StandardPASSState implements ISendState {
         return failedTransitions;
     }
 
-    //TODO: out-Parameter
     public void removeSendingFailedTransition(String id, int removeCascadingDepth) {
         if (id == null) return;
-        if (outgoingTransitions.getOrDefault(id, out ITransition transition)) {
+        ITransition transition = outgoingTransitions.get(id);
+        if (transition != null) {
             if (transition instanceof ISendingFailedTransition sendFailedTransition) {
                 removeOutgoingTransition(sendFailedTransition.getModelComponentID(), removeCascadingDepth);
             }
         }
     }
 
-    //TODO: out-Parameter
     public void removeSendingFailedTransition(String id) {
         if (id == null) return;
-        if (outgoingTransitions.getOrDefault(id, out ITransition transition)) {
+        ITransition transition = outgoingTransitions.get(id);
+        if (transition != null) {
             if (transition instanceof ISendingFailedTransition sendFailedTransition) {
                 removeOutgoingTransition(sendFailedTransition.getModelComponentID(), 0);
             }

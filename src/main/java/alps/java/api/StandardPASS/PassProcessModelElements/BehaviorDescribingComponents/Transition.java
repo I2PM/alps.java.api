@@ -65,9 +65,9 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
         implCapsule = new ImplementsFunctionalityCapsule<ITransition>(this);
         ISubjectBehavior behavior = null;
         if (sourceState != null)
-            sourceState.getContainedBy(out behavior);
+            behavior = sourceState.getContainedBy();
         if (behavior == null && targetState != null)
-            targetState.getContainedBy(out behavior);
+            behavior = targetState.getContainedBy();
         if (behavior != null)
             setContainedBy(behavior);
         setSourceState(sourceState);
@@ -81,9 +81,9 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
         implCapsule = new ImplementsFunctionalityCapsule<ITransition>(this);
         ISubjectBehavior behavior = null;
         if (sourceState != null)
-            sourceState.getContainedBy(out behavior);
+            behavior = sourceState.getContainedBy();
         if (behavior == null && targetState != null)
-            targetState.getContainedBy(out behavior);
+            behavior = targetState.getContainedBy();
         if (behavior != null)
             setSourceState(sourceState);
         setTargetState(targetState);

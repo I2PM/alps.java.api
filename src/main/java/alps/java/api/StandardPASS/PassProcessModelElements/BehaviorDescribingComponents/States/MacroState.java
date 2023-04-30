@@ -109,20 +109,20 @@ public class MacroState extends State implements IMacroState {
         }
     }
 
-    //TODO: out-Parameter
     public void removeStateReference(String stateRefID, int removeCascadeDepth) {
         if (stateRefID == null) return;
-        if (stateReferences.getOrDefault(stateRefID, out IStateReference reference)) {
+        IStateReference reference = stateReferences.get(stateRefID);
+        if (reference != null) {
             stateReferences.remove(stateRefID);
             reference.unregister(this, removeCascadeDepth);
             removeTriple(new IncompleteTriple(OWLTags.stdContains, reference.getUriModelComponentID()));
         }
     }
 
-    //TODO: out-Parameter
     public void removeStateReference(String stateRefID) {
         if (stateRefID == null) return;
-        if (stateReferences.getOrDefault(stateRefID, out IStateReference reference)) {
+        IStateReference reference = stateReferences.get(stateRefID);
+        if (reference != null) {
             stateReferences.remove(stateRefID);
             reference.unregister(this, 0);
             removeTriple(new IncompleteTriple(OWLTags.stdContains, reference.getUriModelComponentID()));

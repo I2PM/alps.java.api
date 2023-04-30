@@ -156,17 +156,18 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
         }
     }
 
-        public void removeOutgoingTransition(String modelCompID, int removeCascadeDepth) {
-                if (modelCompID == null) return;
-                ITransition transition = outgoingTransitions.get(modelCompID);
-                if (transition != null) {
-                        outgoingTransitions.remove(modelCompID);
-                        transition.unregister(this);
-                        transition.setSourceState(null);
-                        action.updateRemoved(transition, this);
-                        removeTriple(new IncompleteTriple(OWLTags.stdHasOutgoingTransition, transition.getUriModelComponentID()));
-                }
+    public void removeOutgoingTransition(String modelCompID, int removeCascadeDepth) {
+        if (modelCompID == null) return;
+        ITransition transition = outgoingTransitions.get(modelCompID);
+        if (transition != null) {
+            outgoingTransitions.remove(modelCompID);
+            transition.unregister(this);
+            transition.setSourceState(null);
+            action.updateRemoved(transition, this);
+            removeTriple(new IncompleteTriple(OWLTags.stdHasOutgoingTransition, transition.getUriModelComponentID()));
         }
+    }
+
     public void removeOutgoingTransition(String modelCompID) {
         if (modelCompID == null) return;
         ITransition transition = outgoingTransitions.get(modelCompID);
@@ -179,16 +180,17 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
         }
     }
 
-        public void removeIncomingTransition(String modelCompID, int removeCascadeDepth) {
-                if (modelCompID == null) return;
-                ITransition transition = incomingTransitions.get(modelCompID);
-                if (transition != null) {
-                        incomingTransitions.remove(modelCompID);
-                        transition.unregister(this);
-                        transition.setTargetState(null);
-                        removeTriple(new IncompleteTriple(OWLTags.stdHasIncomingTransition, transition.getUriModelComponentID()));
-                }
+    public void removeIncomingTransition(String modelCompID, int removeCascadeDepth) {
+        if (modelCompID == null) return;
+        ITransition transition = incomingTransitions.get(modelCompID);
+        if (transition != null) {
+            incomingTransitions.remove(modelCompID);
+            transition.unregister(this);
+            transition.setTargetState(null);
+            removeTriple(new IncompleteTriple(OWLTags.stdHasIncomingTransition, transition.getUriModelComponentID()));
         }
+    }
+
     public void removeIncomingTransition(String modelCompID) {
         if (modelCompID == null) return;
         ITransition transition = incomingTransitions.get(modelCompID);
@@ -209,23 +211,24 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
         return new HashMap<String, ITransition>(outgoingTransitions);
     }
 
-        public void setFunctionSpecification(IFunctionSpecification funSpec, int removeCascadeDepth) {
-                IFunctionSpecification oldSpec = functionSpecification;
-                // Might set it to null
-                functionSpecification = funSpec;
+    public void setFunctionSpecification(IFunctionSpecification funSpec, int removeCascadeDepth) {
+        IFunctionSpecification oldSpec = functionSpecification;
+        // Might set it to null
+        functionSpecification = funSpec;
 
-                if (oldSpec != null) {
-                        if (oldSpec.equals(funSpec)) return;
-                        oldSpec.unregister(this);
-                        removeTriple(new IncompleteTriple(OWLTags.stdHasFunctionSpecification, oldSpec.getUriModelComponentID()));
-                }
-
-                if (funSpec != null) {
-                        publishElementAdded(funSpec);
-                        funSpec.register(this);
-                        addTriple(new IncompleteTriple(OWLTags.stdHasFunctionSpecification, funSpec.getUriModelComponentID()));
-                }
+        if (oldSpec != null) {
+            if (oldSpec.equals(funSpec)) return;
+            oldSpec.unregister(this);
+            removeTriple(new IncompleteTriple(OWLTags.stdHasFunctionSpecification, oldSpec.getUriModelComponentID()));
         }
+
+        if (funSpec != null) {
+            publishElementAdded(funSpec);
+            funSpec.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdHasFunctionSpecification, funSpec.getUriModelComponentID()));
+        }
+    }
+
     public void setFunctionSpecification(IFunctionSpecification funSpec) {
         IFunctionSpecification oldSpec = functionSpecification;
         // Might set it to null
@@ -345,22 +348,21 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
         return stateTypes.contains(stateType);
     }
 
-    //TODO: Out Param
     public void setIsStateType(IState.StateType stateType) {
         switch (stateType) {
-            case IState.StateType.InitialStateOfBehavior:
+            case InitialStateOfBehavior:
                 if (stateTypes.add(stateType))
                     addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfBehavior"));
                 break;
-            case IState.StateType.InitialStateOfChoiceSegmentPath:
+            case InitialStateOfChoiceSegmentPath:
                 if (stateTypes.add(stateType))
                     addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfChoiceSegmentPath"));
                 break;
-            case IState.StateType.EndState:
+            case EndState:
                 if (stateTypes.add(stateType)) {
                     addTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "EndState"));
-
-                    if (getContainedBy(out ISubjectBehavior behavior) && (behavior instanceof ISubjectBaseBehavior baseBehav)) {
+                    ISubjectBehavior behavior = getContainedBy();
+                    if (behavior != null && (behavior instanceof ISubjectBaseBehavior baseBehav)) {
                         baseBehav.registerEndState(this);
                     }
                 }
@@ -368,23 +370,25 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
         }
 
     }
-//TODO: out-Parameter
+
     public void removeStateType(IState.StateType stateType) {
         // If the type was removed successfully
         if (stateTypes.remove(stateType)) {
             switch (stateType) {
-                case IState.StateType.InitialStateOfBehavior:
+                case InitialStateOfBehavior:
                     removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfBehavior"));
-                    if (getContainedBy(out ISubjectBehavior behav)) {
+                    ISubjectBehavior behav = getContainedBy();
+                    if (behav != null) {
                         behav.setInitialState(null);
                     }
                     break;
-                case IState.StateType.InitialStateOfChoiceSegmentPath:
+                case InitialStateOfChoiceSegmentPath:
                     removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "InitialStateOfChoiceSegmentPath"));
                     break;
-                case IState.StateType.EndState:
+                case EndState:
                     removeTriple(new IncompleteTriple(OWLTags.rdfType, OWLTags.std + "EndState"));
-                    if (getContainedBy(out ISubjectBehavior behavior) && behavior instanceof ISubjectBaseBehavior baseBehav) {
+                    ISubjectBehavior behavior = getContainedBy();
+                    if (behavior != null && behavior instanceof ISubjectBaseBehavior baseBehav) {
                         baseBehav.unregisterEndState(getModelComponentID());
                     }
                     break;
@@ -420,10 +424,12 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
                 if (objectContent.toLowerCase().contains("endstate")) {
                     setIsStateType(IState.StateType.EndState);
                     return true;
-                } else if (objectContent.toLowerCase().contains("initialstateofbehavior")) {
+                }
+                if (objectContent.toLowerCase().contains("initialstateofbehavior")) {
                     setIsStateType(IState.StateType.InitialStateOfBehavior);
                     return true;
-                } else if (objectContent.toLowerCase().contains("initialstateofchoicesegmentpath")) {
+                }
+                if (objectContent.toLowerCase().contains("initialstateofchoicesegmentpath")) {
                     setIsStateType(IState.StateType.InitialStateOfChoiceSegmentPath);
                     return true;
                 }

@@ -11,6 +11,7 @@ import alps.java.api.src.OWLTags;
 import alps.java.api.util.IIncompleteTriple;
 import alps.java.api.util.IncompleteTriple;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -80,7 +81,7 @@ public class SendTransitionCondition extends MessageExchangeCondition implements
     public SendTransitionCondition(ITransition transition) {
         super(transition, null, null, null, null, null, null);
         setMultipleSendLowerBound(0);
-        setMultipleSendUpperBound(0;
+        setMultipleSendUpperBound(0);
         setSendType(SendTypes.STANDARD);
         setRequiresMessageSentTo(null);
         setRequiresSendingOfMessage(null);
@@ -113,8 +114,8 @@ public class SendTransitionCondition extends MessageExchangeCondition implements
 
         if (oldType.equals(sendType)) return;
 
-        removeTriple(new IncompleteTriple(OWLTags.stdHasSendType, sendTypeOWLExportNames[(int) oldType]));
-        addTriple(new IncompleteTriple(OWLTags.stdHasSendType, sendTypeOWLExportNames[(int) sendType]));
+        removeTriple(new IncompleteTriple(OWLTags.stdHasSendType, sendTypeOWLExportNames[(int) oldType.ordinal()]));
+        addTriple(new IncompleteTriple(OWLTags.stdHasSendType, sendTypeOWLExportNames[(int) sendType.ordinal()]));
 
     }
 
@@ -256,12 +257,12 @@ public class SendTransitionCondition extends MessageExchangeCondition implements
             return true;
         } else if (predicate.contains(OWLTags.hasMultiSendUpperBound)) {
             String upper = objectContent;
-            setMultipleSendUpperBound(Integer.parseInt(upper).);
+            setMultipleSendUpperBound(Integer.parseInt(upper));
             return true;
         } else if (predicate.contains(OWLTags.hasSendType)) {
-            for (int i : Enum.GetValues(typeof(SendTypes))) {
-                if (objectContent.contains(sendTypeOWLNames[i])) {
-                    setSendType((SendTypes) i);
+            for (SendTypes sendType : EnumSet.allOf(SendTypes.class)) {
+                if (objectContent.contains(sendTypeOWLNames[(int) sendType.ordinal()])) {
+                    setSendType(sendType);
                     return true;
                 }
             }

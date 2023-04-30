@@ -113,8 +113,9 @@ public class GroupState extends State implements IGroupState {
     //TODO: out-Parameter
     public boolean removeGroupedComponent(String id, int removeCascadeDepth) {
         if (id == null) return false;
+        IBehaviorDescribingComponent component = groupedComponents.get(id);
 
-        if (!groupedComponents.getOrDefault(id, out IBehaviorDescribingComponent component)) return false;
+        if (component == null) return false;
 
         groupedComponents.remove(id);
         component.unregister(this, removeCascadeDepth);
@@ -126,7 +127,9 @@ public class GroupState extends State implements IGroupState {
     public boolean removeGroupedComponent(String id) {
         if (id == null) return false;
 
-        if (!groupedComponents.getOrDefault(id, out IBehaviorDescribingComponent component)) return false;
+        IBehaviorDescribingComponent component = groupedComponents.get(id);
+
+        if (component == null) return false;
 
         groupedComponents.remove(id);
         component.unregister(this, 0);

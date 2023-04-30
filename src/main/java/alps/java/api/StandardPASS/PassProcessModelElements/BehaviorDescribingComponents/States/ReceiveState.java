@@ -123,9 +123,7 @@ public class ReceiveState extends StandardPASSState implements IReceiveState {
                         removeStateType(StateType.Abstract);
                     break;
                 default:
-                    if (!stateType.equals(StateType.EndState)) {
                         super.setIsStateType(stateType);
-                    }
                     break;
             }
         }

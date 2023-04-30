@@ -3,7 +3,8 @@ package alps.java.api.parsing;
 
 import alps.java.api.StandardPASS.PASSProcessModelElement;
 import alps.java.api.util.*;
-import org.apache.jena.atlas.lib.Pair;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.atlas.logging.Log;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
@@ -155,7 +156,7 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         }
     }
     */
-    private void findChildsAndAdd(TreeNode<IParseablePASSProcessModelElement> node) {
+    private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node) {
         // Get all classes that are known to the current project and that extend the given node
         List<IParseablePASSProcessModelElement> enumerable = ReflectiveEnumerator.getEnumerableOfType(node.getContent());
         for (IParseablePASSProcessModelElement element : enumerable) {
@@ -185,7 +186,7 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         // Start with mapping the roots, they are both PASSProcessModelElement
         if (parsingDict.isEmpty()) {
             List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>> list = new ArrayList<>();
-            list.add(new Pair<>(rootNode, 0));
+            list.add(new MutablePair<>(rootNode, 0));
             parsingDict.put(removeUri(ontClass.getURI()), list);
         }
         // Create a new dictionary for those urls that could not be mapped properly (need that later)
@@ -324,11 +325,11 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
 
         // If the key (the name of the owl class) is present in the mapping, add the new found class to the existing list (the value)
         if (parsingDict.containsKey(ontResource)) {
-            parsingDict.get(ontResource).add(new Pair<>(element, depth));
+            parsingDict.get(ontResource).add(new MutablePair<>(element, depth));
         }
 
         // If not, create a new entry with a new list containing one element
-        else parsingDict.put(ontResource, new ArrayList(Collections.singletonList(new Pair<>(element, depth))));
+        else parsingDict.put(ontResource, new ArrayList(Collections.singletonList(new MutablePair<>(element, depth))));
     }
 
     /**

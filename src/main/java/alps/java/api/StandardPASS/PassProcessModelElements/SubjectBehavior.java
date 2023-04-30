@@ -94,9 +94,8 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
     }
 
 
-    public boolean getContainedBy(IModelLayer layer) {
-        layer = this.layer;
-        return layer != null;
+    public IModelLayer getContainedBy() {
+        return layer;
     }
 
     public void setContainedBy(IModelLayer layer) {
@@ -194,7 +193,6 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
         return false;
     }
 
-    //TODO: out-Parameter
     public boolean removeBehaviorDescribingComponent(String id) {
         if (id == null) return false;
         IBehaviorDescribingComponent component = behaviorDescriptionComponents.get(id);
@@ -241,6 +239,7 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
             oldInitialState.removeStateType(IState.StateType.InitialStateOfBehavior);
             removeTriple(new IncompleteTriple(OWLTags.stdHasInitialState, oldInitialState.getUriModelComponentID()));
         }
+        this.initialStateOfBehavior = initialStateOfBehavior;
 
         if (!(initialStateOfBehavior == null)) {
             addBehaviorDescribingComponent(initialStateOfBehavior);

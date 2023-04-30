@@ -50,7 +50,7 @@ public class ChoiceSegment extends State implements IChoiceSegment {
     }
 
     public ChoiceSegment(ISubjectBehavior behavior) {
-        super(behavior, null,null,null,null,null,null,null,null);
+        super(behavior, null, null, null, null, null, null, null, null);
         setContainsChoiceSegmentPaths(null);
     }
 
@@ -92,19 +92,20 @@ public class ChoiceSegment extends State implements IChoiceSegment {
         return new HashMap<String, IChoiceSegmentPath>(choiceSegmentPathDict);
     }
 
-    //TODO: Out-Parameter
     public void removeChoiceSegmentPath(String id, int removeCascadeDepth) {
         if (id == null) return;
-        if (choiceSegmentPathDict.getOrDefault(id, out IChoiceSegmentPath path)) {
+        IChoiceSegmentPath path = choiceSegmentPathDict.get(id);
+        if (path != null) {
             choiceSegmentPathDict.remove(id);
             path.unregister(this, removeCascadeDepth);
             addTriple(new IncompleteTriple(OWLTags.stdContains, path.getUriModelComponentID()));
         }
     }
-    //TODO: Out-Parameter
+
     public void removeChoiceSegmentPath(String id) {
         if (id == null) return;
-        if (choiceSegmentPathDict.getOrDefault(id, out IChoiceSegmentPath path)) {
+        IChoiceSegmentPath path = choiceSegmentPathDict.get(id);
+        if (path != null) {
             choiceSegmentPathDict.remove(id);
             path.unregister(this, 0);
             addTriple(new IncompleteTriple(OWLTags.stdContains, path.getUriModelComponentID()));
@@ -138,7 +139,6 @@ public class ChoiceSegment extends State implements IChoiceSegment {
                 removeChoiceSegmentPath(path.getModelComponentID(), removeCascadeDepth);
         }
     }
-
 
 
     @Override
