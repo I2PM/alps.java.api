@@ -333,7 +333,8 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
     @Override
     protected void successfullyParsedElement(IParseablePASSProcessModelElement parsedElement) {
         super.successfullyParsedElement(parsedElement);
-        if (parsedElement instanceof IContainableElement<ISubjectBehavior> containable) {
+        if (parsedElement instanceof IContainableElement) {
+            IContainableElement<ISubjectBehavior> containable = (IContainableElement<ISubjectBehavior>) parsedElement;
             containable.setContainedBy(this);
         }
     }

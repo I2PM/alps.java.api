@@ -47,8 +47,8 @@ public class ReceiveState extends StandardPASSState implements IReceiveState {
 
     public ReceiveState(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,
                         IReceiveFunction functionSpecification,
-                        Set<ITransition> incomingTransition, Set<IReceiveTransition> outgoingTransition, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
-        super(behavior, labelForID, guardBehavior, functionSpecification, incomingTransition, (Set<ITransition>) outgoingTransition, comment, additionalLabel, additionalAttribute);
+                        Set<ITransition> incomingTransition, Set<ITransition> outgoingTransition, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
+        super(behavior, labelForID, guardBehavior, functionSpecification, incomingTransition, outgoingTransition, comment, additionalLabel, additionalAttribute);
     }
 
     public ReceiveState(ISubjectBehavior behavior) {

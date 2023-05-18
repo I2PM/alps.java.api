@@ -3,6 +3,7 @@ package alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors;
 
 import alps.java.api.ALPS.ALPSModelElements.IModelLayer;
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponent;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IState;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IStateReference;
 import alps.java.api.StandardPASS.PassProcessModelElements.IBehaviorDescribingComponent;
@@ -72,16 +73,15 @@ public class SubjectBaseBehavior extends SubjectBehavior implements ISubjectBase
     }
 
     public Map<String, IState> getEndStates() {
-        Map<String, IState> endStates = new HashMap<>();
-
-        for (IState state : getBehaviorDescribingComponents().values()) {
-            if (state instanceof IState && state.isStateType(IState.StateType.EndState)) {
-                endStates.put(state.getModelComponentID(), state);
-            }
-        }
+        Map<String, IState> endStates = getBehaviorDescribingComponents().values().stream()
+                .filter(component -> component instanceof IState)
+                .map(component -> (IState) component)
+                .filter(state -> state.isStateType(IState.StateType.EndState))
+                .collect(Collectors.toMap(IState::getModelComponentID, state -> state));
 
         return new HashMap<>(endStates);
     }
+
 
     @Override
     public boolean addBehaviorDescribingComponent(IBehaviorDescribingComponent component) {

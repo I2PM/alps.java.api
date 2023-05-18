@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Interface to the choice segment path class
  */
-public interface IChoiceSegmentPath extends IState, IContainableElement<IChoiceSegment> {
+public interface IChoiceSegmentPath extends IState {
 
 
     /**

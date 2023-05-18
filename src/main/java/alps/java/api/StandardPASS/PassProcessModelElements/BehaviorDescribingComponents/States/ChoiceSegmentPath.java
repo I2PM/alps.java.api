@@ -77,9 +77,8 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
                              Set<IState> containedStates, IState endState,
                              IInitialStateOfChoiceSegmentPath initialStateOfChoiceSegmentPath, boolean isOptionalToEndChoiceSegmentPath,
                              boolean isOptionalToStartChoiceSegmentPath, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
-        super(choiceSegment == null ? null : (ISubjectBehavior behavior = choiceSegment.getContainedBy() != null) ? behavior : null, labelForID, guardBehavior,
-                functionSpecification, incomingTransition, outgoingTransition, comment, additionalLabel, additionalAttribute)
-        ;
+        super(choiceSegment == null ? null : choiceSegment.getContainedBy(), labelForID, guardBehavior,
+                functionSpecification, incomingTransition, outgoingTransition, comment, additionalLabel, additionalAttribute);
         setEndState(endState);
         setInitialState(initialStateOfChoiceSegmentPath);
         setContainedStates(containedStates);
@@ -89,7 +88,7 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
     }
 
     public ChoiceSegmentPath(IChoiceSegment choiceSegment) {
-        super(choiceSegment == null ? null : (ISubjectBehavior behavior = choiceSegment.getContainedBy() != null) ? behavior : null)
+        super(choiceSegment == null ? null : choiceSegment.getContainedBy())
         ;
         setEndState(null);
         setInitialState(null);
@@ -294,7 +293,7 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
         Set<IPASSProcessModelElement> baseElements = super.getAllConnectedElements(specification);
         for (IState component : getContainedStates().values())
             baseElements.add(component);
-        IChoiceSegment segment = getContainedBy();
+        IChoiceSegment segment = getContainedByIChoiceSegment();
         if (segment != null)
             baseElements.add(segment);
         if (getEndState() != null)
@@ -315,7 +314,7 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
                     setInitialState(null, removeCascadeDepth);
                 else removeContainedState(state.getModelComponentID(), removeCascadeDepth);
             }
-            IChoiceSegment localSegment = getContainedBy();
+            IChoiceSegment localSegment = getContainedByIChoiceSegment();
             if (update instanceof IChoiceSegment segment && segment.equals(localSegment))
                 setContainedBy((IChoiceSegment) null);
         }
@@ -332,7 +331,7 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
                     setInitialState(null, 0);
                 else removeContainedState(state.getModelComponentID(), 0);
             }
-            IChoiceSegment localSegment = getContainedBy();
+            IChoiceSegment localSegment = getContainedByIChoiceSegment();
             if (update instanceof IChoiceSegment segment && segment.equals(localSegment))
                 setContainedBy((IChoiceSegment) null);
         }
@@ -367,7 +366,7 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
     }
 
 
-    public IChoiceSegment getContainedBy() {
+    public IChoiceSegment getContainedByIChoiceSegment() {
         return segment;
     }
 

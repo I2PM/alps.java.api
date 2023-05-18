@@ -522,7 +522,6 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         Map<String, IParseablePASSProcessModelElement> allElements = getDictionaryOfAllAvailableElements();
         return parseAttribute(triple, allElements);
     }
-    //TODO: out Methode
 
     protected IParseablePASSProcessModelElement parseAttribute(Statement triple, Map<String, IParseablePASSProcessModelElement> allElements) {
 
@@ -547,7 +546,8 @@ public class PASSProcessModelElement implements ICapsuleCallback {
             }
             return null;
         } else {
-            return parseAttribute(predicateContent, objectContent, lang, dataType, null);
+            boolean result = parseAttribute(predicateContent, objectContent, lang, dataType, null);
+            return null;
         }
 
     }
@@ -579,7 +579,6 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      * @param element       the element the objectContent points to (if it does and the element exists)
      * @return
      */
-    //TODO: weiter out-Methode
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
         if (predicate.toLowerCase().contains(OWLTags.rdfsComment)) {
             addComment(new LanguageSpecificString(objectContent, lang));
@@ -772,7 +771,6 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         return new HashSet<IPASSProcessModelElement>();
     }
 
-    //TODO: ref Methode
     public void setExportGraph(IPASSGraph graph) {
 
         if (this.exportGraph != null) {

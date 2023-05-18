@@ -53,10 +53,8 @@ public class Action extends BehaviorDescribingComponent implements IAction {
      * @param additionalLabel
      * @param additionalAttribute
      */
-    //TODO: out-Parameter
     public Action(IState state, String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
-        super(state != null ? (ISubjectBehavior behavior = state.getContainedBy()!=null ? behavior : null) : null,
-                labelForID, comment, additionalLabel, additionalAttribute);
+        super((state != null) ? state.getContainedBy() : null, labelForID, comment, additionalLabel, additionalAttribute);
         setContainsState(state, false);
     }
 
@@ -65,10 +63,9 @@ public class Action extends BehaviorDescribingComponent implements IAction {
      *
      * @param state
      */
-    //TODO: Konstruktor überladen, neu implemetnieren
 
     public Action(IState state) {
-        super((state != null) ? (state.getContainedBy(out ISubjectBehavior behavior) ? behavior : null) : null,
+        super((state != null) ? state.getContainedBy() : null,
                 null, null, null, null);
         setContainsState(state, false);
     }
@@ -85,7 +82,7 @@ public class Action extends BehaviorDescribingComponent implements IAction {
     ISubjectBehavior behavior = null;
 
     public Action(IState state, String labelForID) {
-        super((state != null) ? (state.getContainedBy(out ISubjectBehavior behavior) ? behavior : null) : null,
+        super((state != null) ? state.getContainedBy() : null,
                 labelForID, null, null, null);
         setContainsState(state, false);
     }

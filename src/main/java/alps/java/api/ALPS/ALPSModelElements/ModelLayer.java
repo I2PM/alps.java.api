@@ -196,7 +196,8 @@ public class ModelLayer extends ALPSModelElement implements IModelLayer {
         if (element != null) {
             elements.remove(modelComponentID);
             element.unregister(this, removeCascadeDepth);
-            if (element instanceof IContainableElement<IModelLayer> containable) {
+            if (element instanceof IContainableElement) {
+                IContainableElement<IModelLayer> containable = (IContainableElement<IModelLayer>) element;
                 IModelLayer layer = containable.getContainedBy();
                 if (layer != null && layer == this) {
                     containable.removeFromContainer();
@@ -217,7 +218,8 @@ public class ModelLayer extends ALPSModelElement implements IModelLayer {
         if (element != null) {
             elements.remove(modelComponentID);
             element.unregister(this, 0);
-            if (element instanceof IContainableElement<IModelLayer> containable) {
+            if (element instanceof IContainableElement) {
+                IContainableElement<IModelLayer> containable = (IContainableElement<IModelLayer>) element;
                 IModelLayer layer = containable.getContainedBy();
                 if (layer != null && layer == this) {
                     containable.removeFromContainer();
@@ -273,8 +275,10 @@ public class ModelLayer extends ALPSModelElement implements IModelLayer {
                 element.register(this);
 
                 checkLayerTypes();
-                if (element instanceof IContainableElement<IModelLayer> containable)
+                if (element instanceof IContainableElement) {
+                    IContainableElement<IModelLayer> containable = (IContainableElement<IModelLayer>) element;
                     containable.setContainedBy(this);
+                }
                 addTriple(new IncompleteTriple(OWLTags.stdContains, element.getUriModelComponentID()));
             }
     }
@@ -471,8 +475,10 @@ public class ModelLayer extends ALPSModelElement implements IModelLayer {
 
     @Override
     protected void successfullyParsedElement(IParseablePASSProcessModelElement parsedElement) {
-        if (parsedElement instanceof IContainableElement<IModelLayer> containable)
+        if (parsedElement instanceof IContainableElement) {
+            IContainableElement<IModelLayer> containable = (IContainableElement<IModelLayer>) parsedElement;
             containable.setContainedBy(this);
+        }
     }
 
     @Override
@@ -523,7 +529,7 @@ public class ModelLayer extends ALPSModelElement implements IModelLayer {
         super.updateAdded(update, caller);
         IPASSProcessModel model = getContainedBy();
 
-        if (model!=null) {
+        if (model != null) {
             // If the element is already in another layer, do not add it
             List<IModelLayer> modelLayers = elements.values().stream()
                     .filter(element -> element instanceof IModelLayer)

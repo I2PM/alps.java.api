@@ -213,7 +213,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         }
         if (!allModelElements.containsKey(pASSProcessModelElement.getModelComponentID())) {
             allModelElements.tryAdd(pASSProcessModelElement.getModelComponentID(), pASSProcessModelElement);
-            if (pASSProcessModelElement instanceof IContainableElement<IPASSProcessModel> containable) {
+            if (pASSProcessModelElement instanceof IContainableElement containable) {
                 containable.setContainedBy(this);
             }
             if (pASSProcessModelElement instanceof IParseablePASSProcessModelElement parseable) {
@@ -567,17 +567,16 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
 
         }
 
-        //TODO: ref-Methode
         //foreach (IParseablePASSProcessModelElement element in getAllElements().Values)
         for (IParseablePASSProcessModelElement element : allElements.values()) {
             if (!(element instanceof IPASSProcessModel))
-                element.completeObject(ref allElements);
+                element.completeObject(allElements);
         }
 
         if (checkLayers) {
             Map<String, List<String>> doubleBehaviors = new HashMap<>();
             if (getAllElements().values().stream().filter(e -> e instanceof ISubjectBehavior).count() > 1) {
-                for (IParseablePASSProcessModelElement element : getAllElements().values()) {
+                for (IPASSProcessModelElement element : getAllElements().values()) {
                     if (element instanceof ISubjectBehavior) {
                         ISubjectBehavior behavior = (ISubjectBehavior) element;
                         if (behavior.getSubject() != null && behavior.getSubject() instanceof IFullySpecifiedSubject) {
@@ -604,7 +603,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         }
 
         for (IParseablePASSProcessModelElement element : getAllElements().values()) {
-            element.setExportGraph(baseGraph); // removed 'ref' keyword, as it is not needed in Java
+            element.setExportGraph(baseGraph);
         }
     }
 
@@ -763,7 +762,8 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
 
     @Override
     protected void successfullyParsedElement(IParseablePASSProcessModelElement parsedElement) {
-        if (parsedElement instanceof IContainableElement<IPASSProcessModel> containable) {
+        if (parsedElement instanceof IContainableElement) {
+            IContainableElement<IPASSProcessModel> containable = (IContainableElement<IPASSProcessModel>) parsedElement;
             containable.setContainedBy(this);
         }
         parsedElement.setExportGraph(baseGraph);
