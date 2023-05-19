@@ -11,8 +11,8 @@ import java.util.*;
  */
 public class BasicPASSProcessModelElementFactory implements IPASSProcessModelElementFactory<IParseablePASSProcessModelElement> {
     //TODO. Out-Methode
-    public String createInstance(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, List<String> names, IParseablePASSProcessModelElement element) {
-        element = new PASSProcessModelElement();
+    public IParseablePASSProcessModelElement createInstance(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, List<String> names) {
+        IParseablePASSProcessModelElement element = new PASSProcessModelElement();
         Set<String> bestParseableNames = new HashSet<String>();
         int lowestParseDiff = Integer.MAX_VALUE;
 
@@ -86,7 +86,8 @@ public class BasicPASSProcessModelElementFactory implements IPASSProcessModelEle
         if (elementCount == 1) {
             // Take the only element and return a new instance
             element = possibleElements.keySet().iterator().next().getParsedInstance();
-            return possibleElements.values().iterator().next();
+            //return possibleElements.values().iterator().next();
+            return element;
         } else if (elementCount > 1) {
             // Still some elements left that are both
             // - equally good in parsing
@@ -94,7 +95,8 @@ public class BasicPASSProcessModelElementFactory implements IPASSProcessModelEle
             // parse the one having the longest matching name (longer name -> more specific instance ?)
             Map.Entry<IParseablePASSProcessModelElement, String> selectedPair = (Map.Entry<IParseablePASSProcessModelElement, String>) decideForElement(possibleElements);
             element = selectedPair.getKey().getParsedInstance();
-            return selectedPair.getValue();
+            //return selectedPair.getValue();
+            return element;
         } else {
             return null;
         }

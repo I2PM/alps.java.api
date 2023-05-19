@@ -52,12 +52,11 @@ public interface IPASSReaderWriter {
      *
      * @param model       the model that should be exported
      * @param filepath    the path where the file will be saved
-     * @param exportGraph A graph representation of the exported owl file
-     * @return The full filepath to the file that was exported
+     * @return The model
      */
-    String exportModel(IPASSProcessModel model, String filepath, Model exportGraph);
+    Model exportModel(IPASSProcessModel model, String filepath);
 
-    /**
+   /**
      * Exports the given model as rdf/owl formatted file.
      * The file will be saved under filename, this might be given as dynamic or static filepath.
      *
@@ -65,7 +64,9 @@ public interface IPASSReaderWriter {
      * @param filepath the path where the file will be saved
      * @return The full filepath to the file that was exported
      */
+   /**
     String exportModel(IPASSProcessModel model, String filepath);
+    */
 
     /**
      * Allows to set another factory to create the elements.

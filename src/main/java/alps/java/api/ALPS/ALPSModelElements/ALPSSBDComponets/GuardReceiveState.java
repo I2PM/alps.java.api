@@ -53,7 +53,7 @@ public class GuardReceiveState extends ReceiveState implements IGuardReceiveStat
     //TODO: Konstruktor überladen
     public GuardReceiveState(ISubjectBehavior behavior, String labelForId, IGuardBehavior guardBehavior,
                              IReceiveFunction functionSpecification,
-                             Set<ITransition> incomingTransition, Set<IReceiveTransition> outgoingTransition, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
+                             Set<ITransition> incomingTransition, Set<ITransition> outgoingTransition, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
         super(behavior, labelForId, guardBehavior, functionSpecification, incomingTransition, outgoingTransition, comment, additionalLabel, additionalAttribute);
     }
 

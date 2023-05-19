@@ -186,6 +186,7 @@ public class PASSReaderWriter implements IPASSReaderWriter {
 
         return passProcessModels;
     }
+
     public List<IPASSProcessModel> loadModels(List<String> filepaths) {
         System.out.println("Reading input owl files...");
 
@@ -238,6 +239,7 @@ public class PASSReaderWriter implements IPASSReaderWriter {
 
         return passProcessModels;
     }
+
     /**
      * Verifies whether a triple (as string) is part of a standard pass definition owl or a model
      *
@@ -270,7 +272,7 @@ public class PASSReaderWriter implements IPASSReaderWriter {
         Map<String, List<String>> namedIndividualsDict = new HashMap<>();
 
         // Iterate over triples in the graph
-        for(Statement triple: graph.listStatements().toList()){
+        for (Statement triple : graph.listStatements().toList()) {
 
             // Add named individuals
             if (triple.getObject().toString().contains("NamedIndividual") && triple.getSubject().toString().contains("#") && !isStandardPass(triple)) {
@@ -323,23 +325,34 @@ public class PASSReaderWriter implements IPASSReaderWriter {
 
             // Generates a new modelElement and returns the type this element is instantiated with
             // (i.e. an abstract DoState has the types "AbstractState" and "DoState", but is instantiated with a DoState, so this method returns "DoState"
-            String elementType = elementFactory.createInstance(parsingDict, pair.getValue(), IParseablePASSProcessModelElement modelElement);
-
+            IParseablePASSProcessModelElement modelElement = elementFactory.createInstance(parsingDict, pair.getValue());
+            //String elementType;
             // If the factory found a fitting element
             if (modelElement != null) {
+                //String elementType;
                 // The model element receives its triples which define all its characteristics in the form of incomplete triples
-                StmtIterator elementTriples = graph.listStatements(graph.getResource(new URI(pair.getKey()).toString()), null, (RDFNode) null);
+                /**StmtIterator elementTriples = graph.listStatements(graph.getResource(new URI(pair.getKey()).toString()), null, (RDFNode) null);
+                 List<IIncompleteTriple> elementIncompleteTriples = new ArrayList<>();
+
+                 while (elementTriples.hasNext()) {
+                 Statement triple = elementTriples.next();
+                 elementIncompleteTriples.add(new IncompleteTriple(triple, baseUri));
+                 }
+                 modelElement.addIncompleteTriples(elementIncompleteTriples);
+                 */
+                // The model element receives its triples which define all its characteristics in the form of incomplete triples
+                // Incomplete triples carry no information about the subject, as the subjects uri can change during parsing.
+                Resource subject = ResourceFactory.createResource(pair.getKey());
+                List<Statement> elementTriples = graph.listStatements(subject, null, (RDFNode) null).toList();
                 List<IIncompleteTriple> elementIncompleteTriples = new ArrayList<>();
 
-                while (elementTriples.hasNext()) {
-                    Statement triple = elementTriples.next();
-                    elementIncompleteTriples.add(new IncompleteTriple(triple, baseUri));
+                for (Statement statement : elementTriples) {
+                    elementIncompleteTriples.add(new IncompleteTriple(statement, baseUri));
                 }
-                modelElement.addTriples(elementIncompleteTriples);
-
+                modelElement.addIncompleteTriples(elementIncompleteTriples);
                 // Important! The ModelComponentID is overwritten by the suffix of the elements uri (= "baseuri#suffix").
-                if (elementTriples.hasNext()) {
-                    modelElement.setModelComponentID(StaticFunctions.removeBaseUri(elementTriples.next().getSubject().toString(), baseUri));
+                if (elementTriples.size() > 0) {
+                    modelElement.setModelComponentID(StaticFunctions.removeBaseUri(elementTriples.get(0).getSubject().toString(), baseUri));
                 }
 
                 if (modelElement instanceof IPASSProcessModel) {
@@ -349,10 +362,23 @@ public class PASSReaderWriter implements IPASSReaderWriter {
                     IPASSGraph modelBaseGraph = passProcessModell.getBaseGraph();
 
                     // Add all the triples to the graph that describe the owl file directly (version iri, imports...)
-                    StmtIterator modelBaseGraphTriples = graph.listStatements(graph.getResource(new URI(baseUri).toString()), null, (RDFNode) null);
-                    while (modelBaseGraphTriples.hasNext()) {
-                        modelBaseGraph.addTriple(modelBaseGraphTriples.next());
-                    }
+                    /**String nameNewURI;
+                     try {
+                     nameNewURI = (new URI(baseUri)).toString();
+                     }catch(java.net.URISyntaxException e){
+                     nameNewURI = "ERROR_No_New_URI_Created";
+                     }
+                     StmtIterator modelBaseGraphTriples = graph.listStatements(graph.getResource(nameNewURI,  (ResourceF) null));
+                     while (modelBaseGraphTriples.hasNext()) {
+                     modelBaseGraph.addTriple(modelBaseGraphTriples.next());
+                     }
+                     */
+                    // assuming graph has a method to return Jena's Model
+
+                    // Add all the triples to the graph that describe the owl file directly (version iri, imports...)
+                    graph.listStatements(ResourceFactory.createResource(baseUri), null, (RDFNode) null)
+                            .forEachRemaining(statement -> modelBaseGraph.addTriple(statement));
+
 
                 } else {
                     // if the factory could not find a fitting element
@@ -388,19 +414,34 @@ public class PASSReaderWriter implements IPASSReaderWriter {
         return passProcessModels;
     }
 
-// TODO: Out-Methode
-    public String exportModel(IPASSProcessModel model, String filepath, Model exportGraph) {
+    /**
+     * // TODO: Out-Methode
+     * public String exportModel(IPASSProcessModel model, String filepath, Model exportGraph) {
+     * // Get the graph hold by the model and use the export function given by the library
+     * String fullPath = (filepath.endsWith(".owl")) ? filepath : filepath + ".owl";
+     * model.getBaseGraph().exportTo(fullPath);
+     * if (model.getBaseGraph() instanceof PASSGraph graph)
+     * exportGraph = graph.getGraph();
+     * else exportGraph = null;
+     * return fullPath;
+     * }
+     * //TODO Out-Methode
+     * public String exportModel(IPASSProcessModel model, String filepath) {
+     * Model graph;
+     * <p>
+     * return exportModel(model, filepath, Model graph);
+     * }
+     */
+//TODO: ei. STring Rückgabedatentyp mit Path
+    public Model exportModel(IPASSProcessModel model, String filepath) {
         // Get the graph hold by the model and use the export function given by the library
+        Model exportGraph;
         String fullPath = (filepath.endsWith(".owl")) ? filepath : filepath + ".owl";
         model.getBaseGraph().exportTo(fullPath);
         if (model.getBaseGraph() instanceof PASSGraph graph)
             exportGraph = graph.getGraph();
         else exportGraph = null;
-        return fullPath;
-    }
-//TODO Out-Methode
-    public String exportModel(IPASSProcessModel model, String filepath) {
-        return exportModel(model, filepath, Model graph);
+        return exportGraph;
     }
 
     public void setModelElementFactory(IPASSProcessModelElementFactory<IParseablePASSProcessModelElement> elementFactory) {

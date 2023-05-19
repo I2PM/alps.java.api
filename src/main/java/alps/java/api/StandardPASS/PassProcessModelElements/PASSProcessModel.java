@@ -602,9 +602,11 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
             }
         }
 
-        for (IParseablePASSProcessModelElement element : getAllElements().values()) {
-            element.setExportGraph(baseGraph);
-        }
+        getAllElements().values().stream()
+                .filter(IParseablePASSProcessModelElement.class::isInstance)
+                .map(IParseablePASSProcessModelElement.class::cast)
+                .forEach(element -> element.setExportGraph(baseGraph));
+
     }
 
     /**
