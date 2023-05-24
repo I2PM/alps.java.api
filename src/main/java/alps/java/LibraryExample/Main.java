@@ -7,6 +7,7 @@ import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IState;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IDoState;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IMacroState;
+import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataMappingFunctions.IDataMappingIncomingToLocal;
 import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.IDataMappingFunction;
 import alps.java.api.StandardPASS.PassProcessModelElements.IBehaviorDescribingComponent;
 import alps.java.api.StandardPASS.PassProcessModelElements.IPASSProcessModel;
@@ -18,10 +19,7 @@ import alps.java.api.parsing.IPASSReaderWriter;
 import alps.java.api.parsing.PASSReaderWriter;
 import alps.java.api.util.ReflectiveEnumerator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -33,7 +31,7 @@ public class Main {
 
         // Now the reflective enumerator searches for classes in the library assembly as well as in the current.
 
-        ReflectiveEnumerator.addClassToCheckForTypes(System.Reflection.Assembly.GetExecutingAssembly());
+        //ReflectiveEnumerator.addClassToCheckForTypes(System.Reflection.Assembly.GetExecutingAssembly());
 
 
         IPASSReaderWriter io = PASSReaderWriter.getInstance();
@@ -45,8 +43,8 @@ public class Main {
 
 
         List<String> paths = new ArrayList<String>();
-        paths.add("../../../../../src/standard_PASS_ont_v_1.1.0.owl");
-        paths.add("../../../../../src/ALPS_ont_v_0.8.0.owl");
+        paths.add("standard_PASS_ont_v_1.1.0.owl");
+        paths.add("ALPS_ont_v_0.8.0.owl");
 
 
         // Load these files once (no future calls needed)
@@ -54,6 +52,7 @@ public class Main {
         // This call creates both parsing trees and the parsing dictionary
 
         io.loadOWLParsingStructure(paths);
+        /*
 
 
         // This loads models from the specified owl.
@@ -62,9 +61,9 @@ public class Main {
 
         // IList<IPASSProcessModel> models = io.loadModels(new List<string> { "C:\\Data\\ExportImportTest1.owl" });
 
-        List<IPASSProcessModel> models = io.loadModels(new ArrayList<String> {
-            "C:\\Data\\ExportImportTest1.owl"
-        });
+        List<String> modelPaths = new ArrayList<>();
+        modelPaths.add("C:\\Data\\ExportImportTest1.owl");
+        List<IPASSProcessModel> models = io.loadModels(modelPaths);
 
 
         // IDictionary of all elements
@@ -73,12 +72,15 @@ public class Main {
 
         // Drop the keys, keep values
 
-        ICollection<IPASSProcessModelElement> onlyElements = models[0].getAllElements().Values;
+        Collection<IPASSProcessModelElement> onlyElements = models.get(0).getAllElements().values();
 
         // Filter for a specific interface (Enumerable, not so easy to use -> convert to list)
 
-        List<IAdditionalFunctionalityElement> onlyAdditionalFunctionalityElements = models.get(0).getAllElements().Values.OfType < IAdditionalFunctionalityElement > ().ToList();
-
+        List<IAdditionalFunctionalityElement> onlyAdditionalFunctionalityElements = new ArrayList<IAdditionalFunctionalityElement>();
+        for(IPASSProcessModelElement element : onlyElements) {
+            if(element instanceof IAdditionalFunctionalityElement)
+                onlyAdditionalFunctionalityElements.add((IAdditionalFunctionalityElement) element);
+        }
 
         //some output examples for a parsed model
 
@@ -95,9 +97,9 @@ public class Main {
         Map<String, IModelLayer> layers = models.get(0).getModelLayers();
 
         System.out.println("Layers in first model: " + layers.size());
+/*
 
-
-        IModelLayer firstLayer = layers.ElementAt(0).Value;
+        IModelLayer firstLayer = layers.values().iterator().next();
 
 
         IFullySpecifiedSubject mySubject = firstLayer.getFullySpecifiedSubject(1);
@@ -114,11 +116,11 @@ public class Main {
             System.out.println("Numbers of behaviors in subject: " + mySubjectBehaviors.size());
 
 
-            ISubjectBehavior firstBehavior = mySubjectBehaviors.ElementAt(0).Value;
+            ISubjectBehavior firstBehavior = mySubjectBehaviors.values().iterator().next();
 
             System.out.println("Numbers of Elements in Behavior: " + firstBehavior.getBehaviorDescribingComponents().size());
 
-            System.out.println("First Element: " + firstBehavior.getBehaviorDescribingComponents().ElementAt(0).Value.getModelComponentID());
+            System.out.println("First Element: " + firstBehavior.getBehaviorDescribingComponents().values().iterator().next().getModelComponentID());
 
             IState firstState = firstBehavior.getInitialStateOfBehavior();
 
@@ -244,7 +246,7 @@ public class Main {
 
                 System.out.println(" Found a Data Mapping Function: " + myDataMapping.getModelComponentID());
 
-                System.out.println(" - typename: " + myDataMapping.GetType().Name);
+                System.out.println(" - typename: " + myDataMapping.getClass().getName());
 
                 System.out.println(" - string: " + myDataMapping.getDataMappingString());
 
@@ -267,7 +269,7 @@ public class Main {
 
             IDoState myDo = (IDoState) someState;
 
-            Map<String, IDataMappingFunction> myMapDic = myDo.getDataMappingFunctions();
+            Map<String, IDataMappingIncomingToLocal> myMapDic = myDo.getDataMappingFunctionsIncomingToLocal();
 
             System.out.println("   - number of data mappings: " + myMapDic.size());
 
@@ -309,11 +311,10 @@ public class Main {
 
 
         }
+        /*
+ */
 
     }
 
 }
 
-        }
-                }
-                }
