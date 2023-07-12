@@ -43,8 +43,8 @@ public class Main {
 
 
         List<String> paths = new ArrayList<String>();
-        paths.add("standard_PASS_ont_v_1.1.0.owl");
-        paths.add("ALPS_ont_v_0.8.0.owl");
+        paths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\gittest\\IntellijerstesProjekt-master\\src\\main\\java\\alps\\java\\LibraryExample\\standard_PASS_ont_v_1.1.0.owl");
+        paths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\gittest\\IntellijerstesProjekt-master\\src\\main\\java\\alps\\java\\LibraryExample\\ALPS_ont_v_0.8.0.owl");
 
 
         // Load these files once (no future calls needed)
@@ -52,7 +52,7 @@ public class Main {
         // This call creates both parsing trees and the parsing dictionary
 
         io.loadOWLParsingStructure(paths);
-        /*
+
 
 
         // This loads models from the specified owl.
@@ -86,6 +86,7 @@ public class Main {
 
         System.out.println("Number ob Models loaded: " + models.size());
 
+
         System.out.println("Found " + onlyAdditionalFunctionalityElements.size() +
 
                 " AdditionalFunctionalityElements in First model!");
@@ -97,7 +98,7 @@ public class Main {
         Map<String, IModelLayer> layers = models.get(0).getModelLayers();
 
         System.out.println("Layers in first model: " + layers.size());
-/*
+
 
         IModelLayer firstLayer = layers.values().iterator().next();
 
