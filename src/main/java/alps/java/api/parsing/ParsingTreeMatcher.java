@@ -8,11 +8,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.atlas.logging.Log;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 import java.sql.SQLOutput;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -34,6 +36,15 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         }
 
         consoleBar.report(0.25);
+        // Check and remove entities that match the schema from parsingStructureOntologyGraph
+        Pattern pattern = Pattern.compile("[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}");
+
+        for (OntClass ontClass : parsingStructureOntologyGraph.listClasses().toList()) {
+            Matcher matcher = pattern.matcher(ontClass.toString());
+            if (matcher.find()) {
+                ontClass.remove();
+            }
+        }
 
         System.out.println("Creating owl inheritance tree from merged graphs...");
 
@@ -69,6 +80,11 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
 
         return parsingDict;
     }
+    private boolean matchesSchema(String str) {
+        return str.matches("[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}");
+    }
+
+
 
 
 // ################################ OWL class tree creation ################################
@@ -82,16 +98,15 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
      */
     private List<OntClass> createOWLInheritanceTree(OntModel parsingStructureOntologyGraph) {
         List<OntClass> nodesWithoutParents = new LinkedList<OntClass>();
-
+        List<OntClass> test = parsingStructureOntologyGraph.listClasses().toList();
         // Find a root for the tree by finding alls classes that have no parent
         for (OntClass ontClass : parsingStructureOntologyGraph.listClasses().toList()) {
-            if (!ontClass.toString().contains("auto")) {
+
                 // Get all nodes that have no parent and are classes
-                if (hasParentClass(ontClass) == false) {
+                if (!hasParentClass(ontClass)) {
                     nodesWithoutParents.add(ontClass);
                 }
             }
-        }
 
         List<OntClass> baseClasses = new ArrayList<OntClass>();
 
@@ -117,11 +132,14 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
     private boolean hasParentClass(OntClass ontClass) {
         if (ontClass.listSuperClasses().toList().size() > 0) {
             for (OntClass superClass : ontClass.listSuperClasses().toList()) {
-                if (!(superClass.toString().toLowerCase().contains("auto"))) return true;
+                if (superClass.toString().startsWith("http://www.imi.kit.edu/") || superClass.toString().startsWith("http://www.i2pm.net/")) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
+        }return false;
         }
-        return false;
-    }
 
 
 // ########################################################################################
@@ -140,10 +158,11 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         ITreeNode<IParseablePASSProcessModelElement> treeRootNode = new TreeNode<IParseablePASSProcessModelElement>(new PASSProcessModelElement());
 
         // Search recursively for classes that extend this class and add them to the tree
+        //TODO: ab hier kommt STack Overflow Error
         findChildsAndAdd(treeRootNode);
         return treeRootNode;
     }
-
+//TODO: Der Parent Node wird bei addChild auch gleichzeitig zum Child node -> STack Overflow error
     private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node) {
         IParseablePASSProcessModelElement element = node.getContent();
         node.addChild(new TreeNode<IParseablePASSProcessModelElement>(element));

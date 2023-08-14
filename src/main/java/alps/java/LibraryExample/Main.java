@@ -43,8 +43,8 @@ public class Main {
 
 
         List<String> paths = new ArrayList<String>();
-        paths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\gittest\\IntellijerstesProjekt-master\\src\\main\\java\\alps\\java\\LibraryExample\\standard_PASS_ont_v_1.1.0.owl");
-        paths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\gittest\\IntellijerstesProjekt-master\\src\\main\\java\\alps\\java\\LibraryExample\\ALPS_ont_v_0.8.0.owl");
+        paths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\alps.java.api\\src\\main\\java\\alps\\java\\LibraryExample\\standard_PASS_ont_v_1.1.0.owl");
+        paths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\alps.java.api\\src\\main\\java\\alps\\java\\LibraryExample\\ALPS_ont_v_0.8.0.owl");
 
 
         // Load these files once (no future calls needed)
@@ -64,7 +64,7 @@ public class Main {
         List<String> modelPaths = new ArrayList<>();
         modelPaths.add("C:\\Data\\ExportImportTest1.owl");
         List<IPASSProcessModel> models = io.loadModels(modelPaths);
-
+/*
 
         // IDictionary of all elements
 
@@ -312,7 +312,7 @@ public class Main {
 
 
         }
-        /*
+
  */
 
     }
