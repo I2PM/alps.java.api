@@ -63,7 +63,9 @@ public class SubjectBaseBehavior extends SubjectBehavior implements ISubjectBase
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
         if (element != null) {
+            System.out.println("Parsing Attribut: " + predicate);
             if (predicate.contains(OWLTags.hasEndState) && element instanceof IState endState) {
+                System.out.println(" - found End State: "+ endState.getModelComponentID());
                 addBehaviorDescribingComponent(endState);
                 endState.setIsStateType(IState.StateType.EndState);
                 return true;

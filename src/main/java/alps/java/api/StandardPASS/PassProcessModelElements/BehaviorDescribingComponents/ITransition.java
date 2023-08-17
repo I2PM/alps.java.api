@@ -3,11 +3,12 @@ package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCo
 import alps.java.api.StandardPASS.IAbstractElement;
 import alps.java.api.StandardPASS.IImplementingElementT;
 import alps.java.api.StandardPASS.PassProcessModelElements.IBehaviorDescribingComponent;
+import alps.java.api.util.IHasSimple2DVisualizationLine;
 
 /**
  * Interface to the transition class
  */
-public interface ITransition extends IBehaviorDescribingComponent, IImplementingElementT<ITransition>, IAbstractElement
+public interface ITransition extends IBehaviorDescribingComponent, IImplementingElementT<ITransition>, IAbstractElement, IHasSimple2DVisualizationLine
         {
             /**
              * enum which describes all the possible states a transition can have

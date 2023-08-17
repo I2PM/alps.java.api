@@ -241,7 +241,7 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
         }
         this.initialStateOfBehavior = initialStateOfBehavior;
 
-        if (!(initialStateOfBehavior == null)) {
+        if ((initialStateOfBehavior != null)) {
             addBehaviorDescribingComponent(initialStateOfBehavior);
             initialStateOfBehavior.setIsStateType(IState.StateType.InitialStateOfBehavior);
             addTriple(new IncompleteTriple(OWLTags.stdHasInitialState, initialStateOfBehavior.getUriModelComponentID()));
@@ -260,7 +260,7 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
             removeTriple(new IncompleteTriple(OWLTags.stdHasInitialState, oldInitialState.getUriModelComponentID()));
         }
 
-        if (!(initialStateOfBehavior == null)) {
+        if ((initialStateOfBehavior != null)) {
             addBehaviorDescribingComponent(initialStateOfBehavior);
             initialStateOfBehavior.setIsStateType(IState.StateType.InitialStateOfBehavior);
             addTriple(new IncompleteTriple(OWLTags.stdHasInitialState, initialStateOfBehavior.getUriModelComponentID()));

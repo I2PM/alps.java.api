@@ -11,26 +11,26 @@ public interface ISimple2DVisualizationPoint extends IALPSModelElement {
      *
      * @return the relative x coordinate
      */
-    double getRelative2D_PosX();
+    double getRelative2DPosX();
 
     /**
      * Gets the relative y coordinate of the point
      *
      * @return the relative y coordinate<
      */
-    double getRelative2D_PosY();
+    double getRelative2DPosY();
 
     /**
      * Sets the relative x coordinate of the point
      *
      * @param posx the relative x coordinate
      */
-    void setRelative2D_PosX(double posx);
+    void setRelative2DPosX(double posx);
 
     /**
      * Sets the relative y coordinate of the point
      *
      * @param posy the relative y coordinate
      */
-    void setRelative2D_PosY(double posy);
+    void setRelative2DPosY(double posy);
 }

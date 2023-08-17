@@ -18,7 +18,7 @@ public class StandaloneMacroSubject extends Subject implements IStandaloneMacroS
     /**
      * Name of the class, needed for parsing
      */
-    private final String className = "StandaloneMacroSubject";
+    private final String className = "StandAloneMacroSubject";
 
     @Override
     public String getClassName() {

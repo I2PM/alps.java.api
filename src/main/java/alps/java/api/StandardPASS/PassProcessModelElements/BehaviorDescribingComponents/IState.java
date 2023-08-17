@@ -4,6 +4,7 @@ import alps.java.api.StandardPASS.IImplementingElement;
 import alps.java.api.StandardPASS.IImplementingElementT;
 import alps.java.api.StandardPASS.PassProcessModelElements.IBehaviorDescribingComponent;
 import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors.IGuardBehavior;
+import alps.java.api.util.IHasSimple2DVisualizationBox;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +12,7 @@ import java.util.Set;
 /**
  * Interface to the state class
  */
-public interface IState extends IBehaviorDescribingComponent, IImplementingElementT<IState> {
+public interface IState extends IBehaviorDescribingComponent, IImplementingElementT<IState>, IHasSimple2DVisualizationBox {
     /**
      * Method that sets the incoming transition attribute of the instance
      *

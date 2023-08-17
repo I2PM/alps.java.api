@@ -9,6 +9,7 @@ import org.apache.jena.rdf.model.Statement;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -580,7 +581,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      * @param element       the element the objectContent points to (if it does and the element exists)
      * @return
      */
-    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) throws ParseException {
         if (predicate.toLowerCase().contains(OWLTags.rdfsComment)) {
             addComment(new LanguageSpecificString(objectContent, lang));
             return true;

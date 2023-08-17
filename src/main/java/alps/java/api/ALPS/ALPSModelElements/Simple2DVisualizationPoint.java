@@ -6,12 +6,20 @@ import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.src.OWLTags;
 import alps.java.api.util.IIncompleteTriple;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Logger;
 
 public class Simple2DVisualizationPoint extends ALPSModelElement implements ISimple2DVisualizationPoint
 {
 
-    protected double posx, posy;
+    private double has2DPageRatio;
+    private double hasRelative2D_PosX;
+    private double hasRelative2D_PosY;
+    Logger logger = Logger.getLogger(Simple2DVisualizationPoint.class.getName());
+
 
     /**
      * Name of the class, needed for parsing
@@ -31,24 +39,76 @@ public class Simple2DVisualizationPoint extends ALPSModelElement implements ISim
         return OWLTags.abstr;
     }
 
-    public double getRelative2D_PosX()
+    public double getRelative2DPosX()
     {
-        return posx;
+        return this.hasRelative2D_PosX;
     }
 
-    public double getRelative2D_PosY()
+    public double getRelative2DPosY()
     {
-        return posy;
+        return this.hasRelative2D_PosY;
     }
 
-    public void setRelative2D_PosX(double posx)
+    public void setRelative2DPosX(double posx)
     {
-        this.posx = posx;
+        if (posx >= 0 && posx <= 1)
+        {
+            this.hasRelative2D_PosX = posx;
+        }
+        else
+        {
+            if (posx < 0)
+            {
+                this.hasRelative2D_PosX = 0;
+                logger.warning("Value for posx is smaller than 0. Setting it to 0.");
+            }
+            else if (posx > 1)
+            {
+                this.hasRelative2D_PosX = 1;
+                logger.warning("Value for posx is larger than 1. Setting it to 1.");
+            }
+        }
     }
 
-    public void setRelative2D_PosY(double posy)
+    public void setRelative2DPosY(double posy)
     {
-        this.posy = posy;
+        if (posy >= 0 && posy <= 1)
+        {
+            this.hasRelative2D_PosY = posy;
+        }
+        else
+        {
+            if (posy < 0)
+            {
+                this.hasRelative2D_PosY = 0;
+                logger.warning("Value for posy is smaller than 0. Setting it to 0.");
+            }
+            else if (posy > 1)
+            {
+                this.hasRelative2D_PosY = 1;
+                logger.warning("Value for posy is larger than 1. Setting it to 1.");
+            }
+        }
+
+    }
+
+
+    public double getHas2DPageRatio() { return has2DPageRatio; }
+    public void setHas2DPageRatio(double has2DPageRatio){
+        if (has2DPageRatio > 0)
+        {
+            this.has2DPageRatio = has2DPageRatio;
+        }
+        if (has2DPageRatio == 0)
+        {
+            this.has2DPageRatio = 1;
+            logger.warning("found 2D page ratio of 0. This is impossible. changed it to 1");
+        }
+        else
+        {
+            this.has2DPageRatio = Math.abs(has2DPageRatio);
+            logger.warning("found negative 2d page ratio. Changed it to positive value");
+        }
     }
     @Override
     public IParseablePASSProcessModelElement getParsedInstance()
@@ -57,4 +117,41 @@ public class Simple2DVisualizationPoint extends ALPSModelElement implements ISim
     }
 
     protected Simple2DVisualizationPoint() { }
+@Override
+    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+    Locale customCulture = new Locale("en", "US");
+    NumberFormat numberFormat = NumberFormat.getInstance(customLocale);
+    numberFormat.setGroupingUsed(false); // Deaktiviere Gruppierung, z.B. Tausendertrennzeichen
+
+    if (predicate.contains(OWLTags.abstrHas2DPageRatio)) {
+        try {
+            setHas2DPageRatio(numberFormat.parse(objectContent).doubleValue());
+            return true;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    } else if (predicate.contains(OWLTags.abstrHasRelative2D_PosX)) {
+        try {
+            setRelative2DPosX(numberFormat.parse(objectContent).doubleValue());
+            return true;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    } else if (predicate.contains(OWLTags.abstrHasRelative2D_PosY)) {
+        try {
+            setRelative2DPosY(numberFormat.parse(objectContent).doubleValue());
+            return true;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    try {
+        return super.parseAttribute(predicate, objectContent, lang, dataType, element);
+    } catch (ParseException e) {
+        throw new RuntimeException(e);
+    }
+}
 }

@@ -4,21 +4,26 @@ import alps.java.api.FunctionalityCapsules.IImplementsFunctionalityCapsule;
 import alps.java.api.FunctionalityCapsules.ImplementsFunctionalityCapsule;
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponent;
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IMacroState;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IStateReference;
 import alps.java.api.StandardPASS.PassProcessModelElements.ISubjectBehavior;
 import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors.IGuardBehavior;
+import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors.IMacroBehavior;
 import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors.ISubjectBaseBehavior;
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.src.OWLTags;
 import alps.java.api.util.*;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Class that represents a state
  */
 
-public class State extends BehaviorDescribingComponent implements IStateReference {
+public class State extends BehaviorDescribingComponent implements IStateReference, IMacroState {
     protected final ICompatibilityDictionary<String, ITransition> incomingTransitions = new CompatibilityDictionary<String, ITransition>();
     protected final ICompatibilityDictionary<String, ITransition> outgoingTransitions = new CompatibilityDictionary<String, ITransition>();
     protected final IImplementsFunctionalityCapsule<IState> implCapsule;
@@ -27,6 +32,145 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
     protected IGuardBehavior guardBehavior;
     protected IAction action;
     protected IState referenceState;
+    protected IMacroBehavior referenceMacroBehavior;
+    protected final ICompatibilityDictionary<String, IStateReference> stateReferences = new CompatibilityDictionary<String, IStateReference>();
+
+    private double has2DPageRatio;
+    private double hasRelative2D_Height;
+    private double hasRelative2D_Width;
+    private double hasRelative2D_PosX;
+    private double hasRelative2D_PosY;
+    Logger logger = Logger.getLogger(State.class.getName());
+
+    public double get2DPageRatio()
+    {
+        return has2DPageRatio;
+    }
+
+    public void set2DPageRatio(double has2DPageRatio)
+    {
+        if (has2DPageRatio > 0)
+        {
+            this.has2DPageRatio = has2DPageRatio;
+        }
+        if (has2DPageRatio == 0)
+        {
+            this.has2DPageRatio = 1;
+            logger.warning("found 2D page ratio of 0. This is impossible. changed it to 1");
+        }
+        else
+        {
+            this.has2DPageRatio = Math.abs(has2DPageRatio);
+            logger.warning("found negative 2d page ratio. Changed it to positive value");
+        }
+    }
+
+    public double getRelative2DHeight()
+    {
+        return hasRelative2D_Height;
+    }
+
+    public void setRelative2DHeight(double relative2DHeight)
+    {
+        if (relative2DHeight >= 0 && relative2DHeight <= 1)
+        {
+            hasRelative2D_Height = relative2DHeight;
+        }
+        else
+        {
+            if (relative2DHeight < 0)
+            {
+                hasRelative2D_Height = 0;
+                logger.warning("Value for relative2DHeight is smaller than 0. Setting it to 0.");
+            }
+            else if (relative2DHeight > 1)
+            {
+                hasRelative2D_Height = 1;
+                logger.warning("Value for relative2DHeight is larger than 1. Setting it to 1.");
+            }
+        }
+
+    }
+
+    public double getRelative2DWidth()
+    {
+        return hasRelative2D_Width;
+    }
+
+    public void setRelative2DWidth(double relative2DWidth)
+    {
+
+        if (relative2DWidth >= 0 && relative2DWidth <= 1)
+        {
+            hasRelative2D_Width = relative2DWidth;
+        }
+        else
+        {
+            if (relative2DWidth < 0)
+            {
+                hasRelative2D_Width = 0;
+                logger.warning("Value for relative2DWidth is smaller than 0. Setting it to 0.");
+            }
+            else if (relative2DWidth > 1)
+            {
+                hasRelative2D_Width = 1;
+                logger.warning("Value for relative2DWidth is larger than 1. Setting it to 1.");
+            }
+        }
+
+    }
+
+    public double getRelative2DPosX()
+    {
+        return hasRelative2D_PosX;
+    }
+
+    public void setRelative2DPosX(double relative2DPosX)
+    {
+        if (relative2DPosX >= 0 && relative2DPosX <= 1)
+        {
+            hasRelative2D_PosX = relative2DPosX;
+        }
+        else
+        {
+            if (relative2DPosX < 0)
+            {
+                hasRelative2D_PosX = 0;
+                logger.warning("Value for relative2DPosX is smaller than 0. Setting it to 0.");
+            }
+            else if (relative2DPosX > 1)
+            {
+                hasRelative2D_PosX = 1;
+                logger.warning("Value for relative2DPosX is larger than 1. Setting it to 1.");
+            }
+        }
+    }
+
+    public double getRelative2DPosY()
+    {
+        return hasRelative2D_PosY;
+    }
+
+    public void setRelative2DPosY(double relative2DPosY)
+    {
+        if (relative2DPosY >= 0 && relative2DPosY <= 1)
+        {
+            hasRelative2D_PosY = relative2DPosY;
+        }
+        else
+        {
+            if (relative2DPosY < 0)
+            {
+                hasRelative2D_PosY = 0;
+                logger.warning("Value for relative2DPosY is smaller than 0. Setting it to 0.");
+            }
+            else if (relative2DPosY > 1)
+            {
+                hasRelative2D_PosY = 1;
+                logger.warning("Value for relative2DPosY is larger than 1. Setting it to 1.");
+            }
+        }
+    }
 
     /**
      * Name of the class, needed for parsing
@@ -399,9 +543,12 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
 
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
-        if (implCapsule != null && implCapsule.parseAttribute(predicate, objectContent, lang, dataType, element))
+        Locale customLocale = new Locale("en", "US");
+        NumberFormat numberFormat = NumberFormat.getInstance(customLocale);
+        numberFormat.setGroupingUsed(false);
+        if (implCapsule != null && implCapsule.parseAttribute(predicate, objectContent, lang, dataType, element)) {
             return true;
-        else if (element != null) {
+        } else if (element != null) {
             if (element instanceof ITransition transition) {
                 if (predicate.contains(OWLTags.hasIncomingTransition)) {
                     addIncomingTransition(transition);
@@ -420,19 +567,70 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
             } else if (predicate.contains(OWLTags.belongsTo) && element instanceof IAction action) {
                 generateAction(action);
                 return true;
-            } else if (predicate.contains(OWLTags.type)) {
-                if (objectContent.toLowerCase().contains("endstate")) {
-                    setIsStateType(IState.StateType.EndState);
-                    return true;
-                }
-                if (objectContent.toLowerCase().contains("initialstateofbehavior")) {
-                    setIsStateType(IState.StateType.InitialStateOfBehavior);
-                    return true;
-                }
-                if (objectContent.toLowerCase().contains("initialstateofchoicesegmentpath")) {
-                    setIsStateType(IState.StateType.InitialStateOfChoiceSegmentPath);
-                    return true;
-                }
+            }
+            else if (predicate.contains(OWLTags.referencesMacroBehavior) && element instanceof IMacroBehavior behavior)
+            {
+                setReferencedMacroBehavior(behavior);
+                return true;
+            }
+
+        }
+        else if (predicate.contains(OWLTags.abstrHas2DPageRatio))
+        {
+            try {
+                set2DPageRatio(numberFormat.parse(objectContent).doubleValue());
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
+        else if (predicate.contains(OWLTags.abstrHasRelative2D_PosX))
+        {
+            try {
+                setRelative2DPosX(numberFormat.parse(objectContent).doubleValue());
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
+        else if (predicate.contains(OWLTags.abstrHasRelative2D_PosY))
+        {
+            try {
+                setRelative2DPosY(numberFormat.parse(objectContent).doubleValue());
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
+        else if (predicate.contains(OWLTags.abstrHasRelative2D_Height))
+        {
+            try {
+                setRelative2DHeight(numberFormat.parse(objectContent).doubleValue());
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
+        else if (predicate.contains(OWLTags.abstrHasRelative2D_Width))
+        {
+            try {
+                setRelative2DWidth(numberFormat.parse(objectContent).doubleValue());
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+            return true;
+        }
+
+        if (predicate.contains(OWLTags.type)) {
+            if (objectContent.toLowerCase().contains("endstate") && !(objectContent.toLowerCase().contains("sendstate"))) {
+                setIsStateType(StateType.EndState);
+                return true;
+            } else if (objectContent.toLowerCase().contains("initialstateofbehavior")) {
+                setIsStateType(StateType.InitialStateOfBehavior);
+                return true;
+            } else if (objectContent.toLowerCase().contains("initialstateofchoicesegmentpath")) {
+                setIsStateType(StateType.InitialStateOfChoiceSegmentPath);
+                return true;
             }
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
@@ -672,6 +870,51 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
 
     public Map<String, IState> getImplementedInterfaces() {
         return implCapsule.getImplementedInterfaces();
+    }
+    public void setReferencedMacroBehavior(IMacroBehavior macroBehavior, int removeCascadeDepth)
+    {
+        IMacroBehavior oldBehavior = this.referenceMacroBehavior;
+        // Might set it to null
+        this.referenceMacroBehavior = macroBehavior;
+
+        if (oldBehavior != null)
+        {
+            if (oldBehavior.equals(macroBehavior)) return;
+            oldBehavior.unregister(this, removeCascadeDepth);
+            removeTriple(new IncompleteTriple(OWLTags.stdReferencesMacroBehavior, oldBehavior.getUriModelComponentID()));
+        }
+
+        if (!(macroBehavior == null))
+        {
+            publishElementAdded(macroBehavior);
+            macroBehavior.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdReferencesMacroBehavior, macroBehavior.getUriModelComponentID()));
+        }
+    }
+    public void setReferencedMacroBehavior(IMacroBehavior macroBehavior)
+    {
+        IMacroBehavior oldBehavior = this.referenceMacroBehavior;
+        // Might set it to null
+        this.referenceMacroBehavior = macroBehavior;
+
+        if (oldBehavior != null)
+        {
+            if (oldBehavior.equals(macroBehavior)) return;
+            oldBehavior.unregister(this, 0);
+            removeTriple(new IncompleteTriple(OWLTags.stdReferencesMacroBehavior, oldBehavior.getUriModelComponentID()));
+        }
+
+        if (!(macroBehavior == null))
+        {
+            publishElementAdded(macroBehavior);
+            macroBehavior.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdReferencesMacroBehavior, macroBehavior.getUriModelComponentID()));
+        }
+    }
+
+    public IMacroBehavior getReferencedMacroBehavior()
+    {
+        return referenceMacroBehavior;
     }
 }
 
