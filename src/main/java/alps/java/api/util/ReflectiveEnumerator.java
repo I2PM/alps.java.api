@@ -1,4 +1,5 @@
 package alps.java.api.util;
+import alps.java.api.StandardPASS.PassProcessModelElements.PASSProcessModel;
 import alps.java.api.util.priv.ClassGraphHelper;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.util.*;
 
 public class ReflectiveEnumerator {
 
-    private static Set<ClassLoader> additionalClassLoaders = new HashSet<>();
+    private static Set<Class<?>> additionalClassLoaders = new HashSet<>();
 
     public static <T> List<T> getEnumerableOfType(T element) {
         Class<?> typeOfBase = element.getClass();
@@ -22,15 +23,24 @@ public class ReflectiveEnumerator {
             return null;
         }
         List<T> objects = new ArrayList<>();
+       /** Class<T> clazz = T.class;
+        Package packageOfClass = clazz.getPackage();
+        String packageName = packageOfClass.getName();
+        String className = clazz.getSimpleName();
 
-        // Add the class loader of T to the set if not contained already
-        additionalClassLoaders.add(typeOfBase.getClassLoader());
-
+        String containingTName = packageName + "." + className;
+        Class<?> sameAsContainingT = null;
+*/
+        //sameAsContainingT = Class.forName(containingTName);
+        addClassToCheckForTypes(PASSProcessModel.class);
+        //Passt eigentlich, eigentlich ist PASSProcessModel.class.getClassloader() Instanz vom URLCLassLoader
+        System.out.println(PASSProcessModel.class.getClassLoader().toString());
         // Go through all the types that are in registered class loaders
-        for (ClassLoader classLoader : additionalClassLoaders) {
+        for (Class<?> classLoader : additionalClassLoaders) {
             try {
-                Class<?>[] classes = getClassArrayFromLoader(classLoader);
-                for (Class<?> type : classes) {
+                //TODO: es geht nicht in die for-Schleife rein
+                //Class<?>[] classes = getClassArrayFromLoader(classLoader);
+                for (Class<?> type : getClassArrayFromLoader(classLoader.getClassLoader())) {
                     if (type.isAssignableFrom(typeOfBase) && !Modifier.isAbstract(type.getModifiers())) {
                         T createdObject = createInstance(type);
                         if (createdObject != null) {
@@ -44,10 +54,49 @@ public class ReflectiveEnumerator {
         }
         return objects;
     }
+    /**public static <T> List<T> getEnumerableOfType(T element) {
+        Class<?> typeOfBase = element.getClass();
+        if (!elementType.isInstance(element)) {
+            return null;
+        }
 
-    private static Class<?>[] getClassArrayFromLoader(ClassLoader loader) {
-        if (loader instanceof URLClassLoader) {
-            URLClassLoader urlClassLoader = (URLClassLoader) loader;
+        List<T> objects = new ArrayList<>();
+        Class<T> clazz = elementType; // Wir übergeben den Datentyp explizit als Argument
+        Package packageOfClass = clazz.getPackage();
+        String packageName = packageOfClass.getName();
+        String className = clazz.getSimpleName();
+
+        String containingTName = packageName + "." + className;
+        Class<?> sameAsContainingT = null;
+
+        try {
+            sameAsContainingT = Class.forName(containingTName);
+            addClassToCheckForTypes(sameAsContainingT);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    // Go through all the types that are in registered class loaders
+        for (Class<?> classLoader : additionalClassLoaders) {
+        try {
+            Class<?>[] classes = getClassArrayFromLoader(classLoader);
+            for (Class<?> type : classes) {
+                if (type.isAssignableFrom(typeOfBase) && !Modifier.isAbstract(type.getModifiers())) {
+                    T createdObject = createInstance(type);
+                    if (createdObject != null) {
+                        objects.add(createdObject);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Handle exceptions
+        }
+    }
+        return objects;
+    }*/
+//TODO: if-Abfrage ist immer false, d.h. leeres Array wird zurückgegeben und es kann nicht durch die Klassen durchiteriert werden
+    private static Class<?>[] getClassArrayFromLoader(ClassLoader cl) {
+        //if (cl instanceof AppClassLoader) {
+            URLClassLoader urlClassLoader = (URLClassLoader) cl;
             List<Class<?>> classes = new ArrayList<>();
 
             try {
@@ -61,10 +110,10 @@ public class ReflectiveEnumerator {
             }
 
             return classes.toArray(new Class<?>[0]);
-        } else {
+        /**} else {
             // Handle other class loader types
             return new Class<?>[]{};
-        }
+        }*/
     }
 
 
@@ -75,7 +124,14 @@ public class ReflectiveEnumerator {
             return null;
         }
     }
+    public static void addClassToCheckForTypes(Class<?> cl) {
+        if (additionalClassLoaders == null) {
+            additionalClassLoaders = new HashSet<>();
+        }
+        additionalClassLoaders.add(cl);
+    }
 }
+
 
     /**public static <T> List<T> getEnumerableOfType(Class<T> baseType) {
         List<T> objects = new ArrayList<>();
@@ -94,14 +150,10 @@ public class ReflectiveEnumerator {
         }
         return objects;
     }
+     */
 
-    public static void addClassToCheckForTypes(Class<?> cl) {
-        if (additionalClasses == null) {
-            additionalClasses = new HashSet<>();
-        }
-        additionalClasses.add(cl);
-    }
 
+/**
     @SuppressWarnings("unchecked")
     public static <T> T createInstance(Class<T> baseType, Class<?> cl) {
         T finalInstance = null;

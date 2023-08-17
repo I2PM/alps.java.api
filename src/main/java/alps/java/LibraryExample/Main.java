@@ -19,19 +19,19 @@ import alps.java.api.parsing.IPASSReaderWriter;
 import alps.java.api.parsing.PASSReaderWriter;
 import alps.java.api.util.ReflectiveEnumerator;
 
+import java.io.File;
 import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        String helloWorld = "Hello world!";
-        System.out.println(helloWorld);
 
 
         // Needs to be called once
 
         // Now the reflective enumerator searches for classes in the library assembly as well as in the current.
+        Class<?> executingClass = Main.class;
 
-        //ReflectiveEnumerator.addClassToCheckForTypes(System.Reflection.Assembly.GetExecutingAssembly());
+        ReflectiveEnumerator.addClassToCheckForTypes(executingClass);
 
 
         IPASSReaderWriter io = PASSReaderWriter.getInstance();
