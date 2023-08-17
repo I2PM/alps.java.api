@@ -11,7 +11,7 @@ public interface ISystemInterfaceSubject extends IInterfaceSubject {
      *
      * @return all contained InterfaceSubjects
      */
-    Map<String, IInterfaceSubject> getInterfaceSubjects();
+    Map<String, IInterfaceSubject> getContainedInterfaceSubjects();
 
     /**
      * Adds an InterfaceSubject to the list of contained InterfaceSubjects.

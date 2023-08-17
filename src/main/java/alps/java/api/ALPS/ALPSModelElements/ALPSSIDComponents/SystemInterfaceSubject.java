@@ -87,7 +87,7 @@ public class SystemInterfaceSubject extends InterfaceSubject implements ISystemI
 
 
     public void setInterfaceSubjects(Set<IInterfaceSubject> subjects, int removeCascadeDepth) {
-        for (IInterfaceSubject interfaceSubject : this.getInterfaceSubjects().values()) {
+        for (IInterfaceSubject interfaceSubject : this.getContainedInterfaceSubjects().values()) {
             removeInterfaceSubject(interfaceSubject.getModelComponentID(), removeCascadeDepth);
         }
         if (subjects == null) return;
@@ -97,7 +97,7 @@ public class SystemInterfaceSubject extends InterfaceSubject implements ISystemI
     }
 
     public void setInterfaceSubjects(Set<IInterfaceSubject> subjects) {
-        for (IInterfaceSubject interfaceSubject : this.getInterfaceSubjects().values()) {
+        for (IInterfaceSubject interfaceSubject : this.getContainedInterfaceSubjects().values()) {
             removeInterfaceSubject(interfaceSubject.getModelComponentID(), 0);
         }
         if (subjects == null) return;
@@ -129,7 +129,7 @@ public class SystemInterfaceSubject extends InterfaceSubject implements ISystemI
     }
 
 
-    public Map<String, IInterfaceSubject> getInterfaceSubjects() {
+    public Map<String, IInterfaceSubject> getContainedInterfaceSubjects() {
         return new HashMap<String, IInterfaceSubject>(containedInterfaceSubjects);
     }
 

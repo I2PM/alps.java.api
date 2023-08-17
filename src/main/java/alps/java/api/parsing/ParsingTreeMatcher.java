@@ -164,14 +164,16 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
     }
 //TODO: Der Parent Node wird bei addChild auch gleichzeitig zum Child node -> STack Overflow error
     private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node) {
-        IParseablePASSProcessModelElement element = node.getContent();
-        node.addChild(new TreeNode<IParseablePASSProcessModelElement>(element));
+        List<IParseablePASSProcessModelElement> elements = ReflectiveEnumerator.getEnumerableOfType(node.getContent());
+
+        for (IParseablePASSProcessModelElement element : elements) {
+            node.addChild(new TreeNode<>(element));
+        }
 
         for (ITreeNode<IParseablePASSProcessModelElement> childNode : node.getChildNodes()) {
             findChildsAndAdd(childNode);
         }
     }
-
 
 
 

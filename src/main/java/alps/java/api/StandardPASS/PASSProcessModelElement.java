@@ -42,6 +42,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
     /**
      * Name of the class, needed for parsing
      */
+    public static Locale customLocale = new Locale("en", "US");
     private final String className = "PASSProcessModelElement";
 
 

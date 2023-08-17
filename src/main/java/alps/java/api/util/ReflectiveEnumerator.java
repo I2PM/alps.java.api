@@ -4,6 +4,7 @@ import alps.java.api.util.priv.ClassGraphHelper;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
@@ -13,9 +14,70 @@ import java.util.*;
 
 public class ReflectiveEnumerator {
 
-    private static Set<Class<?>> additionalClasses = new HashSet<>();
+    private static Set<ClassLoader> additionalClassLoaders = new HashSet<>();
 
-    public static <T> List<T> getEnumerableOfType(Class<T> baseType) {
+    public static <T> List<T> getEnumerableOfType(T element) {
+        Class<?> typeOfBase = element.getClass();
+        if (!typeOfBase.isInstance(element)) {
+            return null;
+        }
+        List<T> objects = new ArrayList<>();
+
+        // Add the class loader of T to the set if not contained already
+        additionalClassLoaders.add(typeOfBase.getClassLoader());
+
+        // Go through all the types that are in registered class loaders
+        for (ClassLoader classLoader : additionalClassLoaders) {
+            try {
+                Class<?>[] classes = getClassArrayFromLoader(classLoader);
+                for (Class<?> type : classes) {
+                    if (type.isAssignableFrom(typeOfBase) && !Modifier.isAbstract(type.getModifiers())) {
+                        T createdObject = createInstance(type);
+                        if (createdObject != null) {
+                            objects.add(createdObject);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Handle exceptions
+            }
+        }
+        return objects;
+    }
+
+    private static Class<?>[] getClassArrayFromLoader(ClassLoader loader) {
+        if (loader instanceof URLClassLoader) {
+            URLClassLoader urlClassLoader = (URLClassLoader) loader;
+            List<Class<?>> classes = new ArrayList<>();
+
+            try {
+                Method method = URLClassLoader.class.getDeclaredMethod("getLoadedClasses");
+                method.setAccessible(true);
+                Class<?>[] loadedClasses = (Class<?>[]) method.invoke(urlClassLoader);
+
+                classes.addAll(Arrays.asList(loadedClasses));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return classes.toArray(new Class<?>[0]);
+        } else {
+            // Handle other class loader types
+            return new Class<?>[]{};
+        }
+    }
+
+
+    private static <T> T createInstance(Class<?> type) {
+        try {
+            return (T) type.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+}
+
+    /**public static <T> List<T> getEnumerableOfType(Class<T> baseType) {
         List<T> objects = new ArrayList<>();
 
         // Add the class containing T to the set if not contained already
@@ -62,7 +124,7 @@ public class ReflectiveEnumerator {
         }
 
         return finalInstance;
-    }
-}
+    }*/
+
 
 

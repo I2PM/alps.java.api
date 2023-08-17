@@ -16,6 +16,8 @@ import alps.java.api.util.ICompatibilityDictionary;
 import alps.java.api.util.IIncompleteTriple;
 import alps.java.api.util.IncompleteTriple;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.*;
 
 /**
@@ -40,6 +42,72 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
      * Name of the class, needed for parsing
      */
     private final String className = "Subject";
+
+    private double has2DPageRatio = -1;
+    private double hasRelative2D_Height = -1;
+    private double hasRelative2D_Width = -1;
+    private double hasRelative2D_PosX = -1;
+    private double hasRelative2D_PosY = -1;
+
+    public double get2DPageRatio() {
+        return has2DPageRatio;
+    }
+
+    public void set2DPageRatio(double has2DPageRatio) {
+        if (has2DPageRatio >= 0) {
+            this.has2DPageRatio = has2DPageRatio;
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public double getRelative2DHeight() {
+        return hasRelative2D_Height;
+    }
+
+    public void setRelative2DHeight(double relative2DHeight) {
+        if (relative2DHeight >= 0 && relative2DHeight <= 1) {
+            hasRelative2D_Height = relative2DHeight;
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public double getRelative2DWidth() {
+        return hasRelative2D_Width;
+    }
+
+    public void setRelative2DWidth(double relative2DWidth) {
+        if (relative2DWidth >= 0 && relative2DWidth <= 1) {
+            hasRelative2D_Width = relative2DWidth;
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public double getRelative2DPosX() {
+        return hasRelative2D_PosX;
+    }
+
+    public void setRelative2DPosX(double relative2DPosX) {
+        if (relative2DPosX >= 0 && relative2DPosX <= 1) {
+            hasRelative2D_PosX = relative2DPosX;
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    public double getRelative2DPosY() {
+        return hasRelative2D_PosY;
+    }
+
+    public void setRelative2DPosY(double relative2DPosY) {
+        if (relative2DPosY >= 0 && relative2DPosY <= 1) {
+            hasRelative2D_PosY = relative2DPosY;
+        } else {
+            throw new IndexOutOfBoundsException();
+        }
+    }
 
     @Override
     public String getClassName() {
@@ -240,6 +308,52 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
                     return true;
                 }
             }
+        } else if (predicate.contains(OWLTags.abstrHas2DPageRatio)) {
+            try {
+                double parsedValue = parseDoubleWithLocale(objectContent, customLocale);
+
+                set2DPageRatio(parsedValue);
+            } catch (ParseException e) {
+                System.out.println("Fehler beim Parsen: " + e.getMessage());
+            }
+
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasRelative2D_PosX)) {
+            try {
+                double parsedValue = parseDoubleWithLocale(objectContent, customLocale);
+
+                setRelative2DPosX(parsedValue);
+            } catch (ParseException e) {
+                System.out.println("Fehler beim Parsen: " + e.getMessage());
+            }
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasRelative2D_PosY)) {
+            try {
+                double parsedValue = parseDoubleWithLocale(objectContent, customLocale);
+
+                setRelative2DPosY(parsedValue);
+            } catch (ParseException e) {
+                System.out.println("Fehler beim Parsen: " + e.getMessage());
+            }
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasRelative2D_Height)) {
+            try {
+                double parsedValue = parseDoubleWithLocale(objectContent, customLocale);
+
+                setRelative2DHeight(parsedValue);
+            } catch (ParseException e) {
+                System.out.println("Fehler beim Parsen: " + e.getMessage());
+            }
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasRelative2D_Width)) {
+            try {
+                double parsedValue = parseDoubleWithLocale(objectContent, customLocale);
+
+                setRelative2DWidth(parsedValue);
+            } catch (ParseException e) {
+                System.out.println("Fehler beim Parsen: " + e.getMessage());
+            }
+            return true;
         } else {
             if (predicate.contains(OWLTags.type)) {
                 if (objectContent.contains(ABSTRACT_NAME)) {
@@ -249,6 +363,11 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
             }
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
+    }
+
+    public static double parseDoubleWithLocale(String value, Locale locale) throws ParseException {
+        NumberFormat numberFormat = NumberFormat.getInstance(locale);
+        return numberFormat.parse(value).doubleValue();
     }
 
     public void assignRole(ISubject.Role role) {
