@@ -13,6 +13,7 @@ import alps.java.api.util.IIncompleteTriple;
 import alps.java.api.util.IncompleteTriple;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Class that represents a DoTransition
@@ -23,6 +24,7 @@ public class DoTransition extends Transition implements IDoTransition {
      * Name of the class, needed for parsing
      */
     private final String className = "DoTransition";
+    private double _sisiChoiceChance = 0;
 
     @Override
     public String getClassName() {
@@ -92,8 +94,38 @@ public class DoTransition extends Transition implements IDoTransition {
             String prio = objectContent;
             setPriorityNumber(Integer.parseInt(prio));
             return true;
+        }else if (predicate.contains(OWLTags.abstrHasSimpleSimTransitionChoiceChance))
+        {
+            try
+            {
+                this.setSisiChoiceChance(Double.parseDouble(objectContent));
+            }
+            catch (NumberFormatException e)
+            {
+                Logger logger = Logger.getLogger("DoTransition");
+                logger.warning("could not parse the value " + objectContent + " as valid double");
+            }
+            return true;
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
 
+    public double getSisiChoiceChance()
+    {
+        return this._sisiChoiceChance;
+    }
+
+    public void setSisiChoiceChance(double value)
+    {
+        if (value >= 0.0)
+        {
+            _sisiChoiceChance = value;
+        }
+        else
+        {
+            _sisiChoiceChance = 0;
+            Logger logger = Logger.getLogger("DoTransition");
+            logger.warning("Value for _sisiChoiceChance is smaller than 0. Setting it to 0.");
+        }
+    }
 }

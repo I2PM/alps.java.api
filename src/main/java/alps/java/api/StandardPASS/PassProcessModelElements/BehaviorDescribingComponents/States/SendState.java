@@ -13,12 +13,14 @@ import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors.IGua
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.src.OWLTags;
 import alps.java.api.util.IIncompleteTriple;
+import alps.java.api.util.ISiSiTimeDistribution;
 import alps.java.api.util.IncompleteTriple;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,6 +32,9 @@ public class SendState extends StandardPASSState implements ISendState {
     private final String className = "SendState";
     protected String exportTag = OWLTags.std;
     protected String exportClassname = className;
+    protected ISiSiTimeDistribution sisiExecutionDuration;
+    protected double sisiCostPerExecution;
+    private static final Logger logger = Logger.getLogger("SendState");
 
     @Override
     public String getClassName() {
@@ -211,6 +216,54 @@ public class SendState extends StandardPASSState implements ISendState {
                 return true;
             }
         }
+        else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMeanValue))
+        {
+            if (this.sisiExecutionDuration == null)
+            {
+                this.sisiExecutionDuration = new SisiTimeDistribution();
+            }
+            this.sisiExecutionDuration.meanValue = SisiTimeDistribution.ConvertXSDDurationStringToFractionsOfDay(objectContent);
+            return true;
+        }
+        else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationDeviation))
+        {
+            if (this.sisiExecutionDuration == null)
+            {
+                this.sisiExecutionDuration = new SisiTimeDistribution();
+            }
+            this.sisiExecutionDuration.standardDeviation = SisiTimeDistribution.ConvertXSDDurationStringToFractionsOfDay(objectContent);
+            return true;
+        }
+        else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMinValue))
+        {
+            if (this.sisiExecutionDuration == null)
+            {
+                this.sisiExecutionDuration = new SisiTimeDistribution();
+            }
+            this.sisiExecutionDuration.minValue = SisiTimeDistribution.ConvertXSDDurationStringToFractionsOfDay(objectContent);
+            return true;
+        }
+        else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMaxValue))
+        {
+            if (this.sisiExecutionDuration == null)
+            {
+                this.sisiExecutionDuration = new SisiTimeDistribution();
+            }
+            this.sisiExecutionDuration.maxValue = SisiTimeDistribution.ConvertXSDDurationStringToFractionsOfDay(objectContent);
+            return true;
+        }
+        else if (predicate.contains(OWLTags.abstrHasSimpleSimCostPerExecution))
+        {
+            try
+            {
+                this.sisiCostPerExecution = Double.parseDouble(objectContent);
+            }
+            catch (NumberFormatException e)
+            {
+                logger.warning("could not parse the value " + objectContent + " as valid double");
+            }
+            return true;
+        }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
 
@@ -267,5 +320,25 @@ public class SendState extends StandardPASSState implements ISendState {
                     break;
             }
         }
+    }
+    public ISiSiTimeDistribution getSisiExecutionDuration()
+    {
+        return this.sisiExecutionDuration;
+    }
+
+    public void setSisiExecutionDuration(ISiSiTimeDistribution sisiExecutionDuration)
+    {
+        this.sisiExecutionDuration = sisiExecutionDuration;
+    }
+
+
+    public double getSisiCostPerExecution()
+    {
+        return this.sisiCostPerExecution;
+    }
+
+    public void setSisiCostPerExecution(double sisiCostPerExecution)
+    {
+        this.sisiCostPerExecution = sisiCostPerExecution;
     }
 }

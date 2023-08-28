@@ -15,6 +15,7 @@ import alps.java.api.util.IncompleteTriple;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Class that represents a time transition
@@ -42,7 +43,17 @@ public class TimeTransition extends Transition implements ITimeTransition {
 
 
     private TimeTransitionType timeTransitionType = TimeTransitionType.BusinessDayTimer;
+    public double _sisiChoiceChance;
+    public double getSisiChoiceChance()
+    {
+        return this._sisiChoiceChance;
+    }
 
+    public void setSisiChoiceChance(double value)
+    {
+        if (value >= 0.0) { _sisiChoiceChance = value; }
+        else { throw new IllegalArgumentException("_sisiChoiceChance" + "Value must be between 0.0 and 1.0."); }
+    }
     @Override
     public IParseablePASSProcessModelElement getParsedInstance() {
         return new TimeTransition();
@@ -142,6 +153,18 @@ public class TimeTransition extends Transition implements ITimeTransition {
                     return true;
                 }
             }
+        }else if (predicate.contains(OWLTags.abstrHasSimpleSimTransitionChoiceChance))
+        {
+            try
+            {
+                this.setSisiChoiceChance(Double.parseDouble(objectContent));
+            }
+            catch (NumberFormatException e)
+            {
+                Logger logger = Logger.getLogger("TimeTransition");
+                logger.warning("could not parse the value " + objectContent + " as valid double");
+            }
+            return true;
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
 

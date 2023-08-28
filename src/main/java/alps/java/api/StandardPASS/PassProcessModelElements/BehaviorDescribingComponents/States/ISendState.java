@@ -4,6 +4,8 @@ import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCom
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IFunctionSpecification;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.Transitions.ISendTransition;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.Transitions.ISendingFailedTransition;
+import alps.java.api.util.IHasSiSiCostPerExecution;
+import alps.java.api.util.IHasSiSiDistribution;
 
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +13,7 @@ import java.util.Set;
 /**
  * Interface to the send type class
  */
-public interface ISendState extends IStandardPASSState {
+public interface ISendState extends IStandardPASSState, IHasSiSiDistribution.IHasDuration, IHasSiSiCostPerExecution {
 
     /**
      * Method that sets the send transition attribute of the instance

@@ -4,6 +4,9 @@ import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCom
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IFunctionSpecification;
 import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataMappingFunctions.IDataMappingIncomingToLocal;
 import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataMappingFunctions.IDataMappingLocalToOutgoing;
+import alps.java.api.util.IHasSiSiCostPerExecution;
+import alps.java.api.util.IHasSiSiDistribution;
+import alps.java.api.util.IHasSiSiEndStayChance;
 
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +15,7 @@ import java.util.Set;
  * Interface to the DoState class
  */
 
-public interface IDoState extends IStandardPASSState {
+public interface IDoState extends IStandardPASSState, IHasSiSiDistribution.IHasDuration, IHasSiSiCostPerExecution, ICanBeEndState, IHasSiSiEndStayChance, IHasSiSiDistribution.IHasSiSiTimeCategory {
     /**
      * Overrides the functions that define how incoming data will be mapped to local data
      *
@@ -36,9 +39,29 @@ public interface IDoState extends IStandardPASSState {
     void addDataMappingFunctionIncomingToLocal(IDataMappingIncomingToLocal dataMappingIncomingToLocal);
 
     /**
+     * Adds a new function that defines how local data will be mapped in general
+     * @param dataMappingFunction the new function
+     */
+    void addDataMappingFunction(PassProcessModelElements.DataDescribingComponents.IDataMappingFunction dataMappingFunction);
+
+    Map<String, PassProcessModelElements.DataDescribingComponents.IDataMappingFunction> getDataMappingFunctions();
+
+    /**
+     *  Removes a data mapping function
+     * @param id the id of the functio
+     * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
+     */
+    void removeDataMappingFunction(String id, int removeCascadeDepth);
+    /**
+     *  Removes a data mapping function
+     * @param id the id of the functio
+     */
+    void removeDataMappingFunction(String id);
+
+    /**
      * Gets the set of functions that define how incoming data will be mapped to local data
      *
-     * @return
+     * @return the set of functions that define how incoming data will be mapped to local data
      */
     Map<String, IDataMappingIncomingToLocal> getDataMappingFunctionsIncomingToLocal();
 

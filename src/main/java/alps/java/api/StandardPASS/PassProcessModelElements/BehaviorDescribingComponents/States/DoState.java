@@ -168,6 +168,11 @@ public class DoState extends StandardPASSState implements IDoState {
         }
     }
 
+
+   /* public void addDataMappingFunction(IDataMappingFunction dataMappingFunction) {
+
+    }*/
+
     public Map<String, IDataMappingIncomingToLocal> getDataMappingFunctionsIncomingToLocal() {
         return new HashMap<String, IDataMappingIncomingToLocal>(dataMappingIncomingToLocalDict);
     }
@@ -218,6 +223,11 @@ public class DoState extends StandardPASSState implements IDoState {
             mapping.unregister(this, removeCascadeDepth);
             removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
         }
+    }
+
+    @Override
+    public void removeDataMappingFunction(String id) {
+
     }
 
 

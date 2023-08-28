@@ -1,5 +1,6 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents;
 
+import alps.java.api.ALPS.ALPSModelElements.Simple2DVisualizationPoints.ISimple2DVisualizationPathPoint;
 import alps.java.api.FunctionalityCapsules.IImplementsFunctionalityCapsule;
 import alps.java.api.FunctionalityCapsules.ImplementsFunctionalityCapsule;
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
@@ -10,9 +11,7 @@ import alps.java.api.src.OWLTags;
 import alps.java.api.util.IIncompleteTriple;
 import alps.java.api.util.IncompleteTriple;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class that represents a transition class
@@ -32,6 +31,73 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
      * Name of the class, needed for parsing
      */
     private final String className = "Transition";
+    private double has2DPageRatio;
+    private double hasRelative2D_BeginX;
+    private double hasRelative2D_BeginY;
+    private double hasRelative2D_EndX;
+    private double hasRelative2D_EndY;
+    private List<ISimple2DVisualizationPathPoint> pathPoints = new ArrayList<ISimple2DVisualizationPathPoint>();
+
+    public double get2DPageRatio() {
+        return has2DPageRatio;
+    }
+
+    public void set2DPageRatio(double has2DPageRatio) {
+        if (has2DPageRatio >= 0) {
+            this.has2DPageRatio = has2DPageRatio;
+        } else {
+            throw new IndexOutOfBoundsException("has2DPageRatio" + "Value must be a positive double or 0.");
+        }
+    }
+
+    public double getRelative2DBeginX() {
+        return hasRelative2D_BeginX;
+    }
+
+    public void setRelative2DBeginX(double relative2DBeginX) {
+        if (relative2DBeginX >= 0 && relative2DBeginX <= 1) {
+            hasRelative2D_BeginX = relative2DBeginX;
+        } else {
+            throw new IndexOutOfBoundsException("relative2DBeginX" + "Value must be between 0 and 1 (inclusive).");
+        }
+    }
+
+    public double getRelative2DBeginY() {
+        return hasRelative2D_BeginY;
+    }
+
+    public void setRelative2DBeginY(double relative2DBeginY) {
+        if (relative2DBeginY >= 0 && relative2DBeginY <= 1) {
+            hasRelative2D_BeginY = relative2DBeginY;
+        } else {
+            throw new IllegalArgumentException("relative2DBeginY" + "Value must be between 0 and 1 (inclusive).");
+        }
+    }
+
+    public double getRelative2DEndX() {
+        return hasRelative2D_EndX;
+    }
+
+    public void setRelative2DEndX(double relative2DEndX) {
+        if (relative2DEndX >= 0 && relative2DEndX <= 1) {
+            hasRelative2D_EndX = relative2DEndX;
+        } else {
+            throw new IllegalArgumentException("relative2DEndX" + "Value must be between 0 and 1 (inclusive).");
+        }
+    }
+
+    public double getRelative2DEndY() {
+        return hasRelative2D_EndY;
+    }
+
+    public void setRelative2DEndY(double relative2DEndY) {
+        if (relative2DEndY >= 0 && relative2DEndY <= 1) {
+            hasRelative2D_EndY = relative2DEndY;
+        } else {
+            throw new IllegalArgumentException("relative2DEndY" + "Value must be between 0 and 1 (inclusive).");
+        }
+    }
+
 
     @Override
     public String getClassName() {
@@ -324,6 +390,11 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
                 } else if (predicate.contains(OWLTags.hasTargetState)) {
                     setTargetState(state);
                     return true;
+                } else if (element instanceof ISimple2DVisualizationPathPoint point) {
+                    //Console.WriteLine(this.getModelComponentID() + ": PathPoint:" + point.getModelComponentID());
+                    if (this.pathPoints == null) this.pathPoints = new ArrayList<ISimple2DVisualizationPathPoint>();
+
+                    this.pathPoints.add(point);
                 }
 
             }
@@ -334,7 +405,23 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
                     setIsAbstract(true);
                     return true;
                 }
+            } else if (predicate.contains(OWLTags.abstrHas2DPageRatio)) {
+                set2DPageRatio(Double.parseDouble(objectContent));
+                return true;
+            } else if (predicate.contains(OWLTags.abstrHasRelative2D_BeginX)) {
+                setRelative2DBeginX(Double.parseDouble(objectContent));
+                return true;
+            } else if (predicate.contains(OWLTags.abstrHasRelative2D_BeginY)) {
+                setRelative2DBeginY(Double.parseDouble(objectContent));
+                return true;
+            } else if (predicate.contains(OWLTags.abstrHasRelative2D_EndY)) {
+                setRelative2DEndY(Double.parseDouble(objectContent));
+                return true;
+            } else if (predicate.contains(OWLTags.abstrHasRelative2D_EndX)) {
+                setRelative2DEndX(Double.parseDouble(objectContent));
+                return true;
             }
+
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
@@ -454,4 +541,11 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
         return implCapsule.getImplementedInterfaces();
     }
 
+    public List<ISimple2DVisualizationPathPoint> getSimple2DPathPoints() {
+        return this.pathPoints;
+    }
+
+    public void addSimple2DPathPoint(ISimple2DVisualizationPathPoint point) {
+        this.pathPoints.add(point);
+    }
 }

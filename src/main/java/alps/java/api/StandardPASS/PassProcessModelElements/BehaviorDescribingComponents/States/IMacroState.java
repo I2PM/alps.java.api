@@ -35,48 +35,6 @@ public interface IMacroState extends IState {
      */
     IMacroBehavior getReferencedMacroBehavior();
 
-    /**
-     * Adds a StateReference to the set of contained StateReferences.
-     *
-     * @param stateReference the new state reference
-     */
-    void addStateReference(IStateReference stateReference);
 
-    /**
-     * Remove a StateReference from the list of current StateReferences
-     *
-     * @param stateRefID         the id of the reference
-     * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
-     */
-    void removeStateReference(String stateRefID, int removeCascadeDepth);
-
-    /**
-     * Remove a StateReference from the list of current StateReferences
-     *
-     * @param stateRefID the id of the reference
-     */
-    void removeStateReference(String stateRefID);
-
-    /**
-     * Overrides all current StateReferences
-     *
-     * @param references         the new references
-     * @param removeCascadeDepth Parses the depth of a cascading delete for elements that are connected to the currently deleted one
-     */
-    void setStateReferences(Set<IStateReference> references, int removeCascadeDepth);
-
-    /**
-     * Overrides all current StateReferences
-     *
-     * @param references the new references
-     */
-    void setStateReferences(Set<IStateReference> references);
-
-    /**
-     * Return all the StateReferences
-     *
-     * @return all references
-     */
-    Map<String, IStateReference> getStateReferences();
 
 }
