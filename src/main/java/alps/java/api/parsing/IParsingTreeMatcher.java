@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.Model;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public interface IParsingTreeMatcher {
      *
      * @param
      */
-    public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs);
+    public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs) throws IOException, ClassNotFoundException;
 
 
 }

@@ -1,6 +1,7 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents;
 
 import alps.java.api.StandardPASS.PassProcessModelElements.IInteractionDescribingComponent;
+import alps.java.api.util.IHasSimple2DVisualizationLine;
 
 import java.util.Map;
 import java.util.Set;
@@ -8,7 +9,7 @@ import java.util.Set;
 /**
  * Interface to the message exchange list class
  */
-public interface IMessageExchangeList extends IInteractionDescribingComponent {
+public interface IMessageExchangeList extends IInteractionDescribingComponent, IHasSimple2DVisualizationLine {
     /**
      * Adds a message exchange to the exchange list
      *

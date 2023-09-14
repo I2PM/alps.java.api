@@ -2,6 +2,7 @@ package alps.java.api.util;
 import alps.java.api.StandardPASS.PassProcessModelElements.PASSProcessModel;
 import alps.java.api.util.priv.ClassGraphHelper;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -17,6 +18,23 @@ public class ReflectiveEnumerator {
 
     private static Set<Class<?>> additionalClassLoaders = new HashSet<>();
 
+    public static List<Class<?>> getSubclasses(String packageName, Class<?> superClass) throws ClassNotFoundException, IOException {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        String path = packageName.replace('.', '/');
+        List<Class<?>> subclasses = new ArrayList<>();
+
+        for (File file : new File(classLoader.getResource(path).getFile()).listFiles()) {
+            if (file.isFile() && file.getName().endsWith(".class")) {
+                String className = packageName + "." + file.getName().substring(0, file.getName().length() - 6);
+                Class<?> clazz = Class.forName(className);
+                if (superClass.isAssignableFrom(clazz) && !superClass.equals(clazz)) {
+                    subclasses.add(clazz);
+                }
+            }
+        }
+
+        return subclasses;
+    }
     public static <T> List<T> getEnumerableOfType(T element) {
         Class<?> typeOfBase = element.getClass();
         if (!typeOfBase.isInstance(element)) {

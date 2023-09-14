@@ -5,6 +5,7 @@ import alps.java.api.StandardPASS.IAbstractElement;
 import alps.java.api.StandardPASS.IExtendingElement;
 import alps.java.api.StandardPASS.IImplementingElementT;
 import alps.java.api.StandardPASS.PassProcessModelElements.IInteractionDescribingComponent;
+import alps.java.api.util.IHasSimple2DVisualizationBox;
 
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +13,7 @@ import java.util.Set;
 /**
  * Interface to the subject class
  */
-public interface ISubject extends IInteractionDescribingComponent, IImplementingElementT<ISubject>, IExtendingElement<ISubject>, IAbstractElement {
+public interface ISubject extends IHasSimple2DVisualizationBox,IInteractionDescribingComponent, IImplementingElementT<ISubject>, IExtendingElement<ISubject>, IAbstractElement {
 
     /**
      * Adds a MessageExchange to the list of incoming message exchanges

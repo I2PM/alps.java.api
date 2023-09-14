@@ -5,6 +5,11 @@ import alps.java.api.StandardPASS.PassProcessModelElements.IInteractionDescribin
 
 /**
  * Interface to the message exchange class
+ * Interface to the message exchange class
+ * Note that message exchanges are just a combination of a receiver, a sender, and a message (spec)
+ * In a visual modeling approach often message exchanges are grouped individually
+ * You can find these in MessageExchangeList-Objects. Those also contain the rudamentary information in regards to
+ * 2d routing of the accordings
  */
 public interface IMessageExchange extends IInteractionDescribingComponent
         {

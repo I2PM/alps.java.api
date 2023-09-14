@@ -275,6 +275,34 @@ public class DoState extends StandardPASSState implements IDoState {
             removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
         }
     }
+    public void addDataMappingFunction(IDataMappingFunction dataMappingFunction)
+    {
+        if (dataMappingFunction == null) { return; }
+        if (generalDataMappingFunctions.TryAdd(dataMappingFunction.getModelComponentID(), dataMappingFunction))
+        {
+            publishElementAdded(dataMappingFunction);
+            dataMappingFunction.register(this);
+            addTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, dataMappingFunction.getUriModelComponentID()));
+        }
+    }
+
+    public Map<String, IDataMappingFunction> getDataMappingFunctions()
+    {
+        return new HashMap<String, IDataMappingFunction>(generalDataMappingFunctions);
+    }
+
+
+    public void removeDataMappingFunction(String id, int removeCascadeDepth = 0)
+    {
+        if (id is null) return;
+        if (generalDataMappingFunctions.TryGetValue(id, out IDataMappingFunction mapping))
+        {
+            dataMappingLocalToOutgoingDict.Remove(id);
+            mapping.unregister(this, removeCascadeDepth);
+            removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
+        }
+    }
+
 
     public void removeDataMappingFunctionLocalToOutgoing(String id) {
         if (id == null) return;

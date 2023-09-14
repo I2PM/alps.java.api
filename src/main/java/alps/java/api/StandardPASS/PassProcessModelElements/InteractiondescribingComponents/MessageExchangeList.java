@@ -11,6 +11,7 @@ import alps.java.api.util.ICompatibilityDictionary;
 import alps.java.api.util.IIncompleteTriple;
 import alps.java.api.util.IncompleteTriple;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +120,7 @@ public class MessageExchangeList extends InteractionDescribingComponent implemen
     }
 
     @Override
-    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) throws ParseException {
         if (element != null) {
             if (predicate.contains(OWLTags.ccontains) && element instanceof IMessageExchange exchange) {
                 addContainsMessageExchange(exchange);

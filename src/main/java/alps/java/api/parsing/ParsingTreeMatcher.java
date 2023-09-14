@@ -11,6 +11,7 @@ import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.util.iterator.ExtendedIterator;
 
+import java.io.IOException;
 import java.sql.SQLOutput;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  */
 public class ParsingTreeMatcher implements IParsingTreeMatcher {
 
-    public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs) {
+    public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs) throws IOException, ClassNotFoundException {
         System.out.println("Merging all input graphs...");
         System.out.println("Generating class mapping for parser...");
         ConsoleProgressBar consoleBar = new ConsoleProgressBar();
@@ -153,7 +154,7 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
      *
      * @return
      */
-    private ITreeNode<IParseablePASSProcessModelElement> createClassInheritanceTree() {
+    private ITreeNode<IParseablePASSProcessModelElement> createClassInheritanceTree() throws IOException, ClassNotFoundException {
         // Start with the default root: the PASSProcessModelElement class
         ITreeNode<IParseablePASSProcessModelElement> treeRootNode = new TreeNode<IParseablePASSProcessModelElement>(new PASSProcessModelElement());
 
@@ -163,11 +164,17 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         return treeRootNode;
     }
 
-    private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node) {
-        List<IParseablePASSProcessModelElement> elements = ReflectiveEnumerator.getEnumerableOfType(node.getContent());
+    private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node) throws IOException, ClassNotFoundException {
+        String packageName = "alps.java.*";
+        Class<?> superClass = node.getClass();
+        List<Class<?>> elements = ReflectiveEnumerator.getSubclasses(packageName, superClass);
 
-        for (IParseablePASSProcessModelElement element : elements) {
-            node.addChild(new TreeNode<IParseablePASSProcessModelElement>(element));
+        for (Class<?> clazz : elements) {
+            try {
+                IParseablePASSProcessModelElement instance = (IParseablePASSProcessModelElement) clazz.newInstance();
+                node.addChild(new TreeNode<IParseablePASSProcessModelElement>(instance));
+            } catch (InstantiationException | IllegalAccessException e) {
+            }
         }
 
         for (ITreeNode<IParseablePASSProcessModelElement> childNode : node.getChildNodes()) {

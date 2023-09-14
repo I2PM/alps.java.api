@@ -8,6 +8,7 @@ import alps.java.api.src.OWLTags;
 import alps.java.api.util.IIncompleteTriple;
 import alps.java.api.util.IncompleteTriple;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -106,7 +107,7 @@ public class DataMappingFunction extends DataDescribingComponent implements IDat
     }
 
     @Override
-    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) throws ParseException {
         if (predicate.contains(OWLTags.hasDataMappingString)) {
             setDataMappingString(objectContent);
             return true;
