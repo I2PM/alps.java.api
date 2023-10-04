@@ -3,7 +3,7 @@ package alps.java.api.src;
 public class OWLTags {
 
     public static final String abstr = "abstract-pass-ont:";
-    public static final String abstrExtends = "abstract-pass-ont:extends";
+    public static final String abstrExtends = "extends";
     public static final String abstrHas2DPageRatio = "has2DPageRatio";
     public static final String abstrHasRelative2D_BeginX = "hasRelative2D_BeginX";
     public static final String abstrHasRelative2D_BeginY = "abtsrHasRelative2D_BeginY";
@@ -83,6 +83,8 @@ public class OWLTags {
     public static final String hasSendType = "hasSendType";
     public static final String hasSourceState = "hasSourceState";
     public static final String hasStartSubject = "hasStartSubject";
+    //Linking Subjects to individual mapping objects containing a "hasExecutionMappingDefinition
+    public static final String hasSubjectExecutionMapping = "hasSubjectExecutionMapping";
     public static final String hasTargetState = "hasTargetState";
     public static final String hasTimeBasedReoccuranceFrequencyOrDate = "hasTimeBasedReoccuranceFrequencyOrDate";
     public static final String hasTimeValue = "hasTimeValue";

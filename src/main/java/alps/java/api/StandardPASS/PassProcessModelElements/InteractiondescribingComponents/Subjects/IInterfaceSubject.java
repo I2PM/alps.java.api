@@ -2,6 +2,8 @@ package alps.java.api.StandardPASS.PassProcessModelElements.Interactiondescribin
 
 
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubject;
+import org.apache.jena.rdf.model.RDFNode;
+import org.w3c.dom.Node;
 
 /**
  * Interface to the interface subject class
@@ -32,6 +34,8 @@ public interface IInterfaceSubject extends ISubject {
      * @return the referenced subject
      */
     IFullySpecifiedSubject getReferencedSubject();
-
+    void setSimpleSimInterfaceSubjectResponseDefinition(String simpleSimInterfaceSubjectResponseDefinitionString);
+    void setSimpleSimInterfaceSubjectResponseDefinition(Node simpleSimInterfaceSubjectResponseDefinition);
+    Node getSimpleSimInterfaceSubjectResponseDefinition();
 }
 

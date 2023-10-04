@@ -4,6 +4,7 @@ import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.util.*;
 import org.apache.jena.rdf.model.Statement;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,6 @@ public interface IParseablePASSProcessModelElement extends IPASSProcessModelElem
     String getBaseURI();
 
     void addTriple(IIncompleteTriple triple);
-
     /**
      * Adds a  list ofIncomplete Triple to the element that will either be parsed right away, or delayed
      * (depending on whether there is a graph available or not)

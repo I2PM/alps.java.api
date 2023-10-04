@@ -1,10 +1,11 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States;
 
-
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.FunctionSpecifications.IDoFunction;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IFunctionSpecification;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.ITransition;
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IDoState;
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.StandardPASSState;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.Transitions.IReceiveTransition;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.Transitions.ISendTransition;
 import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataMappingFunctions.IDataMappingIncomingToLocal;
@@ -16,6 +17,7 @@ import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.src.OWLTags;
 import alps.java.api.util.*;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,52 +38,47 @@ public class DoState extends StandardPASSState implements IDoState {
     private final String className = "DoState";
     protected String exportTag = OWLTags.std;
     protected String exportClassname = className;
-    Logger logger = Logger.getLogger(DoState.class.getName());
+
+
     protected ISiSiTimeDistribution sisiExecutionDuration;
     protected double sisiCostPerExecution;
     //public ISiSiTimeDistribution sisiExecutionDuration { get; set; }
-    //public double sisiCostPerExecution { get; set; } = 0;
+//public double sisiCostPerExecution { get; set; } = 0;
     private double _sisiEndStayChance = 0;
+    Logger Log = Logger.getLogger(DoState.class.getName());
 
-    public ISiSiTimeDistribution getSisiExecutionDuration()
-    {
+    public ISiSiTimeDistribution getSisiExecutionDuration() {
         return this.sisiExecutionDuration;
     }
 
-    public void setSisiExecutionDuration(ISiSiTimeDistribution sisiExecutionDuration)
-    {
+    public void setSisiExecutionDuration(ISiSiTimeDistribution sisiExecutionDuration) {
         this.sisiExecutionDuration = sisiExecutionDuration;
     }
 
 
-    public double getSisiCostPerExecution()
-    {
+    public double getSisiCostPerExecution() {
         return this.sisiCostPerExecution;
     }
 
-    public void setSisiCostPerExecution(double sisiCostPerExecution)
-    {
+    public void setSisiCostPerExecution(double sisiCostPerExecution) {
         this.sisiCostPerExecution = sisiCostPerExecution;
     }
-    public double getSisiEndStayChance(){ return this._sisiEndStayChance; }
-    public void setSisiEndStayChance(double value)
-    {
+
+    public double getSisiEndStayChance() {
+        return this._sisiEndStayChance;
+    }
+
+    public void setSisiEndStayChance(double value) {
         // Add validation logic
-        if (value >= 0.0 && value <= 1.0)
-        {
+        if (value >= 0.0 && value <= 1.0) {
             _sisiEndStayChance = value;
-        }
-        else
-        {
-            if (value < 0)
-            {
+        } else {
+            if (value < 0) {
                 _sisiEndStayChance = 0;
-                logger.warning("Value for sisiEndStayChance is smaller than 0. Setting it to 0.");
-            }
-            else if (value > 1)
-            {
+                Log.warning("Value for sisiEndStayChance is smaller than 0. Setting it to 0.");
+            } else if (value > 1) {
                 _sisiEndStayChance = 1;
-                logger.warning("Value for sisiEndStayChance is larger than 1. Setting it to 1.");
+                Log.warning("Value for sisiEndStayChance is larger than 1. Setting it to 1.");
             }
         }
 
@@ -89,16 +86,17 @@ public class DoState extends StandardPASSState implements IDoState {
 
     protected IHasSiSiDistribution.SimpleSimTimeCategory sisiVSMTimeCategory;
 
-    public IHasSiSiDistribution.SimpleSimTimeCategory getSisiVSMTimeCategory() { return this.sisiVSMTimeCategory; }
+    public IHasSiSiDistribution.SimpleSimTimeCategory getSisiVSMTimeCategory() {
+        return this.sisiVSMTimeCategory;
+    }
 
-    public void setSisiVSMTimeCategory(IHasSiSiDistribution.SimpleSimTimeCategory simpleSimTimeCategory)
-    {
+    public void setSisiVSMTimeCategory(IHasSiSiDistribution.SimpleSimTimeCategory simpleSimTimeCategory) {
         this.sisiVSMTimeCategory = simpleSimTimeCategory;
     }
 
-
     @Override
     public String getClassName() {
+
         return exportClassname;
     }
 
@@ -119,6 +117,7 @@ public class DoState extends StandardPASSState implements IDoState {
                    IDoFunction doFunction, Set<ITransition> incomingTransitions, Set<ITransition> outgoingTransitions,
                    Set<IDataMappingIncomingToLocal> dataMappingIncomingToLocal, Set<IDataMappingLocalToOutgoing> dataMappingLocalToOutgoing,
                    String comment, String additionalLabel, List<IIncompleteTriple> additionalAttributes) {
+
         super(behavior, labelForID, guardBehavior, doFunction, incomingTransitions, null, comment, additionalLabel, additionalAttributes);
         // Set those attributes locally and pass null to base (so no wrong attributes will be set)
         setDataMappingFunctionsIncomingToLocal(dataMappingIncomingToLocal);
@@ -127,13 +126,13 @@ public class DoState extends StandardPASSState implements IDoState {
     }
 
     public DoState(ISubjectBehavior behavior) {
+
         super(behavior, null, null, null, null, null, null, null, null);
         // Set those attributes locally and pass null to base (so no wrong attributes will be set)
         setDataMappingFunctionsIncomingToLocal(null);
         setDataMappingFunctionsLocalToOutgoing(null);
         setOutgoingTransitions(null);
     }
-
 
 // #################### DataMappingFunctions ####################
 
@@ -168,11 +167,6 @@ public class DoState extends StandardPASSState implements IDoState {
         }
     }
 
-
-   /* public void addDataMappingFunction(IDataMappingFunction dataMappingFunction) {
-
-    }*/
-
     public Map<String, IDataMappingIncomingToLocal> getDataMappingFunctionsIncomingToLocal() {
         return new HashMap<String, IDataMappingIncomingToLocal>(dataMappingIncomingToLocalDict);
     }
@@ -188,48 +182,8 @@ public class DoState extends StandardPASSState implements IDoState {
     }
 
     public void removeDataMappingFunctionIncomingToLocal(String id) {
-        if (id == null) return;
-        IDataMappingIncomingToLocal mapping = dataMappingIncomingToLocalDict.get(id);
-        if (mapping != null) {
-            dataMappingIncomingToLocalDict.remove(id);
-            mapping.unregister(this, 0);
-            removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
-        }
+        removeDataMappingFunctionIncomingToLocal(id, 0);
     }
-    public void addDataMappingFunction(IDataMappingFunction dataMappingFunction)
-    {
-        if (dataMappingFunction == null) { return; }
-        if (generalDataMappingFunctions.tryAdd(dataMappingFunction.getModelComponentID(), dataMappingFunction))
-        {
-            publishElementAdded(dataMappingFunction);
-            dataMappingFunction.register(this);
-            addTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, dataMappingFunction.getUriModelComponentID()));
-        }
-    }
-
-    public Map<String, IDataMappingFunction> getDataMappingFunctions()
-    {
-        return new HashMap<String, IDataMappingFunction>(generalDataMappingFunctions);
-    }
-
-
-    public void removeDataMappingFunction(String id, int removeCascadeDepth)
-    {
-        if (id == null) return;
-        IDataMappingFunction mapping = generalDataMappingFunctions.get(id);
-        if (mapping != null)
-        {
-            dataMappingLocalToOutgoingDict.remove(id);
-            mapping.unregister(this, removeCascadeDepth);
-            removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
-        }
-    }
-
-    @Override
-    public void removeDataMappingFunction(String id) {
-
-    }
-
 
     public void setDataMappingFunctionsLocalToOutgoing(Set<IDataMappingLocalToOutgoing> dataMappingLocalToOutgoing, int removeCascadeDepth) {
         for (IDataMappingLocalToOutgoing mapping : getDataMappingFunctionsLocalToOutgoing().values()) {
@@ -242,13 +196,7 @@ public class DoState extends StandardPASSState implements IDoState {
     }
 
     public void setDataMappingFunctionsLocalToOutgoing(Set<IDataMappingLocalToOutgoing> dataMappingLocalToOutgoing) {
-        for (IDataMappingLocalToOutgoing mapping : getDataMappingFunctionsLocalToOutgoing().values()) {
-            removeDataMappingFunctionLocalToOutgoing(mapping.getModelComponentID(), 0);
-        }
-        if (dataMappingLocalToOutgoing == null) return;
-        for (IDataMappingLocalToOutgoing mapping : dataMappingLocalToOutgoing) {
-            addDataMappingFunctionLocalToOutgoing(mapping);
-        }
+        setDataMappingFunctionsLocalToOutgoing(dataMappingLocalToOutgoing, 0);
     }
 
     public void addDataMappingFunctionLocalToOutgoing(IDataMappingLocalToOutgoing dataMappingLocalToOutgoing) {
@@ -262,8 +210,9 @@ public class DoState extends StandardPASSState implements IDoState {
         }
     }
 
+
     public Map<String, IDataMappingLocalToOutgoing> getDataMappingFunctionsLocalToOutgoing() {
-        return new HashMap<String, IDataMappingLocalToOutgoing>(dataMappingLocalToOutgoingDict);
+        return new HashMap<>(dataMappingLocalToOutgoingDict);
     }
 
     public void removeDataMappingFunctionLocalToOutgoing(String id, int removeCascadeDepth) {
@@ -275,43 +224,39 @@ public class DoState extends StandardPASSState implements IDoState {
             removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
         }
     }
-    public void addDataMappingFunction(IDataMappingFunction dataMappingFunction)
-    {
-        if (dataMappingFunction == null) { return; }
-        if (generalDataMappingFunctions.TryAdd(dataMappingFunction.getModelComponentID(), dataMappingFunction))
-        {
+
+    public void removeDataMappingFunctionLocalToOutgoing(String id) {
+        removeDataMappingFunctionLocalToOutgoing(id, 0);
+    }
+
+    public void addDataMappingFunction(IDataMappingFunction dataMappingFunction) {
+        if (dataMappingFunction == null) {
+            return;
+        }
+        if (generalDataMappingFunctions.tryAdd(dataMappingFunction.getModelComponentID(), dataMappingFunction)) {
             publishElementAdded(dataMappingFunction);
             dataMappingFunction.register(this);
             addTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, dataMappingFunction.getUriModelComponentID()));
         }
     }
 
-    public Map<String, IDataMappingFunction> getDataMappingFunctions()
-    {
+    public Map<String, IDataMappingFunction> getDataMappingFunctions() {
         return new HashMap<String, IDataMappingFunction>(generalDataMappingFunctions);
     }
 
 
-    public void removeDataMappingFunction(String id, int removeCascadeDepth = 0)
-    {
-        if (id is null) return;
-        if (generalDataMappingFunctions.TryGetValue(id, out IDataMappingFunction mapping))
-        {
-            dataMappingLocalToOutgoingDict.Remove(id);
+    public void removeDataMappingFunction(String id, int removeCascadeDepth) {
+        if (id == null) return;
+        IDataMappingFunction mapping = generalDataMappingFunctions.get(id);
+        if (mapping != null) {
+            dataMappingLocalToOutgoingDict.remove(id);
             mapping.unregister(this, removeCascadeDepth);
             removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
         }
     }
 
-
-    public void removeDataMappingFunctionLocalToOutgoing(String id) {
-        if (id == null) return;
-        IDataMappingLocalToOutgoing mapping = dataMappingLocalToOutgoingDict.get(id);
-        if (mapping != null) {
-            dataMappingLocalToOutgoingDict.remove(id);
-            mapping.unregister(this, 0);
-            removeTriple(new IncompleteTriple(OWLTags.stdHasDataMappingFunction, mapping.getUriModelComponentID()));
-        }
+    public void removeDataMappingFunction(String id) {
+        removeDataMappingFunction(id, 0);
     }
 
 // ########################################
@@ -332,11 +277,7 @@ public class DoState extends StandardPASSState implements IDoState {
     }
 
     public void setFunctionSpecification(IFunctionSpecification specification) {
-        if (specification instanceof IDoFunction) {
-            super.setFunctionSpecification(specification, 0);
-        } else {
-            super.setFunctionSpecification(null, 0);
-        }
+        setFunctionSpecification(specification, 0);
     }
 
     public IDoFunction getFunctionSpecification() {
@@ -346,23 +287,24 @@ public class DoState extends StandardPASSState implements IDoState {
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
         if (element != null) {
-            if (predicate.contains(OWLTags.hasDataMappingFunction) && element instanceof IDataMappingIncomingToLocal incomingMapping) {
+            if (predicate.contains(OWLTags.hasDataMappingFunction) && element instanceof IDataMappingIncomingToLocal
+                    incomingMapping) {
                 addDataMappingFunctionIncomingToLocal(incomingMapping);
                 return true;
-            } else if (predicate.contains(OWLTags.hasDataMappingFunction) && element instanceof IDataMappingLocalToOutgoing outgoingMapping) {
+            } else if (predicate.contains(OWLTags.hasDataMappingFunction) && element instanceof IDataMappingLocalToOutgoing
+                    outgoingMapping) {
                 addDataMappingFunctionLocalToOutgoing(outgoingMapping);
                 return true;
-            }
-            else if (predicate.contains(OWLTags.hasDataMappingFunction) && element instanceof IDataMappingFunction functionMapping)
-            {
+
+            } else if (predicate.contains(OWLTags.hasDataMappingFunction) && element instanceof IDataMappingFunction functionMapping) {
                 addDataMappingFunction(functionMapping);
                 return true;
             } else if (predicate.contains(OWLTags.hasFunctionSpecification) && element instanceof IDoFunction function) {
                 setFunctionSpecification(function);
                 return true;
             }
-            if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMeanValue))
-            {
+
+            if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMeanValue)) {
 
             }
         } else if (predicate.contains(OWLTags.type)) {
@@ -373,69 +315,49 @@ public class DoState extends StandardPASSState implements IDoState {
                 setIsStateType(StateType.Finalized);
                 return true;
             }
-        }else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMeanValue))
-        {
-            if (this.sisiExecutionDuration == null)
-            {
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMeanValue)) {
+            if (this.sisiExecutionDuration == null) {
                 this.sisiExecutionDuration = new SiSiTimeDistribution();
             }
-            this.sisiExecutionDuration.meanValue = SiSiTimeDistribution.ConvertXSDDurationStringToFractionsOfDay(objectContent);
+            this.sisiExecutionDuration.setMeanValue(SiSiTimeDistribution.convertXSDDurationStringToFractionsOfDay(objectContent));
             return true;
-        }else if(predicate.contains(OWLTags.abstrHasSimpleSimDurationDeviation))
-        {
-            if (this.sisiExecutionDuration == null)
-            {
-                this.sisiExecutionDuration = new SisiTimeDistribution();
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationDeviation)) {
+            if (this.sisiExecutionDuration == null) {
+                this.sisiExecutionDuration = new SiSiTimeDistribution();
             }
-            this.sisiExecutionDuration.standardDeviation = SisiTimeDistribution.ConvertXSDDurationStringToFractionsOfDay(objectContent);
+            this.sisiExecutionDuration.setStandardDeviation(SiSiTimeDistribution.convertXSDDurationStringToFractionsOfDay(objectContent));
             return true;
-        }else if(predicate.contains(OWLTags.abstrHasSimpleSimDurationMinValue))
-        {
-            if (this.sisiExecutionDuration == null)
-            {
-                this.sisiExecutionDuration = new SisiTimeDistribution();
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMinValue)) {
+            if (this.sisiExecutionDuration == null) {
+                this.sisiExecutionDuration = new SiSiTimeDistribution();
             }
-            this.sisiExecutionDuration.minValue = SisiTimeDistribution.ConvertXSDDurationStringToFractionsOfDay(objectContent);
+            this.sisiExecutionDuration.setMinValue(SiSiTimeDistribution.convertXSDDurationStringToFractionsOfDay(objectContent));
             return true;
-        }else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMaxValue))
-        {
-            if (this.sisiExecutionDuration == null)
-            {
-                this.sisiExecutionDuration = new SisiTimeDistribution();
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMaxValue)) {
+            if (this.sisiExecutionDuration == null) {
+                this.sisiExecutionDuration = new SiSiTimeDistribution();
             }
-            this.sisiExecutionDuration.maxValue = SisiTimeDistribution.ConvertXSDDurationStringToFractionsOfDay(objectContent);
+            this.sisiExecutionDuration.setMaxValue(SiSiTimeDistribution.convertXSDDurationStringToFractionsOfDay(objectContent));
             return true;
-        }else if (predicate.contains(OWLTags.abstrHasSimpleSimCostPerExecution))
-        {
-            try
-            {
-                this.sisiCostPerExecution = double.Parse(objectContent);
-            }
-            catch (System.Exception e)
-            {
-                logger.warning("could not parse the value " + objectContent + " as valid double");
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimCostPerExecution)) {
+            try {
+                this.sisiCostPerExecution = Double.parseDouble(objectContent);
+            } catch (Exception e) {
+                Log.warning("could not parse the value " + objectContent + " as valid double");
             }
             return true;
-        }else if (predicate.contains(OWLTags.abstrHasSimpleSimEndStayChance))
-        {
-            try
-            {
-                _sisiEndStayChance = double.Parse(objectContent);
-            }
-            catch (System.Exception e)
-            {
-                logger.warning("could not parse the value " + objectContent + " as valid double");
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimEndStayChance)) {
+            try {
+                _sisiEndStayChance = Double.parseDouble(objectContent);
+            } catch (Exception e) {
+                Log.warning("could not parse the value " + objectContent + " as valid double");
             }
             return true;
-        }else if (predicate.contains(OWLTags.abstrHasSimpleSimVSMTimeCategory))
-        {
-            try
-            {
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimVSMTimeCategory)) {
+            try {
                 this.sisiVSMTimeCategory = parseSimpleSimTimeCategory(objectContent);
-            }
-            catch (System.Exception e)
-            {
-                logger.warning("could not parse the value " + objectContent + " as valid Time Category");
+            } catch (Exception e) {
+                Log.warning("could not parse the value " + objectContent + " as valid Time Category");
             }
             return true;
         }
@@ -468,7 +390,6 @@ public class DoState extends StandardPASSState implements IDoState {
             }
         }
     }
-
 
     @Override
     public void removeStateType(StateType stateType) {
@@ -518,13 +439,7 @@ public class DoState extends StandardPASSState implements IDoState {
 
     @Override
     public void updateRemoved(IPASSProcessModelElement update, IPASSProcessModelElement caller) {
-        super.updateRemoved(update, caller, 0);
-        if (update != null) {
-            if (update instanceof IDataMappingIncomingToLocal mappingIn)
-                removeDataMappingFunctionIncomingToLocal(mappingIn.getModelComponentID(), 0);
-            if (update instanceof IDataMappingLocalToOutgoing mappingOut)
-                removeDataMappingFunctionLocalToOutgoing(mappingOut.getModelComponentID(), 0);
-        }
+        updateRemoved(update, caller, 0);
     }
 
     @Override
@@ -543,46 +458,37 @@ public class DoState extends StandardPASSState implements IDoState {
 
         super.notifyModelComponentIDChanged(oldID, newID);
     }
-    public void setEndState(boolean isEndState)
-    {
-        if (isEndState)
-        {
-            if (!this.isStateType(StateType.EndState))
-            {
+
+    public void setEndState(boolean isEndState) {
+        if (isEndState) {
+            if (!this.isStateType(StateType.EndState)) {
                 this.setIsStateType(StateType.EndState);
             }
-        }else
-        {
-            if (this.isStateType(StateType.EndState))
-            {
+        } else {
+            if (this.isStateType(StateType.EndState)) {
                 this.removeStateType(StateType.EndState);
             }
         }
     }
 
-    public boolean isEndState()
-    {
+    public boolean isEndState() {
         return this.isStateType(StateType.EndState);
     }
 
-    /// <summary>
-    /// The method will try to pars a given value and return on the the according enum types
-    /// If pasring is not possible the default value will be given.
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    private static IHasSiSiDistribution.SimpleSimTimeCategory parseSimpleSimTimeCategory(String value)
-    {
-        if (String.IsNullOrEmpty(value))
-        {
+    /**
+     * The method will try to pars a given value and return on the the according enum types
+     * If pasring is not possible the default value will be given.
+     *
+     * @param value
+     * @return
+     */
+    private static IHasSiSiDistribution.SimpleSimTimeCategory parseSimpleSimTimeCategory(String value) {
+        if (value == null || value.isEmpty()) {
             value = "nothing correct";
         }
 
-        for(SimpleSimTimeCategory type in Enum.GetValues(typeof(SimpleSimTimeCategory)))
-        {
-            if (value.toLowerCase().contains(type.ToString().ToLower()))
-            {
+        for (IHasSiSiDistribution.SimpleSimTimeCategory type : IHasSiSiDistribution.SimpleSimTimeCategory.values()) {
+            if (value.toLowerCase().contains(type.toString().toLowerCase())) {
                 return type;
             }
         }
@@ -591,4 +497,3 @@ public class DoState extends StandardPASSState implements IDoState {
 
     }
 }
-

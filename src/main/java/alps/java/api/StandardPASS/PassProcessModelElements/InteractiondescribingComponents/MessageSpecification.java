@@ -7,7 +7,9 @@ import alps.java.api.StandardPASS.PassProcessModelElements.InteractionDescribing
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.src.OWLTags;
 import alps.java.api.util.IIncompleteTriple;
+import alps.java.api.util.ISiSiTimeDistribution;
 import alps.java.api.util.IncompleteTriple;
+import alps.java.api.util.SiSiTimeDistribution;
 
 import java.util.List;
 import java.util.Set;
@@ -23,6 +25,24 @@ public class MessageSpecification extends InteractionDescribingComponent impleme
      * Name of the class, needed for parsing
      */
     private final String className = "MessageSpecification";
+    private ISiSiTimeDistribution simpleSimTransmissionTime;
+    private SimpleSimVSMMessageTypes simpleSimVSMMessageType;
+
+    public ISiSiTimeDistribution getSimpleSimTransmissionTime() {
+        return simpleSimTransmissionTime;
+    }
+
+    public void setSimpleSimTransmissionTime(ISiSiTimeDistribution simpleSimTransmissionTime) {
+        this.simpleSimTransmissionTime = simpleSimTransmissionTime;
+    }
+
+    public SimpleSimVSMMessageTypes getSimpleSimVSMMessageType() {
+        return simpleSimVSMMessageType;
+    }
+
+    public void setSimpleSimVSMMessageType(SimpleSimVSMMessageTypes simpleSimVSMMessageType) {
+        this.simpleSimVSMMessageType = simpleSimVSMMessageType;
+    }
 
     @Override
     public String getClassName() {
@@ -103,8 +123,64 @@ public class MessageSpecification extends InteractionDescribingComponent impleme
                 setContainedPayloadDescription(description);
                 return true;
             }
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMeanValue)) {
+            if (this.simpleSimTransmissionTime == null) {
+                this.simpleSimTransmissionTime = new SiSiTimeDistribution();
+            }
+            this.simpleSimTransmissionTime.setMeanValue(SiSiTimeDistribution.convertXSDDurationStringToFractionsOfDay(objectContent));
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationDeviation)) {
+            if (this.simpleSimTransmissionTime == null) {
+                this.simpleSimTransmissionTime = new SiSiTimeDistribution();
+            }
+            this.simpleSimTransmissionTime.setStandardDeviation(SiSiTimeDistribution.convertXSDDurationStringToFractionsOfDay(objectContent));
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMinValue)) {
+            if (this.simpleSimTransmissionTime == null) {
+                this.simpleSimTransmissionTime = new SiSiTimeDistribution();
+            }
+            this.simpleSimTransmissionTime.setMinValue(SiSiTimeDistribution.convertXSDDurationStringToFractionsOfDay(objectContent));
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimDurationMaxValue)) {
+            if (this.simpleSimTransmissionTime == null) {
+                this.simpleSimTransmissionTime = new SiSiTimeDistribution();
+            }
+            this.simpleSimTransmissionTime.setMaxValue(SiSiTimeDistribution.convertXSDDurationStringToFractionsOfDay(objectContent));
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimVSMMessageType)) {
+            this.simpleSimVSMMessageType = parseSimpleSimVSMMessageType(objectContent);
+            return true;
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
+    }
+
+    /**
+     * parse message type of Message
+     * Standard;Conveyance Time (internal);Conveyance Time (external);
+     * Information Flow (internal);Information Flow (external);
+     *
+     * @param value
+     * @return
+     */
+
+    private SimpleSimVSMMessageTypes parseSimpleSimVSMMessageType(String value) {
+        if (value == null || value.isEmpty()) {
+            value = "nothing correct";
+        }
+
+        if (value.toLowerCase().contains("conveyance")) {
+            if (value.toLowerCase().contains("external")) return SimpleSimVSMMessageTypes.ConveyanceTimeExternal;
+            else {
+                return SimpleSimVSMMessageTypes.ConveyanceTimeInternal;
+            }
+        } else if (value.toLowerCase().contains("information")) {
+            if (value.toLowerCase().contains("external")) return SimpleSimVSMMessageTypes.InformationFlowExternal;
+            else {
+                return SimpleSimVSMMessageTypes.InformationFlowInternal;
+            }
+        } else {
+            return SimpleSimVSMMessageTypes.Standard;
+        }
     }
 
     @Override

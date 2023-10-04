@@ -148,10 +148,6 @@ public class Simple2DVisualizationPoint extends ALPSModelElement implements ISim
             return false;
         }
     }
-    try {
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
-    } catch (ParseException e) {
-        throw new RuntimeException(e);
-    }
 }
 }

@@ -107,7 +107,7 @@ public class DataMappingFunction extends DataDescribingComponent implements IDat
     }
 
     @Override
-    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) throws ParseException {
+    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element){
         if (predicate.contains(OWLTags.hasDataMappingString)) {
             setDataMappingString(objectContent);
             return true;

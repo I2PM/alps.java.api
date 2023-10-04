@@ -4,6 +4,7 @@ import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingCompone
 import alps.java.api.StandardPASS.PassProcessModelElements.ISubjectBehavior;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.IInputPoolConstraint;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubject;
+import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubjectExecutionMapping;
 
 import java.util.Map;
 import java.util.Set;
@@ -153,5 +154,76 @@ public interface IFullySpecifiedSubject extends ISubject {
      */
     Map<String, IInputPoolConstraint> getInputPoolConstraints();
 
+    /**
+     * Returns an object containing a subject execution mapping
+     *
+     * @return
+     */
+    ISubjectExecutionMapping getSubjectExecutionMapping();
+
+    /**
+     * Returns an object containing a subject execution mapping
+     *
+     * @param subjectExecutionMapping a reference to the accoring execution mapping object
+     */
+    void setSubjectExecutionMapping(ISubjectExecutionMapping subjectExecutionMapping);
+
+
+    /**
+     * For simple simulation the costs that one subject has per hour of execution
+     */
+    double getSisiExecutionCostPerHour();
+
+    /**
+     * For simple simulation the costs that one subject has per hour of execution
+     */
+    void setSisiExecutionCostPerHour(double sisiExecutionCostPerHour);
+
+    /**
+     * Define what type of Subject this is. Standard; Production Subject, Storage Subject
+     */
+    SimpleSimVSMSubjectTypes getSisiVSMSubjectType();
+
+    /**
+     * Define what type of Subject this is. Standard; Production Subject, Storage Subject
+     */
+    void setSisiVSMSubjectType(SimpleSimVSMSubjectTypes sisiVSMSubjectType);
+
+    double getSisiVSMInventory();
+
+    void setSisiVSMInventory(double sisiVSMInventor);
+
+    /**
+     * Enter a number that represents the amout of inventory in that facility.
+     * Mind the unit that you have chosen to consider in your VSM analisys and keep
+     * it konstant over all Storage Subjects
+     */
+    double getSisiVSMProcessQuantity();
+
+    /**
+     * Enter a number that represents the amout of inventory in that facility.
+     * Mind the unit that you have chosen to consider in your VSM analisys and keep
+     * it konstant over all Storage Subjects
+     */
+    void setSisiVSMProcessQuantity(double sisiVSMProcessQuantity);
+
+    double getSisiVSMQualityRate();
+
+    void setSisiVSMQualityRate(double sisiVSMQualityRate);
+
+    double getSisiVSMAvailability();
+
+    void setSisiVSMAvailability(double sisiVSMAvailability);
+
+
+    /**
+     * Message types for Value Stream Mapping Analysis
+     * Values should be:  Product Subject, Storage Subject, or Standard
+     */
+    enum SimpleSimVSMSubjectTypes {
+        Standard,
+        ProductionSubject,
+        StorageSubject
+    }
 }
 

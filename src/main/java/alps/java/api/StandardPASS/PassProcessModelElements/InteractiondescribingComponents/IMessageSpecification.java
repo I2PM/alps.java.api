@@ -34,22 +34,22 @@ public interface IMessageSpecification extends IInteractionDescribingComponent {
     /**
      * For simple simulation of processes: The (expected) transmission time of this kind of message. Necessary only for simulation purposes
      */
-    ISiSiTimeDistribution getsimpleSimTransmissionTime();
+    ISiSiTimeDistribution getSimpleSimTransmissionTime();
 
     /**
      * For simple simulation of processes: The (expected) transmission time of this kind of message. Necessary only for simulation purposes
      */
-    ISiSiTimeDistribution setsimpleSimTransmissionTime();
+    void setSimpleSimTransmissionTime(ISiSiTimeDistribution sisitime);
 
     /**
      * for values streamm analysisefine what type of Messag this is. Standard;Conveyance Time (internal);Conveyance Time (external);Information Flow (internal);Information Flow (external);
      */
-    SimpleSimVSMMessageTypes getsimpleSimVSMMessageType();
+    SimpleSimVSMMessageTypes getSimpleSimVSMMessageType();
 
     /**
      * for values streamm analysisefine what type of Messag this is. Standard;Conveyance Time (internal);Conveyance Time (external);Information Flow (internal);Information Flow (external);
      */
-    SimpleSimVSMMessageTypes settsimpleSimVSMMessageType();
+    void setSimpleSimVSMMessageType(SimpleSimVSMMessageTypes simplesim);
 }
 
 /**

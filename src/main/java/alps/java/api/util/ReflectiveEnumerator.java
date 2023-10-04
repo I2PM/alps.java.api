@@ -18,7 +18,7 @@ public class ReflectiveEnumerator {
 
     private static Set<Class<?>> additionalClassLoaders = new HashSet<>();
 
-    public static List<Class<?>> getSubclasses(String packageName, Class<?> superClass) throws ClassNotFoundException, IOException {
+    public static List<Class<?>> getSubclasses(String packageName, Class<?> superClass)  {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         String path = packageName.replace('.', '/');
         List<Class<?>> subclasses = new ArrayList<>();
@@ -26,7 +26,12 @@ public class ReflectiveEnumerator {
         for (File file : new File(classLoader.getResource(path).getFile()).listFiles()) {
             if (file.isFile() && file.getName().endsWith(".class")) {
                 String className = packageName + "." + file.getName().substring(0, file.getName().length() - 6);
-                Class<?> clazz = Class.forName(className);
+                Class<?> clazz = null;
+                try {
+                    clazz = Class.forName(className);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
                 if (superClass.isAssignableFrom(clazz) && !superClass.equals(clazz)) {
                     subclasses.add(clazz);
                 }

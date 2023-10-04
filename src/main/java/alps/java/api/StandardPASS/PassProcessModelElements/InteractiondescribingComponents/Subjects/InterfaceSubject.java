@@ -10,7 +10,14 @@ import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.src.OWLTags;
 import alps.java.api.util.IIncompleteTriple;
 import alps.java.api.util.IncompleteTriple;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Set;
 
@@ -115,6 +122,13 @@ public class InterfaceSubject extends Subject implements IInterfaceSubject {
                 return true;
             }
         }
+        else if (predicate.contains(OWLTags.abstrHasSimpleSimInterfaceSubjectResponseDefinition))
+        {
+            this.setSimpleSimInterfaceSubjectResponseDefinition(objectContent);
+            return true;
+        }
+
+        //setSimpleSimInterfaceSubjectResponseDefinition
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
 
@@ -142,5 +156,34 @@ public class InterfaceSubject extends Subject implements IInterfaceSubject {
                 setReferencedSubject(null, 0);
         }
     }
+    protected Node simpleSimInterfaceSubjectResponseDefinition;
+    public void setSimpleSimInterfaceSubjectResponseDefinition(String simpleSimInterfaceSubjectResponseDefinitionString) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
 
+            // Laden Sie XML aus einer Zeichenfolge
+            InputSource inputSource = new InputSource(new StringReader(simpleSimInterfaceSubjectResponseDefinitionString));
+            Document xmlDoc = builder.parse(inputSource);
+
+            // Annahme: Der Eingabe-String stellt ein einzelnes XML-Element dar,
+            // und wir erhalten das erste Kind des Wurzelelements.
+            Element rootElement = xmlDoc.getDocumentElement();
+            Node node = rootElement.getFirstChild();
+            this.simpleSimInterfaceSubjectResponseDefinition = node;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void setSimpleSimInterfaceSubjectResponseDefinition(Node simpleSimInterfaceSubjectResponseDefinition)
+    {
+        this.simpleSimInterfaceSubjectResponseDefinition = simpleSimInterfaceSubjectResponseDefinition;
+    }
+
+    public Node getSimpleSimInterfaceSubjectResponseDefinition()
+    {
+        return simpleSimInterfaceSubjectResponseDefinition;
+    }
 }

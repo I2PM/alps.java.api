@@ -17,7 +17,7 @@ public interface IParsingTreeMatcher {
      *
      * @param
      */
-    public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs) throws IOException, ClassNotFoundException;
+    public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs);
 
 
 }

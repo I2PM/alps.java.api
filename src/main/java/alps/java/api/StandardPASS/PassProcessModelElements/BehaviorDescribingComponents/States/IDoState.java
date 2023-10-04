@@ -4,6 +4,7 @@ import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCom
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IFunctionSpecification;
 import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataMappingFunctions.IDataMappingIncomingToLocal;
 import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataMappingFunctions.IDataMappingLocalToOutgoing;
+import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.IDataMappingFunction;
 import alps.java.api.util.IHasSiSiCostPerExecution;
 import alps.java.api.util.IHasSiSiDistribution;
 import alps.java.api.util.IHasSiSiEndStayChance;
@@ -42,9 +43,9 @@ public interface IDoState extends IStandardPASSState, IHasSiSiDistribution.IHasD
      * Adds a new function that defines how local data will be mapped in general
      * @param dataMappingFunction the new function
      */
-    void addDataMappingFunction(PassProcessModelElements.DataDescribingComponents.IDataMappingFunction dataMappingFunction);
+    void addDataMappingFunction(IDataMappingFunction dataMappingFunction);
 
-    Map<String, PassProcessModelElements.DataDescribingComponents.IDataMappingFunction> getDataMappingFunctions();
+    Map<String, IDataMappingFunction> getDataMappingFunctions();
 
     /**
      *  Removes a data mapping function

@@ -3,6 +3,7 @@ package alps.java.api.parsing;
 
 import alps.java.api.StandardPASS.PASSProcessModelElement;
 import alps.java.api.util.*;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.atlas.logging.Log;
@@ -11,7 +12,9 @@ import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.util.iterator.ExtendedIterator;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLOutput;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -25,7 +28,7 @@ import java.util.stream.Collectors;
  */
 public class ParsingTreeMatcher implements IParsingTreeMatcher {
 
-    public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs) throws IOException, ClassNotFoundException {
+    public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs){
         System.out.println("Merging all input graphs...");
         System.out.println("Generating class mapping for parser...");
         ConsoleProgressBar consoleBar = new ConsoleProgressBar();
@@ -154,31 +157,68 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
      *
      * @return
      */
-    private ITreeNode<IParseablePASSProcessModelElement> createClassInheritanceTree() throws IOException, ClassNotFoundException {
+    private ITreeNode<IParseablePASSProcessModelElement> createClassInheritanceTree() {
         // Start with the default root: the PASSProcessModelElement class
         ITreeNode<IParseablePASSProcessModelElement> treeRootNode = new TreeNode<IParseablePASSProcessModelElement>(new PASSProcessModelElement());
 
         // Search recursively for classes that extend this class and add them to the tree
-        //TODO: ab hier kommt STack Overflow Error
         findChildsAndAdd(treeRootNode);
         return treeRootNode;
     }
 
-    private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node) throws IOException, ClassNotFoundException {
-        String packageName = "alps.java.*";
-        Class<?> superClass = node.getClass();
-        List<Class<?>> elements = ReflectiveEnumerator.getSubclasses(packageName, superClass);
+    private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node)  {
+        List<Class<?>> subclasses = new ArrayList<>();
+        Class<?> superclass = node.getContent().getClass();
+        subclasses = findSubclasses(superclass);
 
-        for (Class<?> clazz : elements) {
-            try {
-                IParseablePASSProcessModelElement instance = (IParseablePASSProcessModelElement) clazz.newInstance();
-                node.addChild(new TreeNode<IParseablePASSProcessModelElement>(instance));
-            } catch (InstantiationException | IllegalAccessException e) {
+        // TODO: es funktioniert!! zumindest für PASSProcessModelElement jetzt das ganze noch rekursiv aufrufen um den vererbungsbaum zu erstellen
+        for (Class<?> subclass : subclasses) {
+            System.out.println(subclass.getName());
+        }
+    }
+
+    private List<Class<?>> findSubclasses(Class<?> superclass) {
+        String packageName = "alps.java.api";
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        List<Class<?>> subclasses = new ArrayList<>();
+
+        try {
+            Enumeration<URL> resources = classLoader.getResources(packageName.replace('.', '/'));
+            while (resources.hasMoreElements()) {
+                URL resource = resources.nextElement();
+                if (resource.getProtocol().equals("file")) {
+                    File packageDir = new File(resource.getFile());
+                    findClassesInDirectory(superclass, packageName, packageDir, subclasses);
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        for (ITreeNode<IParseablePASSProcessModelElement> childNode : node.getChildNodes()) {
-            findChildsAndAdd(childNode);
+        return subclasses;
+    }
+
+    private void findClassesInDirectory(Class<?> superclass, String packageName, File directory, List<Class<?>> subclasses) {
+        File[] files = directory.listFiles();
+        if (files == null) {
+            return;
+        }
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                String subPackageName = packageName + "." + file.getName();
+                findClassesInDirectory(superclass, subPackageName, file, subclasses);
+            } else if (file.getName().endsWith(".class")) {
+                String className = packageName + "." + FilenameUtils.getBaseName(file.getName());
+                try {
+                    Class<?> clazz = Class.forName(className);
+                    if (superclass.isAssignableFrom(clazz) && !superclass.equals(clazz)) {
+                        subclasses.add(clazz);
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

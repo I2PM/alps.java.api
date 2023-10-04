@@ -5,9 +5,7 @@ import alps.java.api.ALPS.ALPSModelElements.IModelLayer;
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataObjectDefinitions.ISubjectDataDefinition;
 import alps.java.api.StandardPASS.PassProcessModelElements.ISubjectBehavior;
-import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.IInputPoolConstraint;
-import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.IMessageExchange;
-import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.Subject;
+import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.*;
 import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehavior;
 import alps.java.api.StandardPASS.PassProcessModelElements.SubjectBehaviors.ISubjectBaseBehavior;
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
@@ -17,10 +15,11 @@ import alps.java.api.util.ICompatibilityDictionary;
 import alps.java.api.util.IIncompleteTriple;
 import alps.java.api.util.IncompleteTriple;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Class that represents an FullySpecifiedSubject
@@ -30,10 +29,67 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
     protected ICompatibilityDictionary<String, ISubjectBehavior> subjectBehaviors = new CompatibilityDictionary<String, ISubjectBehavior>();
     protected ISubjectDataDefinition subjectDataDefinition;
     protected ICompatibilityDictionary<String, IInputPoolConstraint> inputPoolConstraints = new CompatibilityDictionary<String, IInputPoolConstraint>();
+    protected ISubjectExecutionMapping subjectExecutionMapping;
+    Logger Log = Logger.getLogger(FullySpecifiedSubject.class.getName());
     /**
      * Name of the class, needed for parsing
      */
     private final String className = "FullySpecifiedSubject";
+    private double sisiExecutionCostPerHour = 0;
+    private SimpleSimVSMSubjectTypes sisiVSMSubjectType = SimpleSimVSMSubjectTypes.Standard;
+    private double sisiVSMInventory = 0;
+    private double sisiVSMProcessQuantity = 0;
+    private double sisiVSMQualityRate = 0;
+    private double sisiVSMAvailability = 0;
+
+    public double getSisiExecutionCostPerHour() {
+        return sisiExecutionCostPerHour;
+    }
+
+    public void setSisiExecutionCostPerHour(double sisiExecutionCostPerHour) {
+        this.sisiExecutionCostPerHour = sisiExecutionCostPerHour;
+    }
+
+    public SimpleSimVSMSubjectTypes getSisiVSMSubjectType() {
+        return sisiVSMSubjectType;
+    }
+
+    public void setSisiVSMSubjectType(SimpleSimVSMSubjectTypes sisiVSMSubjectType) {
+        this.sisiVSMSubjectType = sisiVSMSubjectType;
+    }
+
+    public double getSisiVSMInventory() {
+        return sisiVSMInventory;
+    }
+
+    public void setSisiVSMInventory(double sisiVSMInventory) {
+        this.sisiVSMInventory = sisiVSMInventory;
+    }
+
+    public double getSisiVSMProcessQuantity() {
+        return sisiVSMProcessQuantity;
+    }
+
+    public void setSisiVSMProcessQuantity(double sisiVSMProcessQuantity) {
+        this.sisiVSMProcessQuantity = sisiVSMProcessQuantity;
+    }
+
+    public double getSisiVSMQualityRate() {
+        return sisiVSMQualityRate;
+    }
+
+    public void setSisiVSMQualityRate(double sisiVSMQualityRate) {
+        this.sisiVSMQualityRate = sisiVSMQualityRate;
+    }
+
+    public double getSisiVSMAvailability() {
+        return sisiVSMAvailability;
+    }
+
+    public void setSisiVSMAvailability(double sisiVSMAvailability) {
+        this.sisiVSMAvailability = sisiVSMAvailability;
+    }
+
 
     @Override
     public String getClassName() {
@@ -296,6 +352,10 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
 
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+        Locale customLocale = new Locale("en-US");
+        DecimalFormatSymbols customSymbols = new DecimalFormatSymbols(customLocale);
+        customSymbols.setDecimalSeparator('.');
+        DecimalFormat customFormatter = new DecimalFormat("#.#######", customSymbols);
         if (element != null) {
             if (element instanceof ISubjectBehavior subjectBehavior) {
                 if (predicate.contains(OWLTags.containsBaseBehavior)) {
@@ -311,9 +371,57 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
             } else if (predicate.contains(OWLTags.hasInputPoolConstraint) && element instanceof IInputPoolConstraint poolConstraint) {
                 addInputPoolConstraint(poolConstraint);
                 return true;
+            } else if (predicate.contains(OWLTags.hasSubjectExecutionMapping) && element instanceof ISubjectExecutionMapping
+            mapping)
+            {
+                setSubjectExecutionMapping(mapping);
+                return true;
             }
 
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimExecutionCostPerHour)) {
+            try {
+                this.sisiExecutionCostPerHour = customFormatter.parse(objectContent).doubleValue();
+            } catch (ParseException e) {
+                Log.warning("could not parse the value " + objectContent + " as valid double");
+            }
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimVSMSubjectType)) {
+            this.sisiVSMSubjectType = parseSimpleSimVSMSubjectType(objectContent);
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimVSMAvailability)) {
+            try {
+                this.sisiVSMInventory = customFormatter.parse(objectContent).doubleValue();
+            } catch (ParseException e) {
+                Log.warning("could not parse the value " + objectContent + " as valid double");
+            }
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimiVSMProcessQuantity)) {
+            try {
+                this.sisiVSMProcessQuantity =  customFormatter.parse(objectContent).doubleValue();
+            } catch (ParseException e) {
+                Log.warning("could not parse the value " + objectContent + " as valid double");
+            }
+            return true;
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimiVSMQualityRate)) {
+            try {
+                this.sisiVSMQualityRate =  customFormatter.parse(objectContent).doubleValue();
+            } catch (ParseException e) {
+                Log.warning("could not parse the value " + objectContent + " as valid double");
+            }
+            return true;
+        } else if (predicate.contains(OWLTags.hasExecutionMappingDefinition)) {
+            //System.Console.WriteLine("Found an Execution Mapping: " + objectContent);
+            if (this.subjectExecutionMapping != null) {
+                String newlabel = "SubjectExecutionMappingOf" + this.modelComponentID;
+                String newID = newlabel;
+                ISubjectExecutionMapping newMappingObject =
+                        new SubjectExecutionMapping(this.layer, newlabel, objectContent,null,null,null);
+                this.subjectExecutionMapping = newMappingObject;
+            }
+            return true;
         }
+
+
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
 
@@ -379,6 +487,36 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
             inputPoolConstraints.put(element.getModelComponentID(), element);
         }
         super.notifyModelComponentIDChanged(oldID, newID);
+    }
+    private static SimpleSimVSMSubjectTypes parseSimpleSimVSMSubjectType(String value)
+    {
+        if (value==null|| value.isEmpty())
+        {
+            value = "nothing correct";
+        }
+
+        if (value.toLowerCase().contains("production"))
+        {
+            return SimpleSimVSMSubjectTypes.ProductionSubject;
+        }
+        else if (value.toLowerCase().contains("storage"))
+        {
+            return SimpleSimVSMSubjectTypes.StorageSubject;
+        }
+        else
+        {
+            return SimpleSimVSMSubjectTypes.Standard;
+        }
+    }
+
+    public ISubjectExecutionMapping getSubjectExecutionMapping()
+    {
+        return this.subjectExecutionMapping;
+    }
+
+    public void setSubjectExecutionMapping(ISubjectExecutionMapping subjectExecutionMapping)
+    {
+        this.subjectExecutionMapping= subjectExecutionMapping;
     }
 
 }
