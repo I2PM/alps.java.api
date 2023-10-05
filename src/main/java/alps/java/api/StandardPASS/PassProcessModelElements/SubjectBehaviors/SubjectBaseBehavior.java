@@ -37,7 +37,7 @@ public class SubjectBaseBehavior extends SubjectBehavior implements ISubjectBase
         return new SubjectBaseBehavior();
     }
 
-    protected SubjectBaseBehavior() {
+    public SubjectBaseBehavior() {
     }
 
     public SubjectBaseBehavior(IModelLayer layer, String labelForID, ISubject subject, Set<IBehaviorDescribingComponent> components,

@@ -27,7 +27,7 @@ public class JSONDataTypeDefinition extends CustomOrExternalDataTypeDefinition i
         return new JSONDataTypeDefinition();
     }
 
-    protected JSONDataTypeDefinition() {
+    public JSONDataTypeDefinition() {
     }
 
     public JSONDataTypeDefinition(IPASSProcessModel model, String labelForID, Set<IDataObjectDefinition> dataObjectDefiniton,

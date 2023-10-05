@@ -109,7 +109,7 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
         return new Transition();
     }
 
-    protected Transition() {
+    public Transition() {
         implCapsule = new ImplementsFunctionalityCapsule<ITransition>(this);
     }
 //TODO: Out Parameter

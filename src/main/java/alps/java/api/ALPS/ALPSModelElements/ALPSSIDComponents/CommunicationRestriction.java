@@ -36,7 +36,7 @@ public class CommunicationRestriction extends ALPSSIDComponent implements ICommu
         return new CommunicationRestriction();
     }
 
-    protected CommunicationRestriction() {
+    public CommunicationRestriction() {
     }
 
     public CommunicationRestriction(IModelLayer layer, String labelForID,

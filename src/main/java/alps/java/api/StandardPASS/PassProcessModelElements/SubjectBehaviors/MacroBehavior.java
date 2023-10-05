@@ -37,7 +37,7 @@ public class MacroBehavior extends SubjectBehavior implements IMacroBehavior {
         return new MacroBehavior();
     }
 
-    protected MacroBehavior() {
+    public MacroBehavior() {
     }
 
     public MacroBehavior(IModelLayer layer, String labelForID, ISubject subject, Set<IBehaviorDescribingComponent> components,

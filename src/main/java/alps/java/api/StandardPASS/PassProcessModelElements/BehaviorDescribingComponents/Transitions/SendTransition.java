@@ -42,7 +42,7 @@ public class SendTransition extends CommunicationTransition implements ISendTran
         return new SendTransition();
     }
 
-    protected SendTransition() {
+    public SendTransition() {
     }
 
     public SendTransition(IState sourceState, IState targetState, String labelForID, ITransitionCondition transitionCondition,

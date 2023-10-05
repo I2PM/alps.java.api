@@ -32,7 +32,7 @@ public class InputPoolConstraint extends InteractionDescribingComponent implemen
         return new InputPoolConstraint();
     }
 
-    protected InputPoolConstraint() {
+    public InputPoolConstraint() {
     }
 
     /**

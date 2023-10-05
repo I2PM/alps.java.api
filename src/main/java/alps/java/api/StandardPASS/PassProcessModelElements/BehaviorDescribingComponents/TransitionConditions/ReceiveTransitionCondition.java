@@ -53,7 +53,7 @@ public class ReceiveTransitionCondition extends MessageExchangeCondition impleme
         return new ReceiveTransitionCondition();
     }
 
-    protected ReceiveTransitionCondition() {
+    public ReceiveTransitionCondition() {
     }
 
     @Override

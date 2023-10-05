@@ -38,7 +38,7 @@ public class SubjectExecutionMapping extends InteractionDescribingComponent impl
         return new SubjectExecutionMapping();
     }
 
-    protected SubjectExecutionMapping() {
+    public SubjectExecutionMapping() {
     }
 
     /**

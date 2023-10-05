@@ -53,7 +53,7 @@ public class ModelLayer extends ALPSModelElement implements IModelLayer {
         return new ModelLayer();
     }
 
-    protected ModelLayer() {
+    public ModelLayer() {
         implCapsule = new ImplementsFunctionalityCapsule<IModelLayer>(this);
         extendsCapsule = new ExtendsFunctionalityCapsule<IModelLayer>(this);
     }

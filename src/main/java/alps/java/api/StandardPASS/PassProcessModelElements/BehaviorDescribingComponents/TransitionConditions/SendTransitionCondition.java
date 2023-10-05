@@ -57,7 +57,7 @@ public class SendTransitionCondition extends MessageExchangeCondition implements
         return new SendTransitionCondition();
     }
 
-    protected SendTransitionCondition() {
+    public SendTransitionCondition() {
     }
 
     @Override

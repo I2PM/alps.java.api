@@ -26,7 +26,7 @@ public class CommunicationAct extends FunctionSpecification implements ICommunic
         return new CommunicationAct();
     }
 
-    protected CommunicationAct() {
+    public CommunicationAct() {
     }
 
     public CommunicationAct(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,

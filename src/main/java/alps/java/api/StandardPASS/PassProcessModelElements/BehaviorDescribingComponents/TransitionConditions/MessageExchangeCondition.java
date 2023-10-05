@@ -34,7 +34,7 @@ public class MessageExchangeCondition extends TransitionCondition implements IMe
         return new MessageExchangeCondition();
     }
 
-    protected MessageExchangeCondition() {
+    public MessageExchangeCondition() {
     }
 
     public MessageExchangeCondition(ITransition transition, String labelForID, String toolSpecificDefinition, IMessageExchange messageExchange,

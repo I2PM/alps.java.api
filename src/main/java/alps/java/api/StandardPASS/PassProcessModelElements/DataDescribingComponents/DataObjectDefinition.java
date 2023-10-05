@@ -33,7 +33,7 @@ public class DataObjectDefinition extends DataDescribingComponent implements IDa
         return new DataObjectDefinition();
     }
 
-    protected DataObjectDefinition() {
+    public DataObjectDefinition() {
     }
 
     public DataObjectDefinition(IPASSProcessModel model, String labelForID,

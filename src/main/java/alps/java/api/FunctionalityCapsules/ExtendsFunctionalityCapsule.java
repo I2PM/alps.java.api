@@ -25,6 +25,10 @@ public class ExtendsFunctionalityCapsule<T extends IPASSProcessModelElement> imp
         this.elementClass = elementClass;
     }
 
+    public ExtendsFunctionalityCapsule() {
+        this.callback=null;
+    }
+
     public String getExtendedElementID() {
         if ((extendedElement != null) && !extendedElement.getModelComponentID().equals(extendedElementID)) {
             setExtendedElementID(extendedElement.getModelComponentID());

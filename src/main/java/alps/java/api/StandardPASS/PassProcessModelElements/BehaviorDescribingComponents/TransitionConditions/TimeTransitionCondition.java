@@ -61,7 +61,7 @@ public class TimeTransitionCondition extends TransitionCondition implements ITim
      * the old triple parsing the time value must be replaced by a triple containing a different predicate
      * (All different classes define differnt predicates for the time value).
      */
-    protected TimeTransitionConditionType lastUsedTypeForExportFunctions;
+    public TimeTransitionConditionType lastUsedTypeForExportFunctions;
 
     @Override
     public String getClassName() {
@@ -73,9 +73,10 @@ public class TimeTransitionCondition extends TransitionCondition implements ITim
         return new TimeTransitionCondition();
     }
 
-    protected TimeTransitionCondition() {
+    public TimeTransitionCondition() {
         lastUsedTypeForExportFunctions = TimeTransitionConditionType.DayTimeTimer;
-        setTimeTransitionConditionType(TimeTransitionConditionType.DayTimeTimer);
+        //TODO: auskommentiert, da sonst fehlermeldung
+        //setTimeTransitionConditionType(TimeTransitionConditionType.DayTimeTimer);
     }
 
     public TimeTransitionCondition(ITransition transition, String labelForID, String toolSpecificDefintion, String timeValue,
@@ -93,11 +94,37 @@ public class TimeTransitionCondition extends TransitionCondition implements ITim
         setTimeTransitionConditionType(TimeTransitionConditionType.DayTimeTimer);
         setTimeValue(null);
     }
-
+//TODO: hier kriege ich NullPointerException, weil die Map specificConditions null ist, warum wird das überhaupt aufgerufen?
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
         // Check if one of the predicates - defined by the different Condition types - is the predicate of the triple
         // For example "hasCalendarBasedFrquencyOrDate" for CalendarBased...
+        Map<Integer, SpecificTimeTransitionCondition> specificConditions = new HashMap<Integer, SpecificTimeTransitionCondition>() {{
+            // CalendarBasedReminderTransitionCondition
+            put((int) TimeTransitionConditionType.CalendarBasedReminder.ordinal(),
+                    new SpecificTimeTransitionCondition(OWLTags.CalendarBasedReminderTransitionClassName, OWLTags.hasCalendarBasedFrequencyOrDate,
+                            OWLTags.stdHasTimeBasedReoccuranceFrequencyOrDate, OWLTags.xsdDataTypeString));
+
+            // TimeBasedReminderTransitionCondition
+            put((int) TimeTransitionConditionType.TimeBasedReminder.ordinal(),
+                    new SpecificTimeTransitionCondition(OWLTags.TimeBasedReminderTransitionConditionClassName, OWLTags.hasTimeBasedReoccuranceFrequencyOrDate,
+                            OWLTags.stdHasTimeBasedReoccuranceFrequencyOrDate, OWLTags.xsdDataTypeString));
+
+            // BusinessDayTimerTransitionCondition
+            put((int) TimeTransitionConditionType.BusinessDayTimer.ordinal(),
+                    new SpecificTimeTransitionCondition(OWLTags.BusinessDayTimerTransitionConditionClassName, OWLTags.hasBusinessDayDurationTimeOutTime,
+                            OWLTags.stdHasBusinessDayDurationTimeOutTime, OWLTags.xsdDayTimeDuration));
+
+            // DayTimeTimerTransitionCondition
+            put((int) TimeTransitionConditionType.DayTimeTimer.ordinal(),
+                    new SpecificTimeTransitionCondition(OWLTags.DayTimeTimerTransitionConditionClassName, OWLTags.hasDayTimeDurationTimeOutTime,
+                            OWLTags.stdHasDayTimeDurationTimeOutTime, OWLTags.xsdDayTimeDuration));
+
+            // YearMonthTimerTransitionCondition
+            put((int) TimeTransitionConditionType.YearMonthTimer.ordinal(),
+                    new SpecificTimeTransitionCondition(OWLTags.YearMonthTimerTransitionConditionClassName, OWLTags.hasYearMonthDurationTimeOutTime,
+                            OWLTags.stdHasYearMonthDurationTimeOutTime, OWLTags.xsdYearMonthDuration));
+        }};
         for (SpecificTimeTransitionCondition specific : specificConditions.values()) {
             if (predicate.contains(specific.getTimeValuePredicate(false))) {
                 setTimeValue(objectContent);

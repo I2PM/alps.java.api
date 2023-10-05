@@ -31,7 +31,7 @@ public class CommunicationTransition extends Transition implements ICommunicatio
         return new CommunicationTransition();
     }
 
-    protected CommunicationTransition() {
+    public CommunicationTransition() {
     }
 
     public CommunicationTransition(IState sourceState, IState targetState, String labelForID, ITransitionCondition transitionCondition,

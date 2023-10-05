@@ -54,7 +54,7 @@ public class MessageSpecification extends InteractionDescribingComponent impleme
         return new MessageSpecification();
     }
 
-    protected MessageSpecification() {
+    public MessageSpecification() {
     }
 
     /**

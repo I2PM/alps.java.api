@@ -27,7 +27,7 @@ public class ALPSModelElement extends PASSProcessModelElement implements IALPSMo
         return new ALPSModelElement();
     }
 
-    protected ALPSModelElement() {
+    public ALPSModelElement() {
     }
 
     /**

@@ -30,7 +30,7 @@ public class StandaloneMacroSubject extends Subject implements IStandaloneMacroS
         return new StandaloneMacroSubject();
     }
 
-    protected StandaloneMacroSubject() {
+    public StandaloneMacroSubject() {
     }
 
     /**

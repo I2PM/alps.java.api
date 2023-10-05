@@ -34,7 +34,7 @@ public class SenderTypeConstraint extends InputPoolConstraint implements ISender
         return new SenderTypeConstraint();
     }
 
-    protected SenderTypeConstraint() {
+    public SenderTypeConstraint() {
     }
 
     /**

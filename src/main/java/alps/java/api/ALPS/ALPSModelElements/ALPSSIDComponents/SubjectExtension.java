@@ -51,7 +51,7 @@ public class SubjectExtension extends Subject implements ISubjectExtension {
         return new SubjectExtension();
     }
 
-    protected SubjectExtension() {
+    public SubjectExtension() {
     }
 
     public SubjectExtension(IModelLayer layer, String labelForID, ISubject extendedSubject, Set<ISubjectBehavior> extensionBehavior,

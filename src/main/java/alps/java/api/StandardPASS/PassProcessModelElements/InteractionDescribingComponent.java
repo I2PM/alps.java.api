@@ -43,7 +43,7 @@ public class InteractionDescribingComponent extends PASSProcessModelElement impl
         return new InteractionDescribingComponent();
     }
 
-    protected InteractionDescribingComponent() {
+    public InteractionDescribingComponent() {
     }
 
     /**

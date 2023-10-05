@@ -34,7 +34,7 @@ public class ALPSSIDComponent extends InteractionDescribingComponent implements 
         return new ALPSSIDComponent();
     }
 
-    protected ALPSSIDComponent() {
+    public ALPSSIDComponent() {
     }
 
     /**

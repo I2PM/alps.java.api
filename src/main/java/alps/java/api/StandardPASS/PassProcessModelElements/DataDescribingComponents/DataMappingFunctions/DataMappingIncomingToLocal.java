@@ -26,7 +26,7 @@ public class DataMappingIncomingToLocal extends DataMappingFunction implements I
         return new DataMappingIncomingToLocal();
     }
 
-    protected DataMappingIncomingToLocal() {
+    public DataMappingIncomingToLocal() {
     }
 
     public DataMappingIncomingToLocal(IPASSProcessModel model, String labelForID, String dataMappingString, String feelExpression,

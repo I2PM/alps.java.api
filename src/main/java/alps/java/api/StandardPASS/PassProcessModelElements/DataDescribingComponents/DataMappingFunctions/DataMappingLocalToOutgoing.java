@@ -26,7 +26,7 @@ public class DataMappingLocalToOutgoing extends DataMappingFunction implements I
         return new DataMappingLocalToOutgoing();
     }
 
-    protected DataMappingLocalToOutgoing() {
+    public DataMappingLocalToOutgoing() {
     }
 
     public DataMappingLocalToOutgoing(IPASSProcessModel model, String labelForID, String dataMappingString, String feelExpression,

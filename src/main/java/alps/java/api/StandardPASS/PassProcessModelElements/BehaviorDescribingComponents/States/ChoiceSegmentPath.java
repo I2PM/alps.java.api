@@ -55,7 +55,7 @@ public class ChoiceSegmentPath extends State implements IChoiceSegmentPath {
         return new ChoiceSegmentPath();
     }
 
-    protected ChoiceSegmentPath() {
+    public ChoiceSegmentPath() {
     }
 
     public ChoiceSegmentPath(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,

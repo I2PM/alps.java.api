@@ -33,7 +33,7 @@ public class AbstractMessageExchange extends MessageExchange implements IAbstrac
         return new AbstractMessageExchange();
     }
 
-    protected AbstractMessageExchange() {
+    public AbstractMessageExchange() {
     }
 
     /**

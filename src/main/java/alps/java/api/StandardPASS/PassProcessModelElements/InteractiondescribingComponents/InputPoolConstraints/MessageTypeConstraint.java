@@ -35,7 +35,7 @@ public class MessageTypeConstraint extends InputPoolConstraint implements IMessa
         return new MessageTypeConstraint();
     }
 
-    protected MessageTypeConstraint() {
+    public MessageTypeConstraint() {
     }
 
     /**

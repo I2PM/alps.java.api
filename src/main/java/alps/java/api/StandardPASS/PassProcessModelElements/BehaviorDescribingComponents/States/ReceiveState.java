@@ -64,7 +64,7 @@ public class ReceiveState extends StandardPASSState implements IReceiveState {
         return new ReceiveState();
     }
 
-    protected ReceiveState() {
+    public ReceiveState() {
     }
 
     @Override

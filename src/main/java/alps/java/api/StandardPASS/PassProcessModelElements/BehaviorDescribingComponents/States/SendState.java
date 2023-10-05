@@ -52,7 +52,7 @@ public class SendState extends StandardPASSState implements ISendState {
         return new SendState();
     }
 
-    protected SendState() {
+    public SendState() {
     }
 
     public SendState(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,

@@ -27,7 +27,7 @@ public class SubjectDataDefinition extends DataObjectDefinition implements ISubj
         return new SubjectDataDefinition();
     }
 
-    protected SubjectDataDefinition() {
+    public SubjectDataDefinition() {
     }
 
     public SubjectDataDefinition(IPASSProcessModel model, String labelForID,

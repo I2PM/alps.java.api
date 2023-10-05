@@ -26,7 +26,7 @@ public class InputPoolConstraintHandlingStrategy extends InteractionDescribingCo
         return new InputPoolConstraintHandlingStrategy();
     }
 
-    protected InputPoolConstraintHandlingStrategy() {
+    public InputPoolConstraintHandlingStrategy() {
     }
 
     /**

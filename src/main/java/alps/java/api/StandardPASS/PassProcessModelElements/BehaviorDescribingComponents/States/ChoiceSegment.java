@@ -39,7 +39,7 @@ public class ChoiceSegment extends State implements IChoiceSegment {
         return new ChoiceSegment();
     }
 
-    protected ChoiceSegment() {
+    public ChoiceSegment() {
     }
 
     public ChoiceSegment(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,

@@ -37,7 +37,7 @@ public class MessageSenderTypeConstraint extends InputPoolConstraint implements 
         return new MessageSenderTypeConstraint();
     }
 
-    protected MessageSenderTypeConstraint() {
+    public MessageSenderTypeConstraint() {
     }
 
     /**

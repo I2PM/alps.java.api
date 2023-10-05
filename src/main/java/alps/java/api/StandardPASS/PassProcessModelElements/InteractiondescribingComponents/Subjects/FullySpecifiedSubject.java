@@ -101,7 +101,7 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
         return new FullySpecifiedSubject();
     }
 
-    protected FullySpecifiedSubject() {
+    public FullySpecifiedSubject() {
     }
 
     public FullySpecifiedSubject(IModelLayer layer, String labelForID, Set<IMessageExchange> incomingMessageExchange,

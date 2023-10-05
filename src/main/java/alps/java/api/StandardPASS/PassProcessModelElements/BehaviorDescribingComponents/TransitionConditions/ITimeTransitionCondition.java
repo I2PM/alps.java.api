@@ -8,7 +8,7 @@ import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCom
  */
 public interface ITimeTransitionCondition extends ITransitionCondition {
 
-    public enum TimeTransitionConditionType {
+    enum TimeTransitionConditionType {
         TimeBasedReminder,
         BusinessDayTimer,
         CalendarBasedReminder,

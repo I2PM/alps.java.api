@@ -40,7 +40,7 @@ public class MacroState extends State implements IMacroState {
         return new MacroState();
     }
 
-    protected MacroState() {
+    public MacroState() {
     }
 
     public MacroState(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,

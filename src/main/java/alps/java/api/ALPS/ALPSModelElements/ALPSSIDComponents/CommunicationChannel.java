@@ -44,7 +44,7 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
         return new CommunicationChannel();
     }
 
-    protected CommunicationChannel() {
+    public CommunicationChannel() {
     }
 
     public CommunicationChannel(IModelLayer layer, String labelForID, ISubject correspondentA, ISubject correspondentB, boolean isUniDirectional, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {

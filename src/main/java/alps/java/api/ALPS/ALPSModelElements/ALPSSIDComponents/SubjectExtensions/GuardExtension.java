@@ -42,7 +42,7 @@ public class GuardExtension extends SubjectExtension implements IGuardExtension 
         return new GuardExtension();
     }
 
-    protected GuardExtension() {
+    public GuardExtension() {
     }
 
     /**

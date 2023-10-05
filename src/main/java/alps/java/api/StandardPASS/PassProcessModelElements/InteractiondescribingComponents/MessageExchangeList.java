@@ -148,7 +148,7 @@ public class MessageExchangeList extends InteractionDescribingComponent implemen
         return new MessageExchangeList();
     }
 
-    protected MessageExchangeList() {
+    public MessageExchangeList() {
     }
 
     /**

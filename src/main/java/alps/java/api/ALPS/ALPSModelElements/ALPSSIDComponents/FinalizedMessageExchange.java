@@ -32,7 +32,7 @@ public class FinalizedMessageExchange extends MessageExchange implements IFinali
         return new FinalizedMessageExchange();
     }
 
-    protected FinalizedMessageExchange() {
+    public FinalizedMessageExchange() {
     }
 
     public FinalizedMessageExchange(IModelLayer layer, String label, IMessageSpecification messageSpecification, ISubject senderSubject,

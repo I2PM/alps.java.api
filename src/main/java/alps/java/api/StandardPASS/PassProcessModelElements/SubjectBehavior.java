@@ -52,7 +52,7 @@ public class SubjectBehavior extends PASSProcessModelElement implements ISubject
         return new SubjectBehavior();
     }
 
-    protected SubjectBehavior() {
+    public SubjectBehavior() {
         implCapsule = new ImplementsFunctionalityCapsule<ISubjectBehavior>(this);
         extendsCapsule = new ExtendsFunctionalityCapsule<ISubjectBehavior>(this);
     }

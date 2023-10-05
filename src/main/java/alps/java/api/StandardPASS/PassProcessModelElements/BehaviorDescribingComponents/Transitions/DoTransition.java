@@ -36,7 +36,7 @@ public class DoTransition extends Transition implements IDoTransition {
         return new DoTransition();
     }
 
-    protected DoTransition() {
+    public DoTransition() {
     }
 
     public DoTransition(IState sourceState, IState targetState, String labelForID, ITransitionCondition transitionCondition,

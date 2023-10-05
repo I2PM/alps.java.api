@@ -41,7 +41,7 @@ public class Action extends BehaviorDescribingComponent implements IAction {
         return new Action();
     }
 
-    protected Action() {
+    public Action() {
     }
 
     /**

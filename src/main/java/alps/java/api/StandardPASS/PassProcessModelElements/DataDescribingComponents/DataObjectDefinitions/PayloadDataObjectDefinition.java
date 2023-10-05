@@ -24,7 +24,7 @@ public class PayloadDataObjectDefinition extends DataObjectDefinition implements
         return new PayloadDataObjectDefinition();
     }
 
-    protected PayloadDataObjectDefinition() {
+    public PayloadDataObjectDefinition() {
     }
 
     public PayloadDataObjectDefinition(IPASSProcessModel model, String labelForID,

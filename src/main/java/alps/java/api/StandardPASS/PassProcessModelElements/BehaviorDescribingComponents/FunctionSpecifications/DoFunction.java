@@ -26,7 +26,7 @@ public class DoFunction extends FunctionSpecification implements IDoFunction {
         return new DoFunction();
     }
 
-    protected DoFunction() {
+    public DoFunction() {
     }
 
     public DoFunction(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,

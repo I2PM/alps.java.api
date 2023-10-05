@@ -47,7 +47,7 @@ public class GuardBehavior extends SubjectBehavior implements IGuardBehavior {
         return new GuardBehavior();
     }
 
-    protected GuardBehavior() {
+    public GuardBehavior() {
     }
 
     public GuardBehavior(IModelLayer layer, String labelForID, ISubject subject, Set<IBehaviorDescribingComponent> components,

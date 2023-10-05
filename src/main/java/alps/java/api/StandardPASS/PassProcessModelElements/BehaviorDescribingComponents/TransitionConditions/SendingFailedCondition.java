@@ -10,27 +10,29 @@ import java.util.List;
 /**
  * Class that represents a sending failed condition
  */
-public class SendingFailedCondition extends TransitionCondition implements ISendingFailedCondition
-        {
-/**
- * Name of the class, needed for parsing
- */
-            private final String className = "SendingFailedCondition";
-@Override
-public String getClassName()
-        {
+public class SendingFailedCondition extends TransitionCondition implements ISendingFailedCondition {
+    /**
+     * Name of the class, needed for parsing
+     */
+    private final String className = "SendingFailedCondition";
+
+    @Override
+    public String getClassName() {
         return className;
-        }
-        @Override
-public IParseablePASSProcessModelElement getParsedInstance()
-        {
+    }
+
+    @Override
+    public IParseablePASSProcessModelElement getParsedInstance() {
         return new SendingFailedCondition();
-        }
+    }
 
-protected SendingFailedCondition() { }
-public SendingFailedCondition(ITransition transition, String labelForID, String toolSpecificDefintion ,
-                              String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
-        super(transition, labelForID,  toolSpecificDefintion, comment, additionalLabel, additionalAttribute); }
+    public SendingFailedCondition() {
+    }
+
+    public SendingFailedCondition(ITransition transition, String labelForID, String toolSpecificDefintion,
+                                  String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
+        super(transition, labelForID, toolSpecificDefintion, comment, additionalLabel, additionalAttribute);
+    }
 
 
-        }
+}

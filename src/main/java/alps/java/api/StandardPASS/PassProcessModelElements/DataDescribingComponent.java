@@ -44,7 +44,7 @@ public class DataDescribingComponent extends PASSProcessModelElement implements 
         return new DataDescribingComponent();
     }
 
-    protected DataDescribingComponent() {
+    public DataDescribingComponent() {
     }
 
     /**

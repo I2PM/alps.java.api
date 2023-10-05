@@ -31,7 +31,7 @@ public class StandardPASSState extends State implements IStandardPASSState {
         return new StandardPASSState();
     }
 
-    protected StandardPASSState() {
+    public StandardPASSState() {
     }
 
     public StandardPASSState(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,

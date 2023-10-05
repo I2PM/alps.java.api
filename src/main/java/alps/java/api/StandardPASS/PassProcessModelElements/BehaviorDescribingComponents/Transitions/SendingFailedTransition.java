@@ -35,7 +35,7 @@ public class SendingFailedTransition extends Transition implements ISendingFaile
         return new SendingFailedTransition();
     }
 
-    protected SendingFailedTransition() {
+    public SendingFailedTransition() {
     }
 
     public SendingFailedTransition(IState sourceState, IState targetState, String labelForID, ITransitionCondition transitionCondition,

@@ -68,7 +68,7 @@ public class Simple2DVisualizationPathPoint extends Simple2DVisualizationPoint i
         return new Simple2DVisualizationPathPoint();
     }
 
-    protected Simple2DVisualizationPathPoint() {
+    public Simple2DVisualizationPathPoint() {
     }
 }
 

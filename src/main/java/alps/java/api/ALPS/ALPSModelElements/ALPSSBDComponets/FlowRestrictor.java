@@ -26,7 +26,7 @@ public class FlowRestrictor extends Transition implements IFlowRestrictor {
         return new FlowRestrictor();
     }
 
-    protected FlowRestrictor() {
+    public FlowRestrictor() {
     }
 
     /**

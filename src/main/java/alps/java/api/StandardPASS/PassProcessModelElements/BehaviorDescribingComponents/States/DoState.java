@@ -110,7 +110,7 @@ public class DoState extends StandardPASSState implements IDoState {
         return new DoState();
     }
 
-    protected DoState() {
+    public DoState() {
     }
 
     public DoState(ISubjectBehavior behavior, String labelForID, IGuardBehavior guardBehavior,

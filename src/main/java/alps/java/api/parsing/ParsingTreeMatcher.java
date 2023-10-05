@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 public class ParsingTreeMatcher implements IParsingTreeMatcher {
 
-    public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs){
+    public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs) {
         System.out.println("Merging all input graphs...");
         System.out.println("Generating class mapping for parser...");
         ConsoleProgressBar consoleBar = new ConsoleProgressBar();
@@ -84,11 +84,10 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
 
         return parsingDict;
     }
+
     private boolean matchesSchema(String str) {
         return str.matches("[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}");
     }
-
-
 
 
 // ################################ OWL class tree creation ################################
@@ -106,11 +105,11 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         // Find a root for the tree by finding alls classes that have no parent
         for (OntClass ontClass : parsingStructureOntologyGraph.listClasses().toList()) {
 
-                // Get all nodes that have no parent and are classes
-                if (!hasParentClass(ontClass)) {
-                    nodesWithoutParents.add(ontClass);
-                }
+            // Get all nodes that have no parent and are classes
+            if (!hasParentClass(ontClass)) {
+                nodesWithoutParents.add(ontClass);
             }
+        }
 
         List<OntClass> baseClasses = new ArrayList<OntClass>();
 
@@ -142,8 +141,9 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
                     return false;
                 }
             }
-        }return false;
         }
+        return false;
+    }
 
 
 // ########################################################################################
@@ -153,7 +153,7 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
 
 
     /**
-     * Creates the inheritance tree for the c# classes known to this library
+     * Creates the inheritance tree for the java classes known to this library
      *
      * @return
      */
@@ -166,15 +166,27 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         return treeRootNode;
     }
 
-    private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node)  {
+    private void findChildsAndAdd(ITreeNode<IParseablePASSProcessModelElement> node) {
         List<Class<?>> subclasses = new ArrayList<>();
         Class<?> superclass = node.getContent().getClass();
         subclasses = findSubclasses(superclass);
 
-        // TODO: es funktioniert!! zumindest für PASSProcessModelElement jetzt das ganze noch rekursiv aufrufen um den vererbungsbaum zu erstellen
+        // Subklassen werden gefunden, sind aber vom Datentyp Class<?>, die Methode addChild, erwartet aber als Eingabeparameter ein Objekt vom Datentyp IParseablePASSProcessModelElement
+        // jede Klasse instanziieren, dazu musste ich den Standardkonstruktor von jeder klasse public machen
+        //Problem bei TimeTransitionCondition
         for (Class<?> subclass : subclasses) {
-            System.out.println(subclass.getName());
+            try {
+                IParseablePASSProcessModelElement instance = (IParseablePASSProcessModelElement) subclass.newInstance();
+                node.addChild(new TreeNode<IParseablePASSProcessModelElement>(instance));
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
         }
+        for(ITreeNode<IParseablePASSProcessModelElement> childNode: node.getChildNodes()){
+            findChildsAndAdd(childNode);
+        }
+
     }
 
     private List<Class<?>> findSubclasses(Class<?> superclass) {
@@ -221,7 +233,6 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
             }
         }
     }
-
 
 
 // ########################################################################################
@@ -413,13 +424,11 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         if (!(parsingDict.containsKey(ontResource))) {
             String possibleClasses = possibleMappedClasses.stream().map(x -> x.getLeft().getContent().getClassName()).collect(Collectors.joining(";"));
             System.err.println("Warning: Could not map " + ontResource + " correctly, mapped with " + possibleClasses + " instead");
-            for (Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer> possibleMappedClassPair:possibleMappedClasses)
-            {
+            for (Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer> possibleMappedClassPair : possibleMappedClasses) {
                 addToParsingDict(parsingDict, ontClass, possibleMappedClassPair.getLeft(), depth);
             }
         }
-        for (OntClass childOntClass : ontClass.listSubClasses(true).toList())
-        {
+        for (OntClass childOntClass : ontClass.listSubClasses(true).toList()) {
             mapRestWithParentNode(parsingDict, childOntClass, parentNodeKey, depth + 1);
         }
     }

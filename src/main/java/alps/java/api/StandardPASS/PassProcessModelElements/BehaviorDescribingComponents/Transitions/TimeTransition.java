@@ -95,7 +95,7 @@ public class TimeTransition extends Transition implements ITimeTransition {
         return timeTransitionType;
     }
 
-    protected TimeTransition() {
+    public TimeTransition() {
         setTimeTransitionType(TimeTransitionType.DayTimeTimer);
     }
 

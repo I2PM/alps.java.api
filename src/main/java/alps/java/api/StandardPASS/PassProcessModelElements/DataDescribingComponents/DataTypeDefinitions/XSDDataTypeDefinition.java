@@ -27,7 +27,7 @@ public class XSDDataTypeDefinition extends CustomOrExternalDataTypeDefinition im
         return new XSDDataTypeDefinition();
     }
 
-    protected XSDDataTypeDefinition() {
+    public XSDDataTypeDefinition() {
     }
 
     public XSDDataTypeDefinition(IPASSProcessModel model, String labelForID, Set<IDataObjectDefinition> dataObjectDefiniton,

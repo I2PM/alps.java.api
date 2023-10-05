@@ -34,7 +34,7 @@ public class DataMappingFunction extends DataDescribingComponent implements IDat
         return new DataMappingFunction();
     }
 
-    protected DataMappingFunction() {
+    public DataMappingFunction() {
     }
 
     public DataMappingFunction(IPASSProcessModel model, String labelForID, String dataMappingString, String feelExpression,

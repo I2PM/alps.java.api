@@ -116,7 +116,7 @@ public class Simple2DVisualizationPoint extends ALPSModelElement implements ISim
         return new Simple2DVisualizationPoint();
     }
 
-    protected Simple2DVisualizationPoint() { }
+    public Simple2DVisualizationPoint() { }
 @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
     Locale customCulture = new Locale("en", "US");

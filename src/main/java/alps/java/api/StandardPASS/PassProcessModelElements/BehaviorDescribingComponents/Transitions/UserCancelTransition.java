@@ -43,7 +43,7 @@ public class UserCancelTransition extends Transition implements IUserCancelTrans
     }
 
 
-    protected UserCancelTransition() {
+    public UserCancelTransition() {
     }
 
     public UserCancelTransition(IState sourceState, IState targetState, String labelForID, ITransitionCondition transitionCondition,

@@ -34,7 +34,7 @@ public class GuardReceiveState extends ReceiveState implements IGuardReceiveStat
         return new GuardReceiveState();
     }
 
-    protected GuardReceiveState() {
+    public GuardReceiveState() {
     }
 
     /**

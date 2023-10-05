@@ -26,6 +26,10 @@ public class ImplementsFunctionalityCapsule<T extends IPASSProcessModelElement> 
         this.callback = callback;
     }
 
+    public ImplementsFunctionalityCapsule() {
+        this.callback = null;
+    }
+
 
     public boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
         if (predicate.contains(OWLTags.iimplements)) {

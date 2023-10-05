@@ -28,7 +28,7 @@ public IParseablePASSProcessModelElement getParsedInstance()
         return new DoTransitionCondition();
         }
 
-protected DoTransitionCondition() { }
+            public DoTransitionCondition() { }
 public DoTransitionCondition(ITransition transition, String labelForID, String toolSpecificDefintion,
                              String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute){
         super(transition, labelForID, toolSpecificDefintion,  comment, additionalLabel, additionalAttribute);

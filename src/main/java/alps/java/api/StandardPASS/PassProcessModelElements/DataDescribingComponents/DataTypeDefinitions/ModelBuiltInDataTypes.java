@@ -28,7 +28,7 @@ public class ModelBuiltInDataTypes extends DataTypeDefinition implements IModelB
         return new ModelBuiltInDataTypes();
     }
 
-    protected ModelBuiltInDataTypes() {
+    public ModelBuiltInDataTypes() {
     }
 
     public ModelBuiltInDataTypes(IPASSProcessModel model, String labelForID, Set<IDataObjectDefinition> dataObjectDefiniton,

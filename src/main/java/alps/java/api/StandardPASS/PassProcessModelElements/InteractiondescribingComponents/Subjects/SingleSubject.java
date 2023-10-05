@@ -30,7 +30,7 @@ public class SingleSubject extends Subject implements ISingleSubject {
         return new SingleSubject();
     }
 
-    protected SingleSubject() {
+    public SingleSubject() {
     }
 
     public SingleSubject(IModelLayer layer, String labelForID, Set<IMessageExchange> incomingMessageExchange, Set<IMessageExchange> outgoingMessageExchange,

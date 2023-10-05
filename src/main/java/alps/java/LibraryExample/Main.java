@@ -61,10 +61,10 @@ public class Main {
 
         // IList<IPASSProcessModel> models = io.loadModels(new List<string> { "C:\\Data\\ExportImportTest1.owl" });
 
-        List<String> modelPaths = new ArrayList<>();
+       /* List<String> modelPaths = new ArrayList<>();
         modelPaths.add("C:\\Data\\ExportImportTest1.owl");
         List<IPASSProcessModel> models = io.loadModels(modelPaths);
-/*
+
 
         // IDictionary of all elements
 

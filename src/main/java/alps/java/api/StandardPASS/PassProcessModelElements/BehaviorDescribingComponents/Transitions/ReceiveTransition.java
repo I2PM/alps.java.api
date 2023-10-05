@@ -44,7 +44,7 @@ public class ReceiveTransition extends CommunicationTransition implements IRecei
         return new ReceiveTransition();
     }
 
-    protected ReceiveTransition() {
+    public ReceiveTransition() {
     }
 
     public ReceiveTransition(IState sourceState, IState targetState, String labelForID, ITransitionCondition transitionCondition,

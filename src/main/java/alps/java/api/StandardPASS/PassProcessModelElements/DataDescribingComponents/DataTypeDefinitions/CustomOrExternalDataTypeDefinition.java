@@ -28,7 +28,7 @@ public class CustomOrExternalDataTypeDefinition extends DataTypeDefinition imple
         return new CustomOrExternalDataTypeDefinition();
     }
 
-    protected CustomOrExternalDataTypeDefinition() {
+    public CustomOrExternalDataTypeDefinition() {
     }
 
     public CustomOrExternalDataTypeDefinition(IPASSProcessModel model, String labelForID, Set<IDataObjectDefinition> dataObjectDefiniton,

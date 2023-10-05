@@ -43,7 +43,7 @@ public class SubjectGroup extends Subject implements ISubjectGroup {
             return new SubjectGroup();
         }
 
-        protected SubjectGroup() { }
+    public SubjectGroup() { }
 
     /**
      *

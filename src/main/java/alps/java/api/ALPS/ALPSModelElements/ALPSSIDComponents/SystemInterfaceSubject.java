@@ -41,7 +41,7 @@ public class SystemInterfaceSubject extends InterfaceSubject implements ISystemI
         return new SystemInterfaceSubject();
     }
 
-    protected SystemInterfaceSubject() {
+    public SystemInterfaceSubject() {
     }
 
     /**

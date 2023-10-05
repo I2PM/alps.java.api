@@ -42,7 +42,7 @@ public class InterfaceSubject extends Subject implements IInterfaceSubject {
         return new InterfaceSubject();
     }
 
-    protected InterfaceSubject() {
+    public InterfaceSubject() {
     }
 
     /**

@@ -29,7 +29,7 @@ public class TransitionCondition extends BehaviorDescribingComponent implements 
         return new TransitionCondition();
     }
 
-    protected TransitionCondition() {
+    public TransitionCondition() {
     }
 
     //TODO: out-Parameter

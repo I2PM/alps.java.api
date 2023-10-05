@@ -27,7 +27,7 @@ public class OWLDataTypeDefinition extends CustomOrExternalDataTypeDefinition im
         return new OWLDataTypeDefinition();
     }
 
-    protected OWLDataTypeDefinition() {
+    public OWLDataTypeDefinition() {
     }
 
     public OWLDataTypeDefinition(IPASSProcessModel model, String labelForID, Set<IDataObjectDefinition> dataObjectDefiniton,

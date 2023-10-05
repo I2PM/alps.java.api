@@ -25,7 +25,7 @@ public class ReceiveFunction extends CommunicationAct implements IReceiveFunctio
         return new ReceiveFunction();
     }
 
-    protected ReceiveFunction() {
+    public ReceiveFunction() {
     }
 
     public ReceiveFunction(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,

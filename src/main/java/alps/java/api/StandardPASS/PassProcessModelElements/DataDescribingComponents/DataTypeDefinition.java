@@ -37,7 +37,7 @@ public class DataTypeDefinition extends DataDescribingComponent implements IData
         return new DataTypeDefinition();
     }
 
-    protected DataTypeDefinition() {
+    public DataTypeDefinition() {
     }
 
     public DataTypeDefinition(IPASSProcessModel model, String labelForID,

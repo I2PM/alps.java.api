@@ -39,7 +39,7 @@ public class GroupState extends State implements IGroupState {
         return new GroupState();
     }
 
-    protected GroupState() {
+    public GroupState() {
     }
 
     /**

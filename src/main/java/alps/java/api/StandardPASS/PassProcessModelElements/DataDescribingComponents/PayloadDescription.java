@@ -26,7 +26,7 @@ public class PayloadDescription extends DataDescribingComponent implements IPayl
         return new PayloadDescription();
     }
 
-    protected PayloadDescription() {
+    public PayloadDescription() {
     }
 
     /**

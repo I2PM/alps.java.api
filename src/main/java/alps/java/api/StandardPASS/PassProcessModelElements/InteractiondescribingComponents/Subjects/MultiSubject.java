@@ -29,7 +29,7 @@ public class MultiSubject extends Subject implements IMultiSubject {
         return new MultiSubject();
     }
 
-    protected MultiSubject() {
+    public MultiSubject() {
     }
 
     public MultiSubject(IModelLayer layer) {

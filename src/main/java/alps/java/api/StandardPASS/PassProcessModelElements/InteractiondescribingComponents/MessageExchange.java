@@ -35,7 +35,7 @@ public class MessageExchange extends InteractionDescribingComponent implements I
         return new MessageExchange();
     }
 
-    protected MessageExchange() {
+    public MessageExchange() {
     }
 
     /**

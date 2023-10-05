@@ -33,7 +33,7 @@ public class MacroExtension extends SubjectExtension implements IMacroExtension 
         return new MacroExtension();
     }
 
-    protected MacroExtension() {
+    public MacroExtension() {
     }
 
     /**

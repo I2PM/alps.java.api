@@ -26,7 +26,7 @@ public class ReceiveType extends BehaviorDescribingComponent implements IReceive
         return new ReceiveType();
     }
 
-    protected ReceiveType() {
+    public ReceiveType() {
     }
 
     /**

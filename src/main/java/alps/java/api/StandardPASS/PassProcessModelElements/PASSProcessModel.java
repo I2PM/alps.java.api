@@ -66,7 +66,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         return new PASSProcessModel();
     }
 
-    protected PASSProcessModel() {
+    public PASSProcessModel() {
         implCapsule = new ImplementsFunctionalityCapsule<IPASSProcessModel>(this);
     }
 

@@ -29,10 +29,10 @@ public class ActorPlaceHolder extends ALPSSIDComponent implements IActorPlaceHol
         return new ActorPlaceHolder();
     }
 
-    protected ActorPlaceHolder() {
+    public ActorPlaceHolder() {
     }
 
-    //TODO: Konstruktor überladen
+
     public ActorPlaceHolder(IModelLayer layer, String labelForID, String comment, String additionalLabel,
                             List<IIncompleteTriple> additionalAttribute) {
         super(layer, labelForID, comment, additionalLabel, additionalAttribute);

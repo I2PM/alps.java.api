@@ -20,7 +20,7 @@ public class PayloadPhysicalObjectDescription extends PayloadDescription impleme
         return new PayloadPhysicalObjectDescription();
     }
 
-    protected PayloadPhysicalObjectDescription() {
+    public PayloadPhysicalObjectDescription() {
     }
 
     public PayloadPhysicalObjectDescription(IPASSProcessModel model, String labelForID,

@@ -26,7 +26,7 @@ public class SendFunction extends CommunicationAct implements ISendFunction {
         return new SendFunction();
     }
 
-    protected SendFunction() {
+    public SendFunction() {
     }
 
     public SendFunction(ISubjectBehavior behavior, String labelForID, String toolSpecificDefinition,

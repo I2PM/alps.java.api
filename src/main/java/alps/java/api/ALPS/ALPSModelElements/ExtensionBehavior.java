@@ -35,7 +35,7 @@ public class ExtensionBehavior extends SubjectBehavior implements IExtensionBeha
         return new ExtensionBehavior();
     }
 
-    protected ExtensionBehavior() {
+    public ExtensionBehavior() {
     }
 
     /**

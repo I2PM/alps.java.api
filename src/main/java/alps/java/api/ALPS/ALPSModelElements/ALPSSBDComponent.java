@@ -38,7 +38,7 @@ public class ALPSSBDComponent extends BehaviorDescribingComponent implements IAL
         return new ALPSSBDComponent();
     }
 
-    protected ALPSSBDComponent() {
+    public ALPSSBDComponent() {
     }
 
     @Override

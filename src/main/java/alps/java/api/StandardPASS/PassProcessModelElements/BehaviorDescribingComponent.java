@@ -35,7 +35,7 @@ public class BehaviorDescribingComponent extends
         return new BehaviorDescribingComponent();
     }
 
-    protected BehaviorDescribingComponent() {
+    public BehaviorDescribingComponent() {
     }
 
     /**

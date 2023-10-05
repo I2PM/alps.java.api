@@ -33,7 +33,7 @@ public class StatePlaceholder extends State implements IStatePlaceholder {
         return new StatePlaceholder();
     }
 
-    protected StatePlaceholder() {
+    public StatePlaceholder() {
     }
 
     /**
