@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
  */
 public class ParsingTreeMatcher implements IParsingTreeMatcher {
 
+    //das ist die Mehode, die die beiden Bäume erstellt (OWL Vererbungsbaum und Java Vererbungsbaum)
     public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs) {
         System.out.println("Merging all input graphs...");
         System.out.println("Generating class mapping for parser...");
@@ -61,18 +62,19 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         System.out.println("Dynamically created owl class tree");
         System.out.println("Creating java class inheritance tree from classes known to the assembly...");
 
-        // Create the inheritance tree for the c# classes by recursively finding child classes to the PASSProcessModelElement class
+        // Create the inheritance tree for the java classes by recursively finding child classes to the PASSProcessModelElement class
         // Does also find child classes of external projects if they registered themself at the ReflectiveEnumerator class.
         ITreeNode<IParseablePASSProcessModelElement> treeRootNode = createClassInheritanceTree();
 
         consoleBar.report(0.75);
         System.out.println("Dynamically created java class tree");
+        printClassHierarchy(treeRootNode, "-");
 
-        // Maps a list of possible c# classes to each ontology class
+        // Maps a list of possible java classes to each ontology class
         Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict
                 = new HashMap<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>>();
 
-        // Map the each base class and its child classes with the c# classes
+        // Map the each base class and its child classes with the java classes
         for (OntClass baseClass : baseClasses) {
             createParsingStructureFromTrees(parsingDict, baseClass, treeRootNode);
         }
@@ -232,6 +234,29 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
                 }
             }
         }
+    }
+    //TODO: funktioniert nicht richtig
+    public void printClassHierarchy(ITreeNode<IParseablePASSProcessModelElement> node, String indent) {
+        System.out.println(indent + getClassName(node.getContent()));
+
+        for (ITreeNode<IParseablePASSProcessModelElement> childNode : node.getChildNodes()) {
+            printClassHierarchy(childNode, indent + "-");
+        }
+    }
+    public String getClassName(Object object) {
+        // Hole den vollständigen Klassennamen
+        String fullClassName = object.getClass().getName();
+        // Extrahiere den letzten Teil des Klassennamens (den Klassennamen ohne Paketnamen)
+        String[] parts = fullClassName.split("\\.");
+        String className = parts[parts.length - 1];
+
+        // Entferne die Endung mit dem "@"-Zeichen, falls vorhanden
+        int atIndex = className.indexOf('@');
+        if (atIndex != -1) {
+            className = className.substring(0, atIndex);
+        }
+
+        return className;
     }
 
 

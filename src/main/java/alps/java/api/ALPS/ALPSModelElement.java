@@ -32,6 +32,7 @@ public class ALPSModelElement extends PASSProcessModelElement implements IALPSMo
 
     /**
      * The default value of all Objects is null.
+     *
      * @param labelForID
      * @param comment
      * @param additionalLabel
@@ -46,4 +47,5 @@ public class ALPSModelElement extends PASSProcessModelElement implements IALPSMo
     protected String getExportTag() {
         return OWLTags.abstr;
     }
+
 }
