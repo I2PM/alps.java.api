@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  * The mapping is used by the parser to instantiate owl class instances with c# class instances
  */
 public class ParsingTreeMatcher implements IParsingTreeMatcher {
+    public int i=0;
 
     //das ist die Mehode, die die beiden Bäume erstellt (OWL Vererbungsbaum und Java Vererbungsbaum)
     public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs) {
@@ -68,7 +69,9 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
 
         consoleBar.report(0.75);
         System.out.println("Dynamically created java class tree");
+        System.out.println(treeRootNode.getChildNodes().size());
         printClassHierarchy(treeRootNode, "-");
+        System.out.println(i);
 
         // Maps a list of possible java classes to each ontology class
         Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict
@@ -185,7 +188,7 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
             }
 
         }
-        for(ITreeNode<IParseablePASSProcessModelElement> childNode: node.getChildNodes()){
+        for (ITreeNode<IParseablePASSProcessModelElement> childNode : node.getChildNodes()) {
             findChildsAndAdd(childNode);
         }
 
@@ -226,7 +229,7 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
                 String className = packageName + "." + FilenameUtils.getBaseName(file.getName());
                 try {
                     Class<?> clazz = Class.forName(className);
-                    if (superclass.isAssignableFrom(clazz) && !superclass.equals(clazz)) {
+                    if (superclass.isAssignableFrom(clazz) && !superclass.equals(clazz) && clazz.getSuperclass().equals(superclass)) {
                         subclasses.add(clazz);
                     }
                 } catch (ClassNotFoundException e) {
@@ -235,14 +238,21 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
             }
         }
     }
-    //TODO: funktioniert nicht richtig
+
+    /**
+     * Method that outputs the Java class hierarchy tree for tree verification. -> java class hierarchy tree is correct
+     * @param node
+     * @param indent for better visualization just use "-".
+     */
     public void printClassHierarchy(ITreeNode<IParseablePASSProcessModelElement> node, String indent) {
+        i=i+1;
         System.out.println(indent + getClassName(node.getContent()));
 
         for (ITreeNode<IParseablePASSProcessModelElement> childNode : node.getChildNodes()) {
             printClassHierarchy(childNode, indent + "-");
         }
     }
+
     public String getClassName(Object object) {
         // Hole den vollständigen Klassennamen
         String fullClassName = object.getClass().getName();
