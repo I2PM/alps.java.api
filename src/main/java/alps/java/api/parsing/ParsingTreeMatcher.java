@@ -324,7 +324,8 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         List<ITreeNode<IParseablePASSProcessModelElement>> childsBeenParsed = new ArrayList<>();
 
         // Go through all ontology child classes of the ontology class
-        for (OntClass directSubclass : parentOntClass.listSubClasses().toList()) {
+        //TODO: parentOnClass.listSubClasses().toList() listet nicht die direkten Subklassen auf!!
+        for (OntClass directSubclass : parentOntClass.listSubClasses(true).toList()) {
             List<ITreeNode<IParseablePASSProcessModelElement>> parseableClasses = new ArrayList<ITreeNode<IParseablePASSProcessModelElement>>();
             String url = removeUri(directSubclass.getURI());
             // Go through all c# child classes of the parent c# class instance
