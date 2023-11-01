@@ -2,6 +2,7 @@ package alps.java.api.ALPS.ALPSModelElements.ALPSSIDComponents;
 
 import alps.java.api.ALPS.ALPSModelElements.IALPSSIDComponent;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubject;
+import alps.java.api.util.IHasSimple2DVisualizationLine;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -9,7 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
  * This also represents Uni- and BiDirectionalCommunicationChannels
  * The direction can be set using the {@link "setIsUniDirectional(bool)"} Method.
  */
-public interface ICommunicationChannel extends IALPSSIDComponent {
+public interface ICommunicationChannel extends IALPSSIDComponent, IHasSimple2DVisualizationLine {
 
     void setCorrespondents(ISubject correspondentA, ISubject correspondentB, int removeCascadeDepth);
 

@@ -24,6 +24,22 @@ public class MessageExchange extends InteractionDescribingComponent implements I
      * Name of the class, needed for parsing
      */
     private final String className = "MessageExchange";
+    private MessageExchangeType messageExchangeType = MessageExchangeType.StandardMessageExchange;
+    protected boolean isAbstractType = false;
+    private final String ABSTRACT_NAME = "AbstractPASSMessageExchange";
+
+    public void setIsAbstract(boolean isAbstract) {
+        this.isAbstractType = isAbstract;
+        if (isAbstract) {
+            addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + ABSTRACT_NAME));
+        } else {
+            removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + ABSTRACT_NAME));
+        }
+    }
+
+    public boolean isAbstract() {
+        return isAbstractType;
+    }
 
     @Override
     public String getClassName() {
@@ -216,6 +232,24 @@ public class MessageExchange extends InteractionDescribingComponent implements I
 
             }
         }
+        if (predicate.contains(OWLTags.type)) {
+            // Console.WriteLine(" - parsing object content transition type: " + objectContent);
+
+            if (objectContent.toLowerCase().contains(MessageExchangeType.FinalizedMessageExchange.toString().toLowerCase())) {
+                setMessageExchangeType(MessageExchangeType.FinalizedMessageExchange);
+                setIsAbstract(true);
+                return true;
+            } else if (objectContent.toLowerCase().contains(MessageExchangeType.AbstractMessageExchange.toString().toLowerCase())) {
+                setMessageExchangeType(MessageExchangeType.AbstractMessageExchange);
+                setIsAbstract(true);
+                return true;
+            } else if (objectContent.contains(ABSTRACT_NAME)) {
+                setIsAbstract(true);
+                return true;
+            }
+
+
+        }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
 
@@ -258,5 +292,13 @@ public class MessageExchange extends InteractionDescribingComponent implements I
             if (update instanceof IMessageSpecification specification && specification.equals(getMessageType()))
                 setMessageType(null, 0);
         }
+    }
+
+    public void setMessageExchangeType(MessageExchangeType type) {
+        this.messageExchangeType = type;
+    }
+
+    public MessageExchangeType getMessageExchangeType() {
+        return this.messageExchangeType;
     }
 }

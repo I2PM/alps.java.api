@@ -119,6 +119,7 @@ public class Simple2DVisualizationPoint extends ALPSModelElement implements ISim
     public Simple2DVisualizationPoint() { }
 @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+        //TODO: Bei alps.net.api ausgeklammert
     Locale customCulture = new Locale("en", "US");
     NumberFormat numberFormat = NumberFormat.getInstance(customLocale);
     numberFormat.setGroupingUsed(false); // Deaktiviere Gruppierung, z.B. Tausendertrennzeichen

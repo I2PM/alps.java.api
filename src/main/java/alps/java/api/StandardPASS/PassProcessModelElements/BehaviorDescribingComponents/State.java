@@ -505,6 +505,7 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
 
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+        //TODO: in alps.net.api sind folgende 3 Zeilen auskommentiert
         Locale customLocale = new Locale("en", "US");
         NumberFormat numberFormat = NumberFormat.getInstance(customLocale);
         numberFormat.setGroupingUsed(false);

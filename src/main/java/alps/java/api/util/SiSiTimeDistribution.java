@@ -259,7 +259,7 @@ public class SiSiTimeDistribution implements ISiSiTimeDistribution {
     }
 
     public static double convertXSDDurationStringToFractionsOfDay(String xsdDurationString) {
-
+        //TODO: alps.net.api wurde weggelassen
         Locale customLocale = new Locale("en", "US");
         DecimalFormatSymbols customSymbols = DecimalFormatSymbols.getInstance(customLocale);
         customSymbols.setDecimalSeparator('.');
@@ -303,6 +303,7 @@ public class SiSiTimeDistribution implements ISiSiTimeDistribution {
 
         int secondsIndex = duration.indexOf("S");
         if (secondsIndex > 0) {
+            //TODO: in alps.net.api wird das mit PASSProcessModelElement.customCulture geregelt
             double seconds = Double.parseDouble(duration.substring(0, secondsIndex).replace(customSymbols.getDecimalSeparator(), '.'));
             fractionsOfDay = fractionsOfDay + (seconds / 86400.0);
         }

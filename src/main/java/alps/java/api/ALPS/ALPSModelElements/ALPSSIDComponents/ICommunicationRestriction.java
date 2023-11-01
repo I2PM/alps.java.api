@@ -2,9 +2,10 @@ package alps.java.api.ALPS.ALPSModelElements.ALPSSIDComponents;
 
 import alps.java.api.ALPS.ALPSModelElements.IALPSSIDComponent;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubject;
+import alps.java.api.util.IHasSimple2DVisualizationLine;
 import org.apache.commons.lang3.tuple.Pair;
 
-public interface ICommunicationRestriction extends IALPSSIDComponent {
+public interface ICommunicationRestriction extends IALPSSIDComponent, IHasSimple2DVisualizationLine {
 
     void setCorrespondents(ISubject correspondentA, ISubject correspondentB, int removeCascadeDepth);
 

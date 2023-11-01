@@ -45,6 +45,14 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      */
     public static Locale customLocale = new Locale("en", "US");
     private final String className = "PASSProcessModelElement";
+    //TODO: das in Java übersetzen
+
+    /**
+     * public static CultureInfo customCulture = new CultureInfo("en-US");
+     * static PASSProcessModelElement(){
+     * customCulture.NumberFormat.NumberDecimalSeparator = ".";
+     * }
+     */
 
 
     public String getClassName() {
@@ -96,7 +104,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      *
      * @param triple the triple that is being saved
      */
-    public void addTriple(IIncompleteTriple triple){
+    public void addTriple(IIncompleteTriple triple) {
         if (containsTriple(triple)) return;
         if (exportGraph == null) {
             additionalIncompleteTriples.add(triple);
@@ -172,7 +180,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
             addTriple(incTriple);
         }
 
-            // If no graph is available
+        // If no graph is available
         else {
             // Remove all incomplete triples that are encoding the same information
             if (getIncompleteTriple(incTriple) != null)
@@ -180,9 +188,9 @@ public class PASSProcessModelElement implements ICapsuleCallback {
 
             // Parse the information encoded by the triple
             additionalAttributeTriples.add(triple);
-                parseAttribute(triple, null);
-            }
+            parseAttribute(triple, null);
         }
+    }
 
     /**
      * Tries to parse an incomplete triple and add it as complete triple
@@ -509,8 +517,8 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         parsingStarted = true;
         List<IParseablePASSProcessModelElement> successfullyParsedElements = new ArrayList<IParseablePASSProcessModelElement>();
         for (Statement triple : getTriples()) {
-            IParseablePASSProcessModelElement parsedElement= null;
-                parsedElement = parseAttribute(triple, allElements);
+            IParseablePASSProcessModelElement parsedElement = null;
+            parsedElement = parseAttribute(triple, allElements);
             if (parsedElement != null) {
                 successfullyParsedElements.add(parsedElement);
             }
@@ -529,7 +537,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         // If attribute contains a reference to a PassProcessModelElement, pass this to the method
         Map<String, IParseablePASSProcessModelElement> allElements = getDictionaryOfAllAvailableElements();
 
-            return parseAttribute(triple, allElements);
+        return parseAttribute(triple, allElements);
     }
 
     protected IParseablePASSProcessModelElement parseAttribute(Statement triple, Map<String, IParseablePASSProcessModelElement> allElements) {
@@ -588,7 +596,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      * @param element       the element the objectContent points to (if it does and the element exists)
      * @return
      */
-    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element)  {
+    protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
         if (predicate.toLowerCase().contains(OWLTags.rdfsComment)) {
             addComment(new LanguageSpecificString(objectContent, lang));
             return true;

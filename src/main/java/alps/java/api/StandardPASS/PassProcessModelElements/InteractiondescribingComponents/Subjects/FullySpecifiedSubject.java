@@ -352,6 +352,7 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
 
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+        //TODO. in alps.net.api sin die folgenden 3 Zeilen auskomemntiert
         Locale customLocale = new Locale("en-US");
         DecimalFormatSymbols customSymbols = new DecimalFormatSymbols(customLocale);
         customSymbols.setDecimalSeparator('.');
@@ -372,8 +373,7 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
                 addInputPoolConstraint(poolConstraint);
                 return true;
             } else if (predicate.contains(OWLTags.hasSubjectExecutionMapping) && element instanceof ISubjectExecutionMapping
-            mapping)
-            {
+                    mapping) {
                 setSubjectExecutionMapping(mapping);
                 return true;
             }
@@ -397,14 +397,14 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
             return true;
         } else if (predicate.contains(OWLTags.abstrHasSimpleSimiVSMProcessQuantity)) {
             try {
-                this.sisiVSMProcessQuantity =  customFormatter.parse(objectContent).doubleValue();
+                this.sisiVSMProcessQuantity = customFormatter.parse(objectContent).doubleValue();
             } catch (ParseException e) {
                 Log.warning("could not parse the value " + objectContent + " as valid double");
             }
             return true;
         } else if (predicate.contains(OWLTags.abstrHasSimpleSimiVSMQualityRate)) {
             try {
-                this.sisiVSMQualityRate =  customFormatter.parse(objectContent).doubleValue();
+                this.sisiVSMQualityRate = customFormatter.parse(objectContent).doubleValue();
             } catch (ParseException e) {
                 Log.warning("could not parse the value " + objectContent + " as valid double");
             }
@@ -415,7 +415,7 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
                 String newlabel = "SubjectExecutionMappingOf" + this.modelComponentID;
                 String newID = newlabel;
                 ISubjectExecutionMapping newMappingObject =
-                        new SubjectExecutionMapping(this.layer, newlabel, objectContent,null,null,null);
+                        new SubjectExecutionMapping(this.layer, newlabel, objectContent, null, null, null);
                 this.subjectExecutionMapping = newMappingObject;
             }
             return true;
@@ -488,35 +488,27 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
         }
         super.notifyModelComponentIDChanged(oldID, newID);
     }
-    private static SimpleSimVSMSubjectTypes parseSimpleSimVSMSubjectType(String value)
-    {
-        if (value==null|| value.isEmpty())
-        {
+
+    private static SimpleSimVSMSubjectTypes parseSimpleSimVSMSubjectType(String value) {
+        if (value == null || value.isEmpty()) {
             value = "nothing correct";
         }
 
-        if (value.toLowerCase().contains("production"))
-        {
+        if (value.toLowerCase().contains("production")) {
             return SimpleSimVSMSubjectTypes.ProductionSubject;
-        }
-        else if (value.toLowerCase().contains("storage"))
-        {
+        } else if (value.toLowerCase().contains("storage")) {
             return SimpleSimVSMSubjectTypes.StorageSubject;
-        }
-        else
-        {
+        } else {
             return SimpleSimVSMSubjectTypes.Standard;
         }
     }
 
-    public ISubjectExecutionMapping getSubjectExecutionMapping()
-    {
+    public ISubjectExecutionMapping getSubjectExecutionMapping() {
         return this.subjectExecutionMapping;
     }
 
-    public void setSubjectExecutionMapping(ISubjectExecutionMapping subjectExecutionMapping)
-    {
-        this.subjectExecutionMapping= subjectExecutionMapping;
+    public void setSubjectExecutionMapping(ISubjectExecutionMapping subjectExecutionMapping) {
+        this.subjectExecutionMapping = subjectExecutionMapping;
     }
 
 }

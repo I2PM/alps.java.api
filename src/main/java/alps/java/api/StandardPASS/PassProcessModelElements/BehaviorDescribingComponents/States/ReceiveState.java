@@ -32,28 +32,26 @@ public class ReceiveState extends StandardPASSState implements IReceiveState {
     protected String exportClassname = className;
 
     private double _billedWaitingTime;
-    private static final Logger logger = Logger.getLogger( "ReceiveState");
-    public double getSisiBilledWaitingTime() { return this._billedWaitingTime; }
-    public void   setSiSiBilledWaitingTime(double value)
-    {
-        if (value >= 0.0 && value <= 1.0)
-        {
+    private static final Logger logger = Logger.getLogger("ReceiveState");
+
+    public double getSisiBilledWaitingTime() {
+        return this._billedWaitingTime;
+    }
+
+    public void setSiSiBilledWaitingTime(double value) {
+        if (value >= 0.0 && value <= 1.0) {
             _billedWaitingTime = value;
-        }
-        else
-        {
-            if (value < 0)
-            {
+        } else {
+            if (value < 0) {
                 _billedWaitingTime = 0;
                 logger.warning("Value for billedWaitingTime is smaller than 0. Setting it to 0.");
-            }
-            else if (value > 1)
-            {
+            } else if (value > 1) {
                 _billedWaitingTime = 1;
                 logger.warning("Value for billedWaitingTime is larger than 1. Setting it to 1.");
             }
         }
     }
+
     @Override
     public String getClassName() {
         return exportClassname;
@@ -112,6 +110,7 @@ public class ReceiveState extends StandardPASSState implements IReceiveState {
 
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+        //TODO: in alps.net.api sind folgende 3 Zeilen auskommentiert
         Locale customLocale = new Locale("en", "US");
 
         NumberFormat numberFormat = NumberFormat.getInstance(customLocale);
@@ -129,9 +128,7 @@ public class ReceiveState extends StandardPASSState implements IReceiveState {
                 setIsStateType(StateType.Finalized);
                 return true;
             }
-        }
-        else if (predicate.contains(OWLTags.abstrHasSimpleSimBilledWaitingTime))
-        {
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimBilledWaitingTime)) {
             try {
                 setSiSiBilledWaitingTime(numberFormat.parse(objectContent).doubleValue());
             } catch (ParseException e) {
@@ -163,7 +160,7 @@ public class ReceiveState extends StandardPASSState implements IReceiveState {
                         removeStateType(StateType.Abstract);
                     break;
                 default:
-                        super.setIsStateType(stateType);
+                    super.setIsStateType(stateType);
                     break;
             }
         }
@@ -194,26 +191,20 @@ public class ReceiveState extends StandardPASSState implements IReceiveState {
             }
         }
     }
-    public void setEndState(boolean isEndState)
-    {
-        if (isEndState)
-        {
-            if (!this.isStateType(StateType.EndState))
-            {
+
+    public void setEndState(boolean isEndState) {
+        if (isEndState) {
+            if (!this.isStateType(StateType.EndState)) {
                 this.setIsStateType(StateType.EndState);
             }
-        }
-        else
-        {
-            if (this.isStateType(StateType.EndState))
-            {
+        } else {
+            if (this.isStateType(StateType.EndState)) {
                 this.removeStateType(StateType.EndState);
             }
         }
     }
 
-    public boolean isEndState()
-    {
+    public boolean isEndState() {
         return this.isStateType(StateType.EndState);
     }
 

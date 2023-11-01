@@ -3,6 +3,7 @@ package alps.java.api.ALPS.ALPSModelElements.ALPSSIDComponents;
 
 import alps.java.api.ALPS.ALPSModelElements.ALPSSIDComponent;
 import alps.java.api.ALPS.ALPSModelElements.IModelLayer;
+import alps.java.api.ALPS.ALPSModelElements.Simple2DVisualizationPoints.ISimple2DVisualizationPathPoint;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubject;
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.src.OWLTags;
@@ -13,7 +14,9 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Method that represents an abstract communication channel.
@@ -28,11 +31,18 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
      * Name of the class, needed for parsing
      */
     private final String className = "CommunicationChannel";
+    Logger Log = Logger.getLogger("CommunicationChannel");
     protected ISubject correspondentA, correspondentB;
     protected boolean channelIsUniDirectional = false;
 
     // Used for internal methods
     private boolean oldIsUniDirectionalValue = false;
+    private double has2DPageRatio;
+    private double hasRelative2D_BeginX;
+    private double hasRelative2D_BeginY;
+    private double hasRelative2D_EndX;
+    private double hasRelative2D_EndY;
+    private List<ISimple2DVisualizationPathPoint> pathPoints = new ArrayList<ISimple2DVisualizationPathPoint>();
 
     @Override
     public String getClassName() {
@@ -52,8 +62,9 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
         setIsUniDirectional(isUniDirectional);
         setCorrespondents(correspondentA, correspondentB);
     }
+
     public CommunicationChannel(IModelLayer layer) {
-        super(layer,null, null, null, null);
+        super(layer, null, null, null, null);
         setIsUniDirectional(false);
         setCorrespondents(null, null);
     }
@@ -87,6 +98,12 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
             } else if (predicate.contains(OWLTags.hasReceiver)) {
                 setCorrespondentB(subj);
             }
+        } else if (element instanceof ISimple2DVisualizationPathPoint point) {
+            //Console.WriteLine(this.getModelComponentID() + ": PathPoint:" + point.getModelComponentID());
+            if (this.pathPoints == null) this.pathPoints = new ArrayList<ISimple2DVisualizationPathPoint>();
+
+            this.pathPoints.add(point);
+
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
@@ -114,7 +131,7 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
         }
         if (!(correspondentA == null)) {
             // Only if the correspondet is new, it must be registered
-            if (!oldCorrespondentA.equals(correspondentA)) {
+            if (!oldCorrespondentA.equals(correspondentA) || (oldCorrespondentA == null)) {
                 publishElementAdded(correspondentA);
                 correspondentA.register(this);
             }
@@ -145,7 +162,7 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
         }
         if (!(correspondentA == null)) {
             // Only if the correspondet is new, it must be registered
-            if (!oldCorrespondentA.equals(correspondentA)) {
+            if (!oldCorrespondentA.equals(correspondentA) || (oldCorrespondentA == null)) {
                 publishElementAdded(correspondentA);
                 correspondentA.register(this);
             }
@@ -176,7 +193,7 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
         }
         if (!(correspondentB == null)) {
             // Only if the correspondet is new, it must be registered
-            if (!oldCorrespondentB.equals(correspondentB)) {
+            if (!oldCorrespondentB.equals(correspondentB) || (oldCorrespondentB == null)) {
                 publishElementAdded(correspondentB);
                 correspondentB.register(this);
             }
@@ -205,7 +222,7 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
         }
         if (!(correspondentB == null)) {
             // Only if the correspondet is new, it must be registered
-            if (!oldCorrespondentB.equals(correspondentB)) {
+            if (!oldCorrespondentB.equals(correspondentB) || (oldCorrespondentB == null)) {
                 publishElementAdded(correspondentB);
                 correspondentB.register(this);
             }
@@ -236,5 +253,106 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
     public boolean isUniDirectional() {
         return channelIsUniDirectional;
     }
+
+    public double get2DPageRatio() {
+        return has2DPageRatio;
+    }
+
+    public void set2DPageRatio(double has2DPageRatio) {
+        if (has2DPageRatio > 0) {
+            this.has2DPageRatio = has2DPageRatio;
+        }
+        if (has2DPageRatio == 0) {
+            this.has2DPageRatio = 1;
+            Log.warning("found 2D page ratio of 0. This is impossible. changed it to 1");
+        } else {
+            this.has2DPageRatio = Math.abs(has2DPageRatio);
+            Log.warning("found negative 2d page ratio. Changed it to positive value");
+        }
+    }
+
+    public double getRelative2DBeginX() {
+        return hasRelative2D_BeginX;
+    }
+
+    public void setRelative2DBeginX(double relative2DBeginX) {
+        if (relative2DBeginX >= 0 && relative2DBeginX <= 1) {
+            hasRelative2D_BeginX = relative2DBeginX;
+        } else {
+            if (relative2DBeginX < 0) {
+                hasRelative2D_BeginX = 0;
+                Log.warning("Value for relative2DBeginX is smaller than 0. Setting it to 0.");
+            } else if (relative2DBeginX > 1) {
+                hasRelative2D_BeginX = 1;
+                Log.warning("Value for relative2DBeginX is larger than 1. Setting it to 1.");
+            }
+        }
+
+    }
+
+    public double getRelative2DBeginY() {
+        return hasRelative2D_BeginY;
+    }
+
+    public void setRelative2DBeginY(double relative2DBeginY) {
+        if (relative2DBeginY >= 0 && relative2DBeginY <= 1) {
+            hasRelative2D_BeginY = relative2DBeginY;
+        } else {
+            if (relative2DBeginY < 0) {
+                hasRelative2D_BeginY = 0;
+                Log.warning("Value for relative2DBeginY is smaller than 0. Setting it to 0.");
+            } else if (relative2DBeginY > 1) {
+                hasRelative2D_BeginY = 1;
+                Log.warning("Value for relative2DBeginY is larger than 1. Setting it to 1.");
+            }
+        }
+
+    }
+
+    public double getRelative2DEndX() {
+        return hasRelative2D_EndX;
+    }
+
+    public void setRelative2DEndX(double relative2DEndX) {
+        if (relative2DEndX >= 0 && relative2DEndX <= 1) {
+            hasRelative2D_EndX = relative2DEndX;
+        } else {
+            if (relative2DEndX < 0) {
+                hasRelative2D_EndX = 0;
+                Log.warning("Value for relative2DEndX is smaller than 0. Setting it to 0.");
+            } else if (relative2DEndX > 1) {
+                hasRelative2D_EndX = 1;
+                Log.warning("Value for relative2DEndX is larger than 1. Setting it to 1.");
+            }
+        }
+
+    }
+
+    public double getRelative2DEndY() {
+        return hasRelative2D_EndY;
+    }
+
+    public void setRelative2DEndY(double relative2DEndY) {
+        if (relative2DEndY >= 0 && relative2DEndY <= 1) {
+            hasRelative2D_EndY = relative2DEndY;
+        } else {
+            if (relative2DEndY < 0) {
+                hasRelative2D_EndY = 0;
+                Log.warning("Value for relative2DEndY is smaller than 0. Setting it to 0.");
+            } else if (relative2DEndY > 1) {
+                hasRelative2D_EndY = 1;
+                Log.warning("Value for relative2DEndY is larger than 1. Setting it to 1.");
+            }
+        }
+    }
+
+    public List<ISimple2DVisualizationPathPoint> getSimple2DPathPoints() {
+        return this.pathPoints;
+    }
+
+    public void addSimple2DPathPoint(ISimple2DVisualizationPathPoint point) {
+        this.pathPoints.add(point);
+    }
+
 }
 

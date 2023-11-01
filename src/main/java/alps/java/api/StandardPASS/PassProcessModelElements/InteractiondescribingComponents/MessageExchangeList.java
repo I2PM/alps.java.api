@@ -231,6 +231,7 @@ public class MessageExchangeList extends InteractionDescribingComponent implemen
 
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
+        //TODO: in alps.net.api sind die  Zeilen auskommentiert
         Locale customLocale = new Locale("en", "US");
         DecimalFormatSymbols customSymbols = new DecimalFormatSymbols(customLocale);
         customSymbols.setDecimalSeparator('.');
