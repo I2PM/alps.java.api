@@ -174,7 +174,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         if (justAddElement(pASSProcessModelElement)) {
 
             if (pASSProcessModelElement instanceof IModelLayer) {
-                if (getModelLayers().size() > 1) setIsLayered(true);
+                if (getModelLayers().size() > 1) setIsMultiLayered(true);
 
             } else {
                 if (pASSProcessModelElement instanceof IInteractionDescribingComponent || pASSProcessModelElement instanceof ISubjectBehavior) {
@@ -265,7 +265,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         if (element != null) {
             if (justRemoveElement(element)) {
                 if (element instanceof IModelLayer) {
-                    if (getModelLayers().size() < 2) setIsLayered(false);
+                    if (getModelLayers().size() < 2) setIsMultiLayered(false);
                 }
 
                 // Might be a start subj
