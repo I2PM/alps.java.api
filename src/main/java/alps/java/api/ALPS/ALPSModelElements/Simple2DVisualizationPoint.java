@@ -15,9 +15,9 @@ import java.util.logging.Logger;
 public class Simple2DVisualizationPoint extends ALPSModelElement implements ISimple2DVisualizationPoint
 {
 
-    private double has2DPageRatio;
-    private double hasRelative2D_PosX;
-    private double hasRelative2D_PosY;
+    private double has2DPageRatio=-1;
+    private double hasRelative2D_PosX=-1;
+    private double hasRelative2D_PosY=-1;
     Logger logger = Logger.getLogger(Simple2DVisualizationPoint.class.getName());
 
 

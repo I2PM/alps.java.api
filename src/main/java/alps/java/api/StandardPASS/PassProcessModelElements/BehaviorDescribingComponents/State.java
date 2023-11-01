@@ -35,11 +35,11 @@ public class State extends BehaviorDescribingComponent implements IStateReferenc
     protected IMacroBehavior referenceMacroBehavior;
     protected final ICompatibilityDictionary<String, IStateReference> stateReferences = new CompatibilityDictionary<String, IStateReference>();
 
-    private double has2DPageRatio;
-    private double hasRelative2D_Height;
-    private double hasRelative2D_Width;
-    private double hasRelative2D_PosX;
-    private double hasRelative2D_PosY;
+    private double has2DPageRatio=-1;
+    private double hasRelative2D_Height=-1;
+    private double hasRelative2D_Width=-1;
+    private double hasRelative2D_PosX=-1;
+    private double hasRelative2D_PosY=-1;
     Logger logger = Logger.getLogger(State.class.getName());
 
     public double get2DPageRatio() {

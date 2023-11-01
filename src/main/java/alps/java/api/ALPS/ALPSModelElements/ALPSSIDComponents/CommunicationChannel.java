@@ -37,11 +37,11 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
 
     // Used for internal methods
     private boolean oldIsUniDirectionalValue = false;
-    private double has2DPageRatio;
-    private double hasRelative2D_BeginX;
-    private double hasRelative2D_BeginY;
-    private double hasRelative2D_EndX;
-    private double hasRelative2D_EndY;
+    private double has2DPageRatio=-1;
+    private double hasRelative2D_BeginX=-1;
+    private double hasRelative2D_BeginY=-1;
+    private double hasRelative2D_EndX=-1;
+    private double hasRelative2D_EndY=-1;
     private List<ISimple2DVisualizationPathPoint> pathPoints = new ArrayList<ISimple2DVisualizationPathPoint>();
 
     @Override

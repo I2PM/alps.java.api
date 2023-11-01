@@ -31,11 +31,11 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
      * Name of the class, needed for parsing
      */
     private final String className = "Transition";
-    private double has2DPageRatio;
-    private double hasRelative2D_BeginX;
-    private double hasRelative2D_BeginY;
-    private double hasRelative2D_EndX;
-    private double hasRelative2D_EndY;
+    private double has2DPageRatio=-1;
+    private double hasRelative2D_BeginX=-1;
+    private double hasRelative2D_BeginY=-1;
+    private double hasRelative2D_EndX=-1;
+    private double hasRelative2D_EndY=-1;
     private List<ISimple2DVisualizationPathPoint> pathPoints = new ArrayList<ISimple2DVisualizationPathPoint>();
 
 
