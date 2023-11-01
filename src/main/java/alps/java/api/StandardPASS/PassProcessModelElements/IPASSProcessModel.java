@@ -38,7 +38,7 @@ public interface IPASSProcessModel extends IPASSProcessModelElement, IImplementi
      *
      * @param layered
      */
-    void setIsLayered(boolean layered);
+    void setIsMultiLayered(boolean layered);
 
     /**
      * Sets whether the model is layered or not

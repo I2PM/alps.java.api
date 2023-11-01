@@ -8,13 +8,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.sparql.function.library.leviathan.log;
+import org.apache.jena.util.FileManager;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -228,6 +229,7 @@ public class PASSReaderWriter implements IPASSReaderWriter {
             bar.report((double) count / filepaths.size() * 2);
 
             // Get models with elements from the current graph and merge it in the list of all models
+            //TODO: hier kommt Fehlermeldung auf
             List<IPASSProcessModel> createdInstances = createClassInstancesFromNamedIndividuals(graph, namedIndividualsDict);
             passProcessModels.addAll(createdInstances);
             passProcessModels = passProcessModels.stream().distinct().collect(Collectors.toList());
@@ -239,6 +241,39 @@ public class PASSReaderWriter implements IPASSReaderWriter {
 
         return passProcessModels;
     }
+
+    /**
+     * The .NetRDF library has a few problems with input files that are basically stupid
+     * E.g. an <rdf:RDF xmlns="" at the beginning of an RDF dokument  may cause an
+     * Invalid URI exception. Sadly some tools like Protegée generate exactly stuff like that
+     * This method simple tries to clean known problems
+     *
+     * @param filePath
+     */
+    private void preCleanFile(String filePath) {
+        String xmlnsConstruct = "xmlns=\"\"";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            StringBuilder fileContents = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.contains(xmlnsConstruct)) {
+                    line = line.replace(xmlnsConstruct, "");
+                }
+                fileContents.append(line).append(System.lineSeparator());
+            }
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                writer.write(fileContents.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Verifies whether a triple (as string) is part of a standard pass definition owl or a model
@@ -345,7 +380,7 @@ public class PASSReaderWriter implements IPASSReaderWriter {
                 Resource subject = ResourceFactory.createResource(pair.getKey());
                 List<Statement> elementTriples = graph.listStatements(subject, null, (RDFNode) null).toList();
                 List<IIncompleteTriple> elementIncompleteTriples = new ArrayList<>();
-
+//TODO: hier tritt Fehlermeldung auf
                 for (Statement statement : elementTriples) {
                     elementIncompleteTriples.add(new IncompleteTriple(statement, baseUri));
                 }

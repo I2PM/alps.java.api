@@ -54,17 +54,16 @@ public class Main {
         io.loadOWLParsingStructure(paths);
 
 
-
         // This loads models from the specified owl.
 
         // Every owl instance of a FullySpecifiedSubject is parsed to an AdditionalFunctionalityFullySpecifiedSubject
 
         // IList<IPASSProcessModel> models = io.loadModels(new List<string> { "C:\\Data\\ExportImportTest1.owl" });
 
-       /* List<String> modelPaths = new ArrayList<>();
-        modelPaths.add("C:\\Data\\ExportImportTest1.owl");
+        List<String> modelPaths = new ArrayList<>();
+        modelPaths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\Hiwi\\Testing\\ExportImportTest1.owl");
         List<IPASSProcessModel> models = io.loadModels(modelPaths);
-
+/**
 
         // IDictionary of all elements
 
@@ -77,8 +76,8 @@ public class Main {
         // Filter for a specific interface (Enumerable, not so easy to use -> convert to list)
 
         List<IAdditionalFunctionalityElement> onlyAdditionalFunctionalityElements = new ArrayList<IAdditionalFunctionalityElement>();
-        for(IPASSProcessModelElement element : onlyElements) {
-            if(element instanceof IAdditionalFunctionalityElement)
+        for (IPASSProcessModelElement element : onlyElements) {
+            if (element instanceof IAdditionalFunctionalityElement)
                 onlyAdditionalFunctionalityElements.add((IAdditionalFunctionalityElement) element);
         }
 
@@ -313,8 +312,7 @@ public class Main {
 
         }
 
- */
-
+*/
     }
 
 }

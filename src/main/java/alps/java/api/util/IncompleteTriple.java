@@ -1,6 +1,7 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.*;
+import alps.java.api.src.OWLTags;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.*;
 
@@ -115,7 +116,8 @@ public class IncompleteTriple implements IIncompleteTriple {
             try {
                 predicateNode = ResourceFactory.createProperty(new URI(predicateContent).toString());
             } catch (URISyntaxException uriEx) {
-                System.err.println("Invalid URI for predicateContent: " + predicateContent);
+                //TODO: bei alps.net.api geht nächste Zeile
+                //predicateNode = graph.createUriNode(new URI(OWLTags.abstr + predicateContent));
                 predicateNode = null;
             }
         }

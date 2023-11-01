@@ -139,7 +139,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         if (justAddElement(pASSProcessModelElement)) {
 
             if (pASSProcessModelElement instanceof IModelLayer) {
-                if (getModelLayers().size() > 1) setIsLayered(true);
+                if (getModelLayers().size() > 1) setIsMultiLayered(true);
 
             } else {
                 if (pASSProcessModelElement instanceof IInteractionDescribingComponent || pASSProcessModelElement instanceof ISubjectBehavior) {
@@ -233,7 +233,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         if (element != null) {
             if (justRemoveElement(element)) {
                 if (element instanceof IModelLayer) {
-                    if (getModelLayers().size() < 2) setIsLayered(false);
+                    if (getModelLayers().size() < 2) setIsMultiLayered(false);
                 }
 
                 // Might be a start subj
@@ -475,7 +475,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         }
     }
 
-    public void setIsLayered(boolean layered) {
+    public void setIsMultiLayered(boolean layered) {
         this.layered = layered;
     }
 
@@ -529,11 +529,21 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
                 }
             }
         }
-        if (getModelLayers().size() == 0) {
+        if (getModelLayers().size() == 1) {
+            if(baseLayer == null)
+            {
+                //Console.WriteLine("There is one layer but it is not the base layer");
+                IModelLayer mylayer = getModelLayers().entrySet().stream().findFirst().get().getValue();
+                if(mylayer.getLayerType() == IModelLayer.LayerType.STANDARD)
+                {
+                    setBaseLayer(mylayer);
+                }
+            }
             getBaseLayer();
             checkLayers = true;
-        } else {
-            setIsLayered(true);
+        } else //this model contains multiple layers
+        {
+            setIsMultiLayered(true);
             for (IModelLayer layer : getModelLayers().values()) {
 
                 // Complete the layer first
@@ -573,32 +583,33 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
                 element.completeObject(allElements);
         }
 
-        if (checkLayers) {
-            Map<String, List<String>> doubleBehaviors = new HashMap<>();
+        if (checkLayers) //to be done when only one (base) layer was found
+        {
+            Map<String, List<String>> multiBehaviors = new HashMap<>();
             if (getAllElements().values().stream().filter(e -> e instanceof ISubjectBehavior).count() > 1) {
                 for (IPASSProcessModelElement element : getAllElements().values()) {
                     if (element instanceof ISubjectBehavior) {
                         ISubjectBehavior behavior = (ISubjectBehavior) element;
                         if (behavior.getSubject() != null && behavior.getSubject() instanceof IFullySpecifiedSubject) {
                             IFullySpecifiedSubject subject = (IFullySpecifiedSubject) behavior.getSubject();
-                            if (doubleBehaviors.containsKey(subject.getModelComponentID())) {
-                                doubleBehaviors.get(subject.getModelComponentID()).add(behavior.getModelComponentID());
+                            if (multiBehaviors.containsKey(subject.getModelComponentID())) {
+                                multiBehaviors.get(subject.getModelComponentID()).add(behavior.getModelComponentID());
                             } else {
                                 List<String> newList = new ArrayList<>();
                                 newList.add(behavior.getModelComponentID());
-                                doubleBehaviors.put(subject.getModelComponentID(), newList);
+                                multiBehaviors.put(subject.getModelComponentID(), newList);
                             }
                         }
                     }
                 }
             }
-            for (Map.Entry<String, List<String>> pair : doubleBehaviors.entrySet()) {
+            for (Map.Entry<String, List<String>> pair : multiBehaviors.entrySet()) {
                 if (pair.getValue().size() > 1) {
                     fixLayers(pair.getKey(), pair.getValue());
                 }
             }
             if (getModelLayers().size() > 1) {
-                setIsLayered(true);
+                setIsMultiLayered(true);
             }
         }
 
@@ -610,7 +621,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
     }
 
     /**
-     * Fix the layers if the imported model is not multi-layered.
+     * Fix layers if the imported model is not multi-layered.
      * All elements get loaded into one layer, afterwards this method is called to split the elements onto multiple layers.
      *
      * @param idOfSubject
@@ -646,6 +657,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         getBaseLayer().addElement(baseBehavior);
         for (String id : idsOfBehaviors) {
             if (!id.equals(baseBehavior.getModelComponentID())) {
+                //System.out.println("Creating new Layer for: " + id);
                 ISubjectBehavior behaviorOfSubjectExtension = (ISubjectBehavior) getAllElements().get(id);
                 IModelLayer layer = new ModelLayer(this);
                 ISubjectExtension subjectExtension;
