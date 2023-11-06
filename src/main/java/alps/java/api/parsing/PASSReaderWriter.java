@@ -5,6 +5,7 @@ import alps.java.api.StandardPASS.PassProcessModelElements.IPASSProcessModel;
 import alps.java.api.StandardPASS.PassProcessModelElements.PASSProcessModel;
 import alps.java.api.util.*;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.*;
@@ -12,11 +13,13 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.sparql.function.library.leviathan.log;
 import org.apache.jena.util.FileManager;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.OWL;
 import org.apache.jena.vocabulary.RDF;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -377,13 +380,24 @@ public class PASSReaderWriter implements IPASSReaderWriter {
                  */
                 // The model element receives its triples which define all its characteristics in the form of incomplete triples
                 // Incomplete triples carry no information about the subject, as the subjects uri can change during parsing.
-                Resource subject = ResourceFactory.createResource(pair.getKey());
-                List<Statement> elementTriples = graph.listStatements(subject, null, (RDFNode) null).toList();
+                URI uri = null; // pair.getKey() muss eine String-URL sein
+                try {
+                    uri = new URI(pair.getKey());
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+                Resource subject = graph.createResource(uri.toString());
+
+                List<Triple> elementTriples = new ArrayList<>();
+                ExtendedIterator<Triple> iterator = graph.getGraph().find(Triple.createMatch(subject.asNode(), Node.ANY, Node.ANY));
+                while (iterator.hasNext()) {
+                    elementTriples.add(iterator.next());
+                }
                 List<IIncompleteTriple> elementIncompleteTriples = new ArrayList<>();
-//TODO: hier tritt Fehlermeldung auf
-                for (Statement statement : elementTriples) {
+                for (Triple statement : elementTriples) {
                     elementIncompleteTriples.add(new IncompleteTriple(statement, baseUri));
                 }
+                //TODO: hier tritt irgendwann Fehlermeldung auf, wenn man ankommt und erneut auf weiter bis Breakpoint geht, dann tritt da irgendwo der Fehler auf, also kein drittes mal aus weiter klicken
                 modelElement.addIncompleteTriples(elementIncompleteTriples);
                 // Important! The ModelComponentID is overwritten by the suffix of the elements uri (= "baseuri#suffix").
                 if (elementTriples.size() > 0) {

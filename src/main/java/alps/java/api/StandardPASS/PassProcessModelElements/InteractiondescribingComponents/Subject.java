@@ -19,6 +19,8 @@ import alps.java.api.util.IncompleteTriple;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class that represents a subject
@@ -164,6 +166,7 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         if (restriction == this.instanceRestriction) return;
         removeTriple(new IncompleteTriple(OWLTags.stdhasInstanceRestriction, Integer.toString(instanceRestriction), IncompleteTriple.LiteralType.DATATYPE, OWLTags.xsdDataTypeNonNegativeInt));
         this.instanceRestriction = (restriction >= 0) ? restriction : 0;
+        //TODO: hier tritt jetzt Fehlermeldung
         addTriple(new IncompleteTriple(OWLTags.stdhasInstanceRestriction, Integer.toString(instanceRestriction), IncompleteTriple.LiteralType.DATATYPE, OWLTags.xsdDataTypeNonNegativeInt));
     }
 
@@ -292,8 +295,10 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         else if (extendsCapsule != null && extendsCapsule.parseAttribute(predicate, objectContent, lang, dataType, element))
             return true;
         else if (predicate.contains(OWLTags.hasInstanceRestriction)) {
-            String restr = objectContent;
-            setInstanceRestriction(Integer.parseInt(restr));
+            String restr = extractNumber(objectContent);
+            int i = Integer.parseInt(restr);
+            //TODO: hier tritt Fehlermeldung auf bei parseInt
+            setInstanceRestriction(i);
             return true;
         } else if (predicate.contains(OWLTags.type) && objectContent.contains("StartSubject")) {
             assignRole(ISubject.Role.StartSubject);
@@ -363,6 +368,19 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
             }
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
+    }
+    public String extractNumber(String input) {
+        // Verwende einen regulären Ausdruck, um Zahlen zu finden
+        Pattern pattern = Pattern.compile("\"(\\d+)\"\\^\\^http://www\\.w3\\.org/2001/XMLSchema#integer");
+        Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()) {
+            // Gibt die gefundene Zahl zurück
+            return matcher.group(1);
+        } else {
+            // Gibt null zurück, wenn keine Zahl gefunden wurde
+            return null;
+        }
     }
 
     public static double parseDoubleWithLocale(String value, Locale locale) throws ParseException {

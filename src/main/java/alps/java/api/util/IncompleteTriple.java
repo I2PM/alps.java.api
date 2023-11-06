@@ -59,7 +59,7 @@ public class IncompleteTriple implements IIncompleteTriple {
         }
     }
     */
-    public IncompleteTriple(Statement realTriple, String baseUriToReplace) {
+    public IncompleteTriple(Triple realTriple, String baseUriToReplace) {
         predicateContent = (baseUriToReplace == null) ? realTriple.getPredicate().toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.getPredicate().toString(), baseUriToReplace);
         if (realTriple.getObject() instanceof Literal literal) {
             if (literal.getLanguage() != null && !literal.getLanguage().equals(""))
