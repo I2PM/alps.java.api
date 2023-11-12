@@ -1,6 +1,7 @@
 package alps.java.api.parsing;
 
 import alps.java.api.util.*;
+import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
 
 import java.io.FileOutputStream;
@@ -130,8 +131,8 @@ public class PASSGraph implements IPASSGraph {
         return baseGraph.createProperty(uri.toString());
     }
 
-    public Resource createUriNode(String qname) {
-        return baseGraph.createResource(qname);
+    public Node createUriNode(String qname) {
+        return baseGraph.crea(qname);
     }
 
     public Literal createLiteralNode(String literal) {

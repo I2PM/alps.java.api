@@ -4,6 +4,8 @@ import alps.java.api.FunctionalityCapsules.*;
 import alps.java.api.parsing.*;
 import alps.java.api.src.OWLTags;
 import alps.java.api.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 
@@ -29,7 +31,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
     public static final int CANNOT_PARSE = -1;
 
     protected final List<IValueChangedObserver<IPASSProcessModelElement>> observerList = new ArrayList<IValueChangedObserver<IPASSProcessModelElement>>();
-    protected List<Statement> additionalAttributeTriples = new ArrayList<Statement>();
+    protected List<Triple> additionalAttributeTriples = new ArrayList<Triple>();
     protected List<IIncompleteTriple> additionalIncompleteTriples = new ArrayList<IIncompleteTriple>();
 
 
@@ -153,9 +155,9 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      *
      * @param triples
      */
-    public void addTriples(List<Statement> triples) {
+    public void addTriples(List<Triple> triples) {
         if (triples != null) {
-            for (Statement triple : triples) {
+            for (Triple triple : triples) {
                 addTriple(triple);
             }
         }
@@ -168,7 +170,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      *
      * @param triple
      */
-    public void addTriple(Statement triple) {
+    public void addTriple(Triple triple) {
         // Do not add the triple if it is already contained
         if (triple == null)
             return;
@@ -202,7 +204,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      */
     protected void completeIncompleteTriple(IIncompleteTriple triple) {
         if (exportGraph == null) return;
-        Resource subjectNode;
+        Node subjectNode;
 
 
         // Generate subject node uri from modelComponentID
@@ -225,15 +227,15 @@ public class PASSProcessModelElement implements ICapsuleCallback {
 
 
         // other nodes are evaluated from the provided incomplete triple
-        Statement completeTriple = triple.getRealTriple(exportGraph, subjectNode);
+        Triple completeTriple = triple.getRealTriple(exportGraph, subjectNode);
 
         additionalAttributeTriples.add(completeTriple);
         exportGraph.addTriple(completeTriple);
         additionalIncompleteTriples.remove(triple);
     }
 
-    public List<Statement> getTriples() {
-        return new ArrayList<Statement>(additionalAttributeTriples);
+    public List<Triple> getTriples() {
+        return new ArrayList<Triple>(additionalAttributeTriples);
     }
 
     public List<IIncompleteTriple> getIncompleteTriples() {
@@ -248,7 +250,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      * @return
      */
     public boolean removeTriple(IIncompleteTriple incTriple) {
-        Statement foundTriple = getTriple(incTriple);
+        Triple foundTriple = getTriple(incTriple);
         if (foundTriple != null) {
             if (exportGraph != null) exportGraph.removeTriple(foundTriple);
             return additionalAttributeTriples.remove(foundTriple);
@@ -276,10 +278,10 @@ public class PASSProcessModelElement implements ICapsuleCallback {
      * @param searchedTriple An incomplete triple providing the data to be searched for
      * @return
      */
-    protected Statement getTriple(IIncompleteTriple searchedTriple) {
+    protected Triple getTriple(IIncompleteTriple searchedTriple) {
         String predicateToSearchFor = NodeHelper.cutURI(searchedTriple.getPredicate());
         String objectContentToSearchFor = NodeHelper.cutURI(searchedTriple.getObject());
-        for (Statement triple : getTriples()) {
+        for (Triple triple : getTriples()) {
             String predicateToMatch = NodeHelper.cutURI(NodeHelper.getNodeContent(triple.getPredicate()));
             String objectContentToMatch = NodeHelper.cutURI(NodeHelper.getNodeContent(triple.getObject()));
             if (predicateToSearchFor.equals(predicateToMatch) && objectContentToSearchFor.equals(objectContentToMatch))
@@ -369,7 +371,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
     protected void invalidateTriplesContainingString(String containedString) {
         List<IIncompleteTriple> triplesToBeChanged = new ArrayList<IIncompleteTriple>();
         IIncompleteTriple owlNamedIndivTriple = null;
-        for (Statement triple : getTriples()) {
+        for (Triple triple : getTriples()) {
             if (triple.toString().contains(containedString)) {
                 IIncompleteTriple newTriple = new IncompleteTriple(triple);
                 if (newTriple.getPredicate().contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#type") && newTriple.getObject().contains("http://www.w3.org/2002/07/owl#NamedIndividual"))
@@ -517,7 +519,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         if (parsingStarted) return;
         parsingStarted = true;
         List<IParseablePASSProcessModelElement> successfullyParsedElements = new ArrayList<IParseablePASSProcessModelElement>();
-        for (Statement triple : getTriples()) {
+        for (Triple triple : getTriples()) {
             IParseablePASSProcessModelElement parsedElement = null;
             parsedElement = parseAttribute(triple, allElements);
             if (parsedElement != null) {
@@ -532,7 +534,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
 
     protected boolean parsingStarted = false;
 
-    protected IParseablePASSProcessModelElement parseAttribute(Statement triple) {
+    protected IParseablePASSProcessModelElement parseAttribute(Triple triple) {
 
         // Calling parsing method
         // If attribute contains a reference to a PassProcessModelElement, pass this to the method
@@ -541,7 +543,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         return parseAttribute(triple, allElements);
     }
 
-    protected IParseablePASSProcessModelElement parseAttribute(Statement triple, Map<String, IParseablePASSProcessModelElement> allElements) {
+    protected IParseablePASSProcessModelElement parseAttribute(Triple triple, Map<String, IParseablePASSProcessModelElement> allElements) {
 
         // Calling parsing method
         // If attribute contains a reference to a PassProcessModelElement, pass this to the method
@@ -804,7 +806,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         for (IIncompleteTriple triple : getIncompleteTriples()) {
             completeIncompleteTriple(triple);
         }
-        for (Statement triple : getTriples()) {
+        for (Triple triple : getTriples()) {
             graph.addTriple(triple);
         }
     }
@@ -825,7 +827,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
                 replaceTriple(t, newIncompleteTriple);
             }
         }
-        for (Statement t : getTriples()) {
+        for (Triple t : getTriples()) {
             if (t.toString().contains(oldID)) {
                 IIncompleteTriple oldIncompleteTriple = new IncompleteTriple(t);
                 IIncompleteTriple newIncompleteTriple;
@@ -883,7 +885,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         return getModelComponentID();
     }
 
-    public void notifyTriple(Statement triple) {
+    public void notifyTriple(Triple triple) {
         addTriple(triple);
     }
 

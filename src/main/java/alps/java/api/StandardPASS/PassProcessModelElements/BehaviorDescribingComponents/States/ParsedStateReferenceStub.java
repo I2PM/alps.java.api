@@ -8,6 +8,7 @@ import alps.java.api.src.OWLTags;
 import alps.java.api.util.IIncompleteTriple;
 import alps.java.api.util.IncompleteTriple;
 import alps.java.api.util.StaticFunctions;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Statement;
 
 import java.util.List;
@@ -59,7 +60,7 @@ public class ParsedStateReferenceStub extends State implements IStateReference {
 
     public IState transformToState(Map<String, IParseablePASSProcessModelElement> allElements) {
         List<IIncompleteTriple> allTriples = getIncompleteTriples();
-        for (Statement t : getTriples())
+        for (Triple t : getTriples())
             allTriples.add(new IncompleteTriple(t));
 
         for (IIncompleteTriple t : allTriples) {

@@ -263,15 +263,16 @@ public class SiSiTimeDistribution implements ISiSiTimeDistribution {
         Locale customLocale = new Locale("en", "US");
         DecimalFormatSymbols customSymbols = DecimalFormatSymbols.getInstance(customLocale);
         customSymbols.setDecimalSeparator('.');
+        String xsdDurationStringModified = StringExtractor.extractString(xsdDurationString);
 
         // Check if the string starts with 'P' and ends with 'S'
-        if (!xsdDurationString.startsWith("P")) {
-            Log.warning("could not Parse the value " + xsdDurationString + " as valid XSD Duration");
+        if (!xsdDurationStringModified.startsWith("P")) {
+            Log.warning("could not Parse the value " + xsdDurationStringModified + " as valid XSD Duration");
             return 0.0;
         }
 
         // Remove the 'P' and 'S' from the string to extract the duration components
-        String duration = xsdDurationString.substring(1, xsdDurationString.length() - 1);
+        String duration = xsdDurationStringModified.substring(1, xsdDurationStringModified.length());
 
         double fractionsOfDay = 0;
 

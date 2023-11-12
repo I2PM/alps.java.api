@@ -1,6 +1,7 @@
 package alps.java.api.parsing;
 
 
+import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
@@ -24,14 +25,14 @@ public interface IPASSGraph {
      *
      * @param t the triple
      */
-    void addTriple(Statement t);
+    void addTriple(Triple t);
 
     /**
      * Removes a triple from the triple store this graph contains
      *
      * @param t the triple
      */
-    void removeTriple(Statement t);
+    void removeTriple(Triple t);
 
     /**
      * Creates a new Uri node inside the graph
@@ -64,7 +65,7 @@ public interface IPASSGraph {
      * @param name The name
      * @return The new Uri node
      */
-    Resource createUriNode(String name);
+    Node createUriNode(String name);
 
     Literal createLiteralNode(String literal);
 

@@ -394,8 +394,9 @@ public class PASSReaderWriter implements IPASSReaderWriter {
                     elementTriples.add(iterator.next());
                 }
                 List<IIncompleteTriple> elementIncompleteTriples = new ArrayList<>();
-                for (Triple statement : elementTriples) {
-                    elementIncompleteTriples.add(new IncompleteTriple(statement, baseUri));
+                for (Triple triple : elementTriples) {
+                    //TODO: hier entstehen dann die neuen IncompleteTriples mit predicateContent und extraString, dieser wird unterteilt in extra und content
+                    elementIncompleteTriples.add(new IncompleteTriple(triple, baseUri));
                 }
                 //TODO: hier tritt irgendwann Fehlermeldung auf, wenn man ankommt und erneut auf weiter bis Breakpoint geht, dann tritt da irgendwo der Fehler auf, also kein drittes mal aus weiter klicken
                 modelElement.addIncompleteTriples(elementIncompleteTriples);

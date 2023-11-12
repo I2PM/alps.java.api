@@ -1,6 +1,7 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.IPASSGraph;
+import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.RDFNode;
 
 
@@ -46,7 +47,7 @@ public interface IStringWithExtra {
      * @param graph the context in which the node is created
      * @return the created Node
      */
-    RDFNode getNodeFromString(IPASSGraph graph);
+    Node getNodeFromString(IPASSGraph graph);
 
     /**
      * Clones the current string with extra to get a new instance

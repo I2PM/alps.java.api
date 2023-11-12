@@ -1,6 +1,8 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.IPASSGraph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.*;
 
 
@@ -20,7 +22,7 @@ public interface IIncompleteTriple {
      * @param subjectNode the subject that will be subject of the new triple
      * @return The real triple
      */
-    Statement getRealTriple(IPASSGraph graph, Resource subjectNode);
+    Triple getRealTriple(IPASSGraph graph, Node subjectNode);
 
     /**
      * Get the predicate attribute of the incomplete Triple

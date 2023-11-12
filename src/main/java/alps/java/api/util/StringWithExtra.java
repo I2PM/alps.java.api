@@ -1,6 +1,7 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.IPASSGraph;
+import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.RDFNode;
 
 public abstract class StringWithExtra implements IStringWithExtra {
@@ -42,7 +43,7 @@ public abstract class StringWithExtra implements IStringWithExtra {
         }
     }
 
-    public abstract RDFNode getNodeFromString(IPASSGraph graph);
+    public abstract Node getNodeFromString(IPASSGraph graph);
 
     public abstract IStringWithExtra clone();
 

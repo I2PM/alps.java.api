@@ -11,10 +11,7 @@ import alps.java.api.StandardPASS.PassProcessModelElements.IPASSProcessModel;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractionDescribingComponent;
 import alps.java.api.parsing.IParseablePASSProcessModelElement;
 import alps.java.api.src.OWLTags;
-import alps.java.api.util.CompatibilityDictionary;
-import alps.java.api.util.ICompatibilityDictionary;
-import alps.java.api.util.IIncompleteTriple;
-import alps.java.api.util.IncompleteTriple;
+import alps.java.api.util.*;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -295,7 +292,7 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         else if (extendsCapsule != null && extendsCapsule.parseAttribute(predicate, objectContent, lang, dataType, element))
             return true;
         else if (predicate.contains(OWLTags.hasInstanceRestriction)) {
-            String restr = extractNumber(objectContent);
+            String restr = StringExtractor.extractString(objectContent);
             int i = Integer.parseInt(restr);
             //TODO: hier tritt Fehlermeldung auf bei parseInt
             setInstanceRestriction(i);
@@ -369,19 +366,7 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         }
         return super.parseAttribute(predicate, objectContent, lang, dataType, element);
     }
-    public String extractNumber(String input) {
-        // Verwende einen regulären Ausdruck, um Zahlen zu finden
-        Pattern pattern = Pattern.compile("\"(\\d+)\"\\^\\^http://www\\.w3\\.org/2001/XMLSchema#integer");
-        Matcher matcher = pattern.matcher(input);
 
-        if (matcher.find()) {
-            // Gibt die gefundene Zahl zurück
-            return matcher.group(1);
-        } else {
-            // Gibt null zurück, wenn keine Zahl gefunden wurde
-            return null;
-        }
-    }
 
     public static double parseDoubleWithLocale(String value, Locale locale) throws ParseException {
         NumberFormat numberFormat = NumberFormat.getInstance(locale);

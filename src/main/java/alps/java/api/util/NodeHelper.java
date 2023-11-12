@@ -1,25 +1,26 @@
 package alps.java.api.util;
 
+import org.apache.jena.graph.Node;
 import org.apache.jena.graph.impl.LiteralLabel;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 
 public class NodeHelper {
-    public static String getNodeContent(RDFNode node) {
+    public static String getNodeContent(Node node) {
         if (node instanceof Literal literal) {
             return literal.getValue().toString();
         }
         return node.toString();
     }
 
-    public static String getLangIfContained(RDFNode node) {
+    public static String getLangIfContained(Node node) {
         if (node instanceof Literal literal) {
             return literal.getLanguage();
         }
         return "";
     }
 
-    public static String getDataTypeIfContained(RDFNode node) {
+    public static String getDataTypeIfContained(Node node) {
         if (node instanceof Literal literal) {
             if (literal.getDatatype() != null) {
                 return literal.getDatatype().toString();

@@ -507,7 +507,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
             }
 
         // Go through triples, filter all Layers
-        for (Statement triple : getTriples()) {
+        for (Triple triple : getTriples()) {
             String predicateContent = NodeHelper.getNodeContent(triple.getPredicate());
             if (predicateContent.contains(OWLTags.ccontains)) {
                 String objectContent = NodeHelper.getNodeContent(triple.getObject());
@@ -570,7 +570,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
             }
         }
 
-        for (Statement triple : getTriples()) {
+        for (Triple triple : getTriples()) {
             IParseablePASSProcessModelElement element = parseAttribute(triple, allElements);
             // Calling parsing method
             // If attribute contains a reference to a PassProcessModelElement, pass this to the method

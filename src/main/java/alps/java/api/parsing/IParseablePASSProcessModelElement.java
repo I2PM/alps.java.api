@@ -2,6 +2,7 @@ package alps.java.api.parsing;
 
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.util.*;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Statement;
 
 import java.text.ParseException;
@@ -79,7 +80,7 @@ public interface IParseablePASSProcessModelElement extends IPASSProcessModelElem
      *
      * @return
      */
-    List<Statement> getTriples();
+    List<Triple> getTriples();
 
     /**
      * Returns all the triples currently contained by the class as incomplete triples (not containing the subject).

@@ -2,6 +2,9 @@ package alps.java.api.util;
 
 import alps.java.api.parsing.*;
 import alps.java.api.src.OWLTags;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Node_Literal;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.*;
 
@@ -59,14 +62,15 @@ public class IncompleteTriple implements IIncompleteTriple {
         }
     }
     */
+    //TODO: hier könnte das object von Triple in content und extra aufgeteilt werden
     public IncompleteTriple(Triple realTriple, String baseUriToReplace) {
         predicateContent = (baseUriToReplace == null) ? realTriple.getPredicate().toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.getPredicate().toString(), baseUriToReplace);
-        if (realTriple.getObject() instanceof Literal literal) {
-            if (literal.getLanguage() != null && !literal.getLanguage().equals(""))
-                extraString = new LanguageSpecificString(literal.getValue().toString(), literal.getLanguage());
-            else if (literal.getDatatype() != null && !literal.getDatatype().toString().equals(""))
-                extraString = new DataTypeString(literal.getValue().toString(), literal.getDatatype().toString());
-            else {
+        if (realTriple.getObject() instanceof Node_Literal literal) {
+            if (literal.getLiteralLanguage() != null && !literal.getLiteralLanguage().equals((""))) {
+                extraString = new LanguageSpecificString(literal.getLiteralValue().toString(), literal.getLiteralLanguage());
+            } else if (literal.getLiteralDatatype() != null && !literal.getLiteralDatatype().toString().equals("")) {
+                extraString = new DataTypeString(literal.getLiteralValue().toString(), literal.getLiteralDatatype().toString());
+            } else {
                 String content = baseUriToReplace == null ? realTriple.getObject().toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.getObject().toString(), baseUriToReplace);
                 extraString = new StringWithoutExtra(content);
             }
@@ -76,7 +80,7 @@ public class IncompleteTriple implements IIncompleteTriple {
         }
     }
 
-    public IncompleteTriple(Statement realTriple) {
+    public IncompleteTriple(Triple realTriple) {
         predicateContent = realTriple.getPredicate().toString();
         if (realTriple.getObject() instanceof Literal literal) {
             if (literal.getLanguage() != null && !literal.getLanguage().equals(""))
@@ -108,22 +112,24 @@ public class IncompleteTriple implements IIncompleteTriple {
         this.extraString = objectWithExtra;
     }
 
-    public Statement getRealTriple(IPASSGraph graph, Resource subjectNode) {
-        Property predicateNode;
+    public Triple getRealTriple(IPASSGraph graph, Node subjectNode) {
+        Node predicateNode;
         try {
-            predicateNode = ResourceFactory.createProperty(predicateContent);
-        } catch (Exception e) {
-            try {
-                predicateNode = ResourceFactory.createProperty(new URI(predicateContent).toString());
-            } catch (URISyntaxException uriEx) {
-                //TODO: bei alps.net.api geht nächste Zeile
-                //predicateNode = graph.createUriNode(new URI(OWLTags.abstr + predicateContent));
-                predicateNode = null;
-            }
+            // Überprüfen, ob predicateContent eine gültige URI ist
+            new URI(predicateContent);
+            // Erstellen eines URI-Node mit NodeFactory
+            predicateNode = NodeFactory.createURI(predicateContent);
+        } catch (URISyntaxException uriEx) {
+            throw new IllegalArgumentException("Ungültige URI für Prädikat: " + predicateContent, uriEx);
         }
-        RDFNode objectNode = extraString.getNodeFromString(graph);
 
-        return ResourceFactory.createStatement(subjectNode, predicateNode, objectNode);
+        Node objectNode = extraString.getNodeFromString(graph);
+
+        if (subjectNode == null || predicateNode == null || objectNode == null) {
+            throw new IllegalStateException("Knoten für Triple können nicht null sein");
+        }
+
+        return new Triple(subjectNode, predicateNode, objectNode);
     }
 
     public String getPredicate() {
