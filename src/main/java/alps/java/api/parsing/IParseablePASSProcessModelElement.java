@@ -62,7 +62,7 @@ public interface IParseablePASSProcessModelElement extends IPASSProcessModelElem
      *
      * @param triples the triple that is being saved
      */
-    void addTriples(List<Statement> triples);
+    void addTriples(List<Triple> triples);
 
 
     /**
@@ -72,7 +72,7 @@ public interface IParseablePASSProcessModelElement extends IPASSProcessModelElem
      *
      * @param triple
      */
-    void addTriple(Statement triple);
+    void addTriple(Triple triple);
 
     /**
      * Returns all the triples currently contained by the class.

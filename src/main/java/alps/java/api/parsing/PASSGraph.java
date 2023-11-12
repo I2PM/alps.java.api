@@ -109,21 +109,24 @@ public class PASSGraph implements IPASSGraph {
         return baseGraph;
     }
 
-    public void addTriple(Statement t) {
-        if (baseGraph.contains(t)) return;
-        baseGraph.add(t);
+    public void addTriple(Triple t) {
+        if (baseGraph.getGraph().contains(t)) return;
+        baseGraph.getGraph().add(t);
         String subjWithoutUri = t.getSubject().toString().replace(baseURI + "#", "");
         if (elements.containsKey(subjWithoutUri)) {
             elements.get(subjWithoutUri).notifyTriple(t);
         }
     }
 
-    public Resource createUriNode() {
-        return baseGraph.createResource();
+    public Node createUriNode() {
+
+        Resource resource = baseGraph.createResource();
+        return resource.asNode();
     }
 
-    public Resource createUriNode(URI uri) {
-        return baseGraph.createResource(uri.toString());
+    public Node createUriNode(URI uri) {
+        Resource resource =  baseGraph.createResource(uri.toString());
+        return resource.asNode();
     }
 
     @Override
@@ -132,7 +135,8 @@ public class PASSGraph implements IPASSGraph {
     }
 
     public Node createUriNode(String qname) {
-        return baseGraph.crea(qname);
+        Resource resource = baseGraph.createResource(qname);
+        return resource.asNode();
     }
 
     public Literal createLiteralNode(String literal) {
@@ -147,7 +151,7 @@ public class PASSGraph implements IPASSGraph {
         return baseGraph.createLiteral(literal, langspec);
     }
 
-    public void removeTriple(Statement t) {
+    public void removeTriple(Triple t) {
         baseGraph.remove(t);
     }
 

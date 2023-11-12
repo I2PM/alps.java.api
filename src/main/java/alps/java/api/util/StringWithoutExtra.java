@@ -1,6 +1,7 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.IPASSGraph;
+import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.RDFNode;
 
 import java.net.URI;
@@ -24,8 +25,8 @@ public class StringWithoutExtra extends StringWithExtra {
     }
 
     @Override
-    public RDFNode getNodeFromString(IPASSGraph graph) {
-        RDFNode objectNode;
+    public Node getNodeFromString(IPASSGraph graph) {
+        Node objectNode;
         if (!content.contains("http://") && !content.contains("https://")) {
             try {
                 objectNode = graph.createUriNode(content);

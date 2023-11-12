@@ -386,10 +386,11 @@ public class PASSReaderWriter implements IPASSReaderWriter {
                 } catch (URISyntaxException e) {
                     throw new RuntimeException(e);
                 }
-                Resource subject = graph.createResource(uri.toString());
+                Resource resource = graph.createResource(uri.toString());
+                Node subject = resource.asNode();
 
                 List<Triple> elementTriples = new ArrayList<>();
-                ExtendedIterator<Triple> iterator = graph.getGraph().find(Triple.createMatch(subject.asNode(), Node.ANY, Node.ANY));
+                ExtendedIterator<Triple> iterator = graph.getGraph().find(Triple.createMatch(subject, Node.ANY, Node.ANY));
                 while (iterator.hasNext()) {
                     elementTriples.add(iterator.next());
                 }
@@ -426,8 +427,13 @@ public class PASSReaderWriter implements IPASSReaderWriter {
                     // assuming graph has a method to return Jena's Model
 
                     // Add all the triples to the graph that describe the owl file directly (version iri, imports...)
-                    graph.listStatements(ResourceFactory.createResource(baseUri), null, (RDFNode) null)
-                            .forEachRemaining(statement -> modelBaseGraph.addTriple(statement));
+                    ExtendedIterator<Triple> triples = graph.getGraph().find(subject, Node.ANY, Node.ANY);
+
+                    // Fügen Sie jedes Triple dem Modell hinzu
+                    while (triples.hasNext()) {
+                        Triple triple = triples.next();
+                        graph.getGraph().add(triple);
+                    }
 
 
                 } else {

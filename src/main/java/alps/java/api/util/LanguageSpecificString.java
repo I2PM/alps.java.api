@@ -2,6 +2,8 @@ package alps.java.api.util;
 
 import alps.java.api.parsing.IPASSGraph;
 import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Node_Literal;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 
 /**
@@ -46,7 +48,8 @@ public class LanguageSpecificString extends StringWithExtra {
 
     @Override
     public Node getNodeFromString(IPASSGraph graph) {
-        return graph.createLiteralNode(getContent(), getExtra());
+        Literal literal =  graph.createLiteralNode(getContent(), getExtra());
+        return literal.asNode();
     }
 
     @Override

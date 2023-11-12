@@ -1,6 +1,8 @@
 package alps.java.api.util;
 
 import alps.java.api.parsing.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 
 import java.net.URI;
@@ -49,15 +51,17 @@ public class DataTypeString extends StringWithExtra {
     }
 
     @Override
-    public RDFNode getNodeFromString(IPASSGraph graph) {
+    public Node getNodeFromString(IPASSGraph graph) {
         if (getExtra().contains("www")) {
             try {
-                return graph.createLiteralNode(getContent(), new URI(getExtra()));
+                Literal literal =  graph.createLiteralNode(getContent(), new URI(getExtra()));
+                return  literal.asNode();
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
         }
-        return graph.createLiteralNode(getContent(), graph.createUriNode(getExtra()).getURI());
+        Literal literal= graph.createLiteralNode(getContent(), graph.createUriNode(getExtra()).getURI());
+        return literal.asNode();
     }
 
     @Override
