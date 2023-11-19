@@ -118,7 +118,7 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         return new Subject();
     }
 
-    public Subject() {
+    protected Subject() {
         implCapsule = new ImplementsFunctionalityCapsule<ISubject>(this);
         extendsCapsule = new ExtendsFunctionalityCapsule<ISubject>(this);
     }

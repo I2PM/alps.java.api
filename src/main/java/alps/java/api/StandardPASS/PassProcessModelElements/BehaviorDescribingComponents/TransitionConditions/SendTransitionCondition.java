@@ -43,7 +43,7 @@ public class SendTransitionCondition extends MessageExchangeCondition implements
 
     protected int lowerBound;
     protected int upperBound;
-    protected SendTypes sendType;
+    public SendTypes sendType;
     protected ISubject messageSentTo;
     protected IMessageSpecification messageSpecification;
 
@@ -54,6 +54,7 @@ public class SendTransitionCondition extends MessageExchangeCondition implements
 
     @Override
     public IParseablePASSProcessModelElement getParsedInstance() {
+
         return new SendTransitionCondition();
     }
 
