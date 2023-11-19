@@ -125,14 +125,17 @@ public class PASSGraph implements IPASSGraph {
     }
 
     public Node createUriNode(URI uri) {
-        Resource resource =  baseGraph.createResource(uri.toString());
+        Resource resource = baseGraph.createResource(uri.toString());
         return resource.asNode();
     }
 
-    @Override
-    public Property createUriNodeProp(URI uri) {
-        return baseGraph.createProperty(uri.toString());
-    }
+    //not sure if I need it
+
+    /**
+     * @Override public Property createUriNodeProp(URI uri) {
+     * return baseGraph.createProperty(uri.toString());
+     * }
+     */
 
     public Node createUriNode(String qname) {
         Resource resource = baseGraph.createResource(qname);
@@ -152,7 +155,14 @@ public class PASSGraph implements IPASSGraph {
     }
 
     public void removeTriple(Triple t) {
-        baseGraph.remove(t);
+        // Erstellt ein Statement aus dem Triple
+        Resource subject = baseGraph.asRDFNode(t.getSubject()).asResource();
+        Property predicate = baseGraph.createProperty(t.getPredicate().getURI());
+        RDFNode object = baseGraph.asRDFNode(t.getObject());
+
+        // Erstellt das Statement und entfernt es aus dem baseGraph
+        Statement s = baseGraph.createStatement(subject, predicate, object);
+        baseGraph.remove(s);
     }
 
 

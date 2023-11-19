@@ -292,10 +292,7 @@ public class Subject extends InteractionDescribingComponent implements ISubject 
         else if (extendsCapsule != null && extendsCapsule.parseAttribute(predicate, objectContent, lang, dataType, element))
             return true;
         else if (predicate.contains(OWLTags.hasInstanceRestriction)) {
-            String restr = StringExtractor.extractString(objectContent);
-            int i = Integer.parseInt(restr);
-            //TODO: hier tritt Fehlermeldung auf bei parseInt
-            setInstanceRestriction(i);
+            setInstanceRestriction(Integer.parseInt(objectContent));
             return true;
         } else if (predicate.contains(OWLTags.type) && objectContent.contains("StartSubject")) {
             assignRole(ISubject.Role.StartSubject);

@@ -16,9 +16,12 @@ public class Simple2DVisualizationPathPoint extends Simple2DVisualizationPoint i
      */
     private final String className = "Simple2DVisualizationPathPoint";
 
-    //TODO:Konstruktor überladen
     public Simple2DVisualizationPathPoint(String labelForID, String comment, String additionalLabel, List<IIncompleteTriple> additionalAttribute) {
         super(labelForID, comment, additionalLabel, additionalAttribute);
+    }
+
+    public Simple2DVisualizationPathPoint(String labelForID) {
+        super(labelForID, null, null, null);
     }
 
     @Override
