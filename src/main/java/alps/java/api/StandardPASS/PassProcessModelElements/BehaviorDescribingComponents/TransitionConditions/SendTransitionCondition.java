@@ -110,7 +110,10 @@ public class SendTransitionCondition extends MessageExchangeCondition implements
 
 
     public void setSendType(SendTypes sendType) {
-        //TODO: Fehlermeldung hier
+        //TODO: Fehlermeldung
+        if(this.sendType == null){
+            this.sendType=SendTypes.STANDARD;
+        }
         SendTypes oldType = this.sendType;
         this.sendType = sendType;
 
