@@ -224,6 +224,7 @@ public class ReceiveTransitionCondition extends MessageExchangeCondition impleme
             return true;
         } else if (predicate.contains(OWLTags.hasReceiveType)) {
             for (ReceiveTypes receiveTypes : ReceiveTypes.values()) {
+                //TODO: Fehlermeldung
                 if (objectContent.contains(receiveTypeOWLNames[Integer.parseInt(String.valueOf(receiveTypes))])) {
                     setReceiveType(receiveTypes);
                     return true;

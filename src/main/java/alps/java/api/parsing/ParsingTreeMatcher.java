@@ -324,7 +324,6 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         List<ITreeNode<IParseablePASSProcessModelElement>> childsBeenParsed = new ArrayList<>();
 
         // Go through all ontology child classes of the ontology class
-        //TODO: parentOnClass.listSubClasses().toList() listet nicht die direkten Subklassen auf!!
         for (OntClass directSubclass : parentOntClass.listSubClasses(true).toList()) {
             List<ITreeNode<IParseablePASSProcessModelElement>> parseableClasses = new ArrayList<ITreeNode<IParseablePASSProcessModelElement>>();
             String url = removeUri(directSubclass.getURI());
@@ -464,8 +463,11 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
                 addToParsingDict(parsingDict, ontClass, possibleMappedClassPair.getLeft(), depth);
             }
         }
+        //TODO: for each Schleife anpassen!!!
         for (OntClass childOntClass : ontClass.listSubClasses(true).toList()) {
-            mapRestWithParentNode(parsingDict, childOntClass, parentNodeKey, depth + 1);
+            if (!parsingDict.containsKey(removeUri(childOntClass.getURI()))) {
+                mapRestWithParentNode(parsingDict, childOntClass, parentNodeKey, depth + 1);
+            }
         }
     }
 
