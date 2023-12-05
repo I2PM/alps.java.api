@@ -156,8 +156,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         // if added, register and send signal to next higher observers so they can add and register as well
         pASSProcessModelElement.register(this);
         publishElementAdded(pASSProcessModelElement);
-        if (exportGraph != null && pASSProcessModelElement instanceof IParseablePASSProcessModelElement) {
-            IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) pASSProcessModelElement;
+        if (exportGraph != null && pASSProcessModelElement instanceof IParseablePASSProcessModelElement parseable) {
             parseable.setExportGraph(exportGraph);
         }
         if (pASSProcessModelElement instanceof IInteractionDescribingComponent || pASSProcessModelElement instanceof IModelLayer || pASSProcessModelElement instanceof ISubjectBehavior) {
@@ -189,8 +188,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         // if added, register and send signal to next higher observers so they can add and register as well
         pASSProcessModelElement.register(this);
         publishElementAdded(pASSProcessModelElement);
-        if (exportGraph != null && pASSProcessModelElement instanceof IParseablePASSProcessModelElement) {
-            IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) pASSProcessModelElement;
+        if (exportGraph != null && pASSProcessModelElement instanceof IParseablePASSProcessModelElement parseable) {
             parseable.setExportGraph(exportGraph);
         }
         if (pASSProcessModelElement instanceof IInteractionDescribingComponent || pASSProcessModelElement instanceof IModelLayer || pASSProcessModelElement instanceof ISubjectBehavior) {
@@ -513,14 +511,12 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
                 String objectContent = NodeHelper.getNodeContent(triple.getObject());
 
                 String possibleID = objectContent;
-                String[] splitted = possibleID.split("#");
+                String[] splitted = possibleID.split(":");
                 if (splitted.length > 1)
                     possibleID = splitted[splitted.length - 1];
-
+                //TODO: die if Abfrage ist immer false, müsste aber true sein
                 if (allElements.containsKey(possibleID)) {
-                    if (allElements.get(possibleID) instanceof IModelLayer && allElements.get(possibleID) instanceof IParseablePASSProcessModelElement) {
-                        IModelLayer layer = (IModelLayer) allElements.get(possibleID);
-                        IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) allElements.get(possibleID);
+                    if (allElements.get(possibleID) instanceof IModelLayer layer && layer instanceof IParseablePASSProcessModelElement parseable) {
                         // Parse the layer
                         String lang = NodeHelper.getLangIfContained(triple.getObject());
                         String dataType = NodeHelper.getDataTypeIfContained(triple.getObject());

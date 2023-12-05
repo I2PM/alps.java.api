@@ -142,7 +142,6 @@ public class PASSProcessModelElement implements ICapsuleCallback {
     public void addIncompleteTriples(List<IIncompleteTriple> triples) {
         if (triples != null) {
             for (IIncompleteTriple triple : triples) {
-                //TODO: hier Fehlermeldung bei dem 2ten
                 addTriple(triple);
             }
         }

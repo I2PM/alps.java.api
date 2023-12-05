@@ -82,11 +82,11 @@ public class IncompleteTriple implements IIncompleteTriple {
 
     public IncompleteTriple(Triple realTriple) {
         predicateContent = realTriple.getPredicate().toString();
-        if (realTriple.getObject() instanceof Literal literal) {
-            if (literal.getLanguage() != null && !literal.getLanguage().equals(""))
-                extraString = new LanguageSpecificString(literal.getValue().toString(), literal.getLanguage());
-            else if (literal.getDatatype() != null && !literal.getDatatype().toString().equals(""))
-                extraString = new DataTypeString(literal.getValue().toString(), literal.getDatatype().toString());
+        if (realTriple.getObject() instanceof Node_Literal literal) {
+            if (literal.getLiteralLanguage() != null && !literal.getLiteralLanguage().equals(""))
+                extraString = new LanguageSpecificString(literal.getLiteralValue().toString(), literal.getLiteralLanguage());
+            else if (literal.getLiteralDatatype() != null && !literal.getLiteralDatatype().toString().equals(""))
+                extraString = new DataTypeString(literal.getLiteralValue().toString(), literal.getLiteralDatatype().toString());
             else {
                 String content = realTriple.getObject().toString();
                 extraString = new StringWithoutExtra(content);

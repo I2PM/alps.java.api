@@ -65,7 +65,7 @@ public class Main {
         List<IPASSProcessModel> models = io.loadModels(modelPaths);
 //Bis hierhin funktiniert es ohne Fehlermeldungen!!!!!
 
-       /** // IDictionary of all elements
+       // IDictionary of all elements
 
         Map<String, IPASSProcessModelElement> allElements = models.get(0).getAllElements();
 
@@ -83,7 +83,7 @@ public class Main {
 
         //some output examples for a parsed model
 
-        System.out.println("Number ob Models loaded: " + models.size());
+        System.out.println("Number of Models loaded: " + models.size());
 
 
         System.out.println("Found " + onlyAdditionalFunctionalityElements.size() +
@@ -311,8 +311,6 @@ public class Main {
 
 
         }
-
-*/
     }
 
 }

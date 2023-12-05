@@ -517,7 +517,11 @@ public class ModelLayer extends ALPSModelElement implements IModelLayer {
                 if (predicate.contains(OWLTags.hasPriorityNumber)) {
                     String prio = objectContent;
                     prio = prio.split("^")[0];
-                    setPriorityNumber(Integer.parseInt(prio));
+                    if(prio.contains("@")){
+                        setPriorityNumber(1);
+                    }else {
+                        setPriorityNumber(Integer.parseInt(prio));
+                    }
                     return true;
                 }
             }

@@ -444,8 +444,7 @@ public class PASSReaderWriter implements IPASSReaderWriter {
         // The model is parsed top down; Every element that needs the reference to another can ask the model
         // by passing the suffix of the uri of the required element (which is also the ModelComponentID).
         for (IPASSProcessModel model : passProcessModels) {
-            if (model instanceof IParseablePASSProcessModelElement) {
-                IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) model;
+            if (model instanceof IParseablePASSProcessModelElement parseable) {
                 parseable.completeObject(createdElements);
             }
         }
