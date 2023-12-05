@@ -63,9 +63,9 @@ public class Main {
         List<String> modelPaths = new ArrayList<>();
         modelPaths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\Hiwi\\Testing\\ExportImportTest1.owl");
         List<IPASSProcessModel> models = io.loadModels(modelPaths);
-/**
+//Bis hierhin funktiniert es ohne Fehlermeldungen!!!!!
 
-        // IDictionary of all elements
+       /** // IDictionary of all elements
 
         Map<String, IPASSProcessModelElement> allElements = models.get(0).getAllElements();
 

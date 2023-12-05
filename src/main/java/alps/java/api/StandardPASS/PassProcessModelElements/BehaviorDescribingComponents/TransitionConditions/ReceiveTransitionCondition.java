@@ -3,6 +3,7 @@ package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingCo
 
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.ITransition;
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.Transitions.IReceiveTransition;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.IMessageExchange;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.IMessageSpecification;
 import alps.java.api.StandardPASS.PassProcessModelElements.InteractiondescribingComponents.ISubject;
@@ -106,6 +107,9 @@ public class ReceiveTransitionCondition extends MessageExchangeCondition impleme
 
 
     public void setReceiveType(ReceiveTypes receiveType) {
+        if(this.receiveType == null){
+            this.receiveType= ReceiveTypes.STANDARD;
+        }
         ReceiveTypes oldType = this.receiveType;
         this.receiveType = receiveType;
 
@@ -223,10 +227,9 @@ public class ReceiveTransitionCondition extends MessageExchangeCondition impleme
             setMultipleReceiveUpperBound(Integer.parseInt(tmpUpperBound));
             return true;
         } else if (predicate.contains(OWLTags.hasReceiveType)) {
-            for (ReceiveTypes receiveTypes : ReceiveTypes.values()) {
-                //TODO: Fehlermeldung
-                if (objectContent.contains(receiveTypeOWLNames[Integer.parseInt(String.valueOf(receiveTypes))])) {
-                    setReceiveType(receiveTypes);
+            for (ReceiveTypes type : ReceiveTypes.values()) {
+                if (objectContent.contains(receiveTypeOWLNames[type.ordinal()])) {
+                    setReceiveType(type);
                     return true;
                 }
             }

@@ -302,7 +302,7 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         System.out.println(unmappableDict.size() + " were not mapped correctly");
         System.out.println("##########################################");
         for (Map.Entry<OntClass, String> pair : unmappableDict.entrySet()) {
-            mapRestWithParentNode(parsingDict, pair.getKey(), pair.getValue());
+            mapRestWithParentNode(parsingDict, pair.getKey(), pair.getValue(), unmappableDict);
         }
     }
 
@@ -444,16 +444,16 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
      * @param parentNodeKey the node that was mapped with the parent ontology class of the ontClass
      */
 
-    private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass ontClass, String parentNodeKey) {
-        mapRestWithParentNode(parsingDict, ontClass, parentNodeKey, 1);
+    private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass ontClass, String parentNodeKey, ICompatibilityDictionary<OntClass, String> unmappableDict) {
+        mapRestWithParentNode(parsingDict, ontClass, parentNodeKey, 1, unmappableDict);
     }
 
     /**
      * Do not use this directly, use:
-     * {@link #mapRestWithParentNode(Map, OntClass, String, int)} )"}
+     * {@link #mapRestWithParentNode(Map, OntClass, String, int, ICompatibilityDictionary<OntClass, String>)} )"}
      * instead
      */
-    private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass ontClass, String parentNodeKey, int depth) {
+    private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass ontClass, String parentNodeKey, int depth, ICompatibilityDictionary<OntClass, String> unmappableDict) {
         String ontResource = removeUri(ontClass.getURI());
         List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>> possibleMappedClasses = parsingDict.get(parentNodeKey);
         if (!(parsingDict.containsKey(ontResource))) {
@@ -465,8 +465,8 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         }
         //TODO: for each Schleife anpassen!!!
         for (OntClass childOntClass : ontClass.listSubClasses(true).toList()) {
-            if (!parsingDict.containsKey(removeUri(childOntClass.getURI()))) {
-                mapRestWithParentNode(parsingDict, childOntClass, parentNodeKey, depth + 1);
+            if (!parsingDict.containsKey(removeUri(childOntClass.getURI()))&& !(unmappableDict.containsKey(childOntClass))) {
+                mapRestWithParentNode(parsingDict, childOntClass, parentNodeKey, depth + 1, unmappableDict);
             }
         }
     }

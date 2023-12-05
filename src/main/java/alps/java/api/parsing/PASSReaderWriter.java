@@ -6,6 +6,7 @@ import alps.java.api.StandardPASS.PassProcessModelElements.PASSProcessModel;
 import alps.java.api.util.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.*;
@@ -396,44 +397,28 @@ public class PASSReaderWriter implements IPASSReaderWriter {
                 }
                 List<IIncompleteTriple> elementIncompleteTriples = new ArrayList<>();
                 for (Triple triple : elementTriples) {
-                    //TODO: hier entstehen dann die neuen IncompleteTriples mit predicateContent und extraString, dieser wird unterteilt in extra und content
                     elementIncompleteTriples.add(new IncompleteTriple(triple, baseUri));
                 }
-                //TODO: hier tritt irgendwann Fehlermeldung auf, wenn man ankommt und erneut auf weiter bis Breakpoint geht, dann tritt da irgendwo der Fehler auf, also kein drittes mal aus weiter klicken
                 modelElement.addIncompleteTriples(elementIncompleteTriples);
                 // Important! The ModelComponentID is overwritten by the suffix of the elements uri (= "baseuri#suffix").
                 if (elementTriples.size() > 0) {
                     modelElement.setModelComponentID(StaticFunctions.removeBaseUri(elementTriples.get(0).getSubject().toString(), baseUri));
                 }
 
-                if (modelElement instanceof IPASSProcessModel) {
-                    IPASSProcessModel passProcessModell = (IPASSProcessModel) modelElement;
-                    passProcessModels.add(passProcessModell);
-                    passProcessModell.setBaseURI(baseUri);
-                    IPASSGraph modelBaseGraph = passProcessModell.getBaseGraph();
+                if (modelElement instanceof IPASSProcessModel passProcessModel) {
+                    passProcessModels.add(passProcessModel);
+                    passProcessModel.setBaseURI(baseUri);
+                    IPASSGraph modelBaseGraph = passProcessModel.getBaseGraph();
 
                     // Add all the triples to the graph that describe the owl file directly (version iri, imports...)
-                    /**String nameNewURI;
-                     try {
-                     nameNewURI = (new URI(baseUri)).toString();
-                     }catch(java.net.URISyntaxException e){
-                     nameNewURI = "ERROR_No_New_URI_Created";
-                     }
-                     StmtIterator modelBaseGraphTriples = graph.listStatements(graph.getResource(nameNewURI,  (ResourceF) null));
-                     while (modelBaseGraphTriples.hasNext()) {
-                     modelBaseGraph.addTriple(modelBaseGraphTriples.next());
-                     }
-                     */
-                    // assuming graph has a method to return Jena's Model
+                    Resource ressubject = graph.createResource(baseUri);
 
-                    // Add all the triples to the graph that describe the owl file directly (version iri, imports...)
-                    ExtendedIterator<Triple> triples = graph.getGraph().find(subject, Node.ANY, Node.ANY);
-
-                    // Fügen Sie jedes Triple dem Modell hinzu
-                    while (triples.hasNext()) {
-                        Triple triple = triples.next();
-                        graph.getGraph().add(triple);
+                    StmtIterator iter = graph.listStatements(ressubject, null, (RDFNode) null);
+                    while (iter.hasNext()) {
+                        Statement stmt = iter.nextStatement();
+                        modelBaseGraph.addTriple(stmt.asTriple());
                     }
+
 
 
                 } else {
