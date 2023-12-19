@@ -550,16 +550,23 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         String predicateContent = NodeHelper.getNodeContent(triple.getPredicate());
         String objectContent = NodeHelper.getNodeContent(triple.getObject());
         String lang = NodeHelper.getLangIfContained(triple.getObject());
+        if(lang == null){
+            lang = "";
+        }
         String dataType = NodeHelper.getDataTypeIfContained(triple.getObject());
+        if(dataType==null){
+            dataType="";
+        }
         String possibleID = objectContent;
-        if (possibleID.split("#").length > 1)
-            possibleID = possibleID.split("#")[possibleID.split("#").length - 1];
+        //To split the STring of the objecContent to get the possibleID
+        if (possibleID.split(":").length > 1)
+            possibleID = possibleID.split(":")[possibleID.split(":").length - 1];
 
         if (triple.getSubject() != null && triple.getSubject().toString() != "") {
             exportSubjectNodeName = triple.getSubject().toString();
         }
-
         if (allElements != null && allElements.containsKey(possibleID)) {
+            //TODO: es geht nicht in die Methode parseAttribute() rein
             if (parseAttribute(predicateContent, possibleID, lang, dataType, allElements.get(possibleID)) && allElements.get(possibleID) != this) {
                 return allElements.get(possibleID);
             }

@@ -233,7 +233,6 @@ public class PASSReaderWriter implements IPASSReaderWriter {
             bar.report((double) count / filepaths.size() * 2);
 
             // Get models with elements from the current graph and merge it in the list of all models
-            //TODO: hier kommt Fehlermeldung auf
             List<IPASSProcessModel> createdInstances = createClassInstancesFromNamedIndividuals(graph, namedIndividualsDict);
             passProcessModels.addAll(createdInstances);
             passProcessModels = passProcessModels.stream().distinct().collect(Collectors.toList());

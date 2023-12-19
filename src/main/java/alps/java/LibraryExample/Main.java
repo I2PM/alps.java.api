@@ -61,7 +61,7 @@ public class Main {
         // IList<IPASSProcessModel> models = io.loadModels(new List<string> { "C:\\Data\\ExportImportTest1.owl" });
 
         List<String> modelPaths = new ArrayList<>();
-        modelPaths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\Hiwi\\Testing\\ExportImportTest1.owl");
+        modelPaths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\Hiwi\\Testing\\EasyTest.owl");
         List<IPASSProcessModel> models = io.loadModels(modelPaths);
 //Bis hierhin funktiniert es ohne Fehlermeldungen!!!!!
 

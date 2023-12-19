@@ -184,15 +184,15 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
                     }
                 }
             }
-        }
-        // if added, register and send signal to next higher observers so they can add and register as well
-        pASSProcessModelElement.register(this);
-        publishElementAdded(pASSProcessModelElement);
-        if (exportGraph != null && pASSProcessModelElement instanceof IParseablePASSProcessModelElement parseable) {
-            parseable.setExportGraph(exportGraph);
-        }
-        if (pASSProcessModelElement instanceof IInteractionDescribingComponent || pASSProcessModelElement instanceof IModelLayer || pASSProcessModelElement instanceof ISubjectBehavior) {
-            addTriple(new IncompleteTriple(OWLTags.stdContains, pASSProcessModelElement.getUriModelComponentID()));
+            // if added, register and send signal to next higher observers so they can add and register as well
+            pASSProcessModelElement.register(this);
+            publishElementAdded(pASSProcessModelElement);
+            if (exportGraph != null && pASSProcessModelElement instanceof IParseablePASSProcessModelElement parseable) {
+                parseable.setExportGraph(exportGraph);
+            }
+            if (pASSProcessModelElement instanceof IInteractionDescribingComponent || pASSProcessModelElement instanceof IModelLayer || pASSProcessModelElement instanceof ISubjectBehavior) {
+                addTriple(new IncompleteTriple(OWLTags.stdContains, pASSProcessModelElement.getUriModelComponentID()));
+            }
         }
     }
 
@@ -211,8 +211,9 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
         }
         if (!allModelElements.containsKey(pASSProcessModelElement.getModelComponentID())) {
             allModelElements.tryAdd(pASSProcessModelElement.getModelComponentID(), pASSProcessModelElement);
-            if (pASSProcessModelElement instanceof IContainableElement containable) {
-                containable.setContainedBy(this);
+            if (pASSProcessModelElement instanceof IContainableElement) {
+                //IContainableElement<IPASSProcessModel> containable = (IContainableElement<IPASSProcessModel>) pASSProcessModelElement;
+               // containable.setContainedBy(this);
             }
             if (pASSProcessModelElement instanceof IParseablePASSProcessModelElement parseable) {
                 parseable.setExportGraph(baseGraph);
@@ -520,18 +521,17 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
                         // Parse the layer
                         String lang = NodeHelper.getLangIfContained(triple.getObject());
                         String dataType = NodeHelper.getDataTypeIfContained(triple.getObject());
+                        //TODO: Hier wird die Modellayer der Map hinzugefügt
                         parseAttribute(predicateContent, possibleID, lang, dataType, parseable);
                     }
                 }
             }
         }
         if (getModelLayers().size() == 1) {
-            if(baseLayer == null)
-            {
+            if (baseLayer == null) {
                 //Console.WriteLine("There is one layer but it is not the base layer");
                 IModelLayer mylayer = getModelLayers().entrySet().stream().findFirst().get().getValue();
-                if(mylayer.getLayerType() == IModelLayer.LayerType.STANDARD)
-                {
+                if (mylayer.getLayerType() == IModelLayer.LayerType.STANDARD) {
                     setBaseLayer(mylayer);
                 }
             }
@@ -543,8 +543,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
             for (IModelLayer layer : getModelLayers().values()) {
 
                 // Complete the layer first
-                if (layer instanceof IParseablePASSProcessModelElement) {
-                    IParseablePASSProcessModelElement parseable = (IParseablePASSProcessModelElement) layer;
+                if (layer instanceof IParseablePASSProcessModelElement parseable) {
                     parseable.completeObject(allElements);
                 }
 
@@ -565,7 +564,7 @@ public class PASSProcessModel extends PASSProcessModelElement implements IPASSPr
                 }
             }
         }
-
+        //TODO: hier werden die einzelnen Elemente bzw. Triple (außer das Layer) der Map hinzugefügt
         for (Triple triple : getTriples()) {
             IParseablePASSProcessModelElement element = parseAttribute(triple, allElements);
             // Calling parsing method
