@@ -549,19 +549,32 @@ public class PASSProcessModelElement implements ICapsuleCallback {
         setExportXMLName(NodeHelper.getNodeContent(triple.getSubject()));
         String predicateContent = NodeHelper.getNodeContent(triple.getPredicate());
         String objectContent = NodeHelper.getNodeContent(triple.getObject());
+        String dataType = NodeHelper.getDataTypeIfContained(triple.getObject());
+        if (objectContent.split("@").length > 1) {
+            String[] parts = objectContent.split("@");
+            objectContent = parts[0];
+            if (objectContent.startsWith("\"") && objectContent.endsWith("\"")) {
+                objectContent = objectContent.substring(1, objectContent.length() - 1);
+            }
+            dataType = parts[parts.length - 1];
+        }
         String lang = NodeHelper.getLangIfContained(triple.getObject());
-        if(lang == null){
+        if (lang == null) {
             lang = "";
         }
-        String dataType = NodeHelper.getDataTypeIfContained(triple.getObject());
-        if(dataType==null){
-            dataType="";
+        if (dataType == null) {
+            dataType = "";
         }
         String possibleID = objectContent;
         //To split the STring of the objecContent to get the possibleID
         if (possibleID.split(":").length > 1)
             possibleID = possibleID.split(":")[possibleID.split(":").length - 1];
-
+        if (possibleID.split("@").length > 1) {
+            possibleID = possibleID.split("@")[possibleID.split("@").length - 1];
+            if (possibleID.startsWith("\"") && possibleID.endsWith("\"")) {
+                possibleID = possibleID.substring(1, objectContent.length() - 1);
+            }
+        }
         if (triple.getSubject() != null && triple.getSubject().toString() != "") {
             exportSubjectNodeName = triple.getSubject().toString();
         }
