@@ -1,19 +1,20 @@
 package alps.java.LibraryExample;
 
 
+import alps.java.api.ALPS.ALPSModelElements.ALPSSIDComponents.ICommunicationChannel;
 import alps.java.api.ALPS.ALPSModelElements.ALPSSIDComponents.IStandaloneMacroSubject;
+import alps.java.api.ALPS.ALPSModelElements.ALPSSIDComponents.ISubjectGroup;
+import alps.java.api.ALPS.ALPSModelElements.ALPSSIDComponents.ISystemInterfaceSubject;
 import alps.java.api.ALPS.ALPSModelElements.IModelLayer;
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.IState;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.ITransition;
-import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.DoState;
-import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IDoState;
-import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IMacroState;
-import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.IReceiveState;
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.States.*;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.TransitionConditions.ISendTransitionCondition;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.Transitions.IDoTransition;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.Transitions.IReceiveTransition;
 import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.Transitions.ISendTransition;
+import alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents.Transitions.IUserCancelTransition;
 import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.DataMappingFunctions.IDataMappingIncomingToLocal;
 import alps.java.api.StandardPASS.PassProcessModelElements.DataDescribingComponents.IDataMappingFunction;
 import alps.java.api.StandardPASS.PassProcessModelElements.IBehaviorDescribingComponent;
@@ -102,105 +103,118 @@ public class Main {
 
 
         System.out.println();
-
-
         Map<String, IModelLayer> layers = models.get(0).getModelLayers();
-
         System.out.println("Layers in first model: " + layers.size());
-
-
-        IModelLayer firstLayer = layers.values().iterator().next();
-        getStandaloneMacroSubjectFrom(firstLayer);
-        IFullySpecifiedSubject mySubject = firstLayer.getFullySpecifiedSubject(0);
-
-        if (mySubject != null) {
-
-//TODO: mySubjectBehaviours.size() muss 1 sein
-            Map<String, ISubjectBehavior> mySubjectBehaviors = mySubject.getBehaviors();
-
-            System.out.println();
-
-            System.out.println("Found a subject: " + mySubject.getModelComponentID());
-
-            System.out.println("Numbers of behaviors in subject: " + mySubjectBehaviors.size());
-
-
-            ISubjectBehavior firstBehavior = mySubjectBehaviors.values().iterator().next();
-
-            System.out.println("Numbers of Elements in Behavior: " + firstBehavior.getBehaviorDescribingComponents().size());
-
-            System.out.println("First Element: " + firstBehavior.getBehaviorDescribingComponents().values().iterator().next().getModelComponentID());
-
-            IState firstState = firstBehavior.getInitialStateOfBehavior();
-
-            if (firstState != null) {
-
-                System.out.println("Initial State of Behavior: " + firstState.getModelComponentID());
-
+        for (Map.Entry<String, IModelLayer> kvp : layers.entrySet()) {
+            System.out.println(" - Layer ID: " + kvp.getValue().getModelComponentID() + " type: " + kvp.getValue().getLayerType());
+        }
+        IModelLayer firstLayer = layers.get(0);
+        IStandaloneMacroSubject sams = iterateTrhoughSIDandGetStandaloneMacroSubjectFromA(firstLayer);
+        if (sams != null) {
+            ISubjectBehavior samsB = sams.getBehavior();
+            if (samsB != null) {
+                System.out.println("");
+                System.out.println("##### macro behavior! components: ######");
+                lookForChoiceSegementStuffIn(samsB);
             }
+        }
+        IFullySpecifiedSubject mySubject = firstLayer.getFullySpecifiedSubject(0);
+        if (mySubject != null) {
+            Map<String, ISubjectBehavior> mySubjectBehaviors = mySubject.getBehaviors();
+            System.out.println();
+            System.out.println("Found a subject: " + mySubject.getModelComponentID());
+            System.out.println("Numbers of behaviors in subject: " + mySubjectBehaviors.size());
+            ISubjectBehavior firstBehavior = mySubjectBehaviors.get(0);
+            System.out.println("Numbers of Elements in Behavior: " + firstBehavior.getBehaviorDescribingComponents().size());
+            System.out.println("First Element: " + firstBehavior.getBehaviorDescribingComponents().get(0).getModelComponentID());
+            IState firstState = firstBehavior.getInitialStateOfBehavior();
+            if (firstState != null) {
+                System.out.println("Initial State of Behavior: " + firstState.getModelComponentID());
+            }
+
             iterateStates(firstBehavior);
             System.out.println();
             iterateTransitions(firstBehavior);
             System.out.println();
+
         }
     }
 
-
-    private static IStandaloneMacroSubject getStandaloneMacroSubjectFrom(IModelLayer layer) {
-
+    private static IStandaloneMacroSubject iterateTrhoughSIDandGetStandaloneMacroSubjectFromA(IModelLayer layer) {
         IStandaloneMacroSubject result = null;
-
-        System.out.println("Subjects:");
-
+        System.out.println("SID Elements - nr. of elements: " + layer.getElements().size());
         for (Map.Entry<String, IPASSProcessModelElement> kvp : layer.getElements().entrySet()) {
-
             IPASSProcessModelElement myComponent = kvp.getValue();
-
-
-            if (myComponent instanceof ISubject) {
-
-                System.out.println("Subject: " + myComponent.getModelComponentID());
-
+            if (myComponent instanceof ISubject mySub) {
+                System.out.println(" Subject: " + myComponent.getModelComponentID());
                 if (myComponent instanceof IStandaloneMacroSubject isms) {
-
                     result = isms;
-
+                } else if (myComponent instanceof ISystemInterfaceSubject) {
+                    System.out.println(" SystemInterfacesubject: " + myComponent.getModelComponentID());
+                    ISystemInterfaceSubject mySIS = (ISystemInterfaceSubject) myComponent;
+                    System.out.println(" - contained interfaces: " + mySIS.getContainedInterfaceSubjects().size());
+                } else if (myComponent instanceof ISubjectGroup) {
+                    System.out.println(" Subject Group: " + myComponent.getModelComponentID());
+                    ISubjectGroup mySIS = (ISubjectGroup) myComponent;
+                    System.out.println(" - contained Subjects: " + mySIS.getContainedSubjects().size());
                 } else if (myComponent instanceof IInterfaceSubject iis) {
-                    System.out.println(" Interface Subject: ");
-                    System.out.println(" - interface subject sisimapping exists: " + (iis.getSimpleSimInterfaceSubjectResponseDefinition() != null));
+                    System.out.println("  Interface Subject: ");
+                    System.out.println("  - interface subject sisimapping exists: " + (iis.getSimpleSimInterfaceSubjectResponseDefinition() != null));
                     if (iis.getSimpleSimInterfaceSubjectResponseDefinition() != null) {
                         System.out.println(iis.getSimpleSimInterfaceSubjectResponseDefinition());
                     }
                 }
+                System.out.println(" - 2d page ratio: " + mySub.get2DPageRatio());
+                System.out.println(" - 2d width: " + mySub.getRelative2DWidth());
+                System.out.println(" - 2d height: " + mySub.getRelative2DHeight());
+                System.out.println(" - 2d posX: " + mySub.getRelative2DPosX());
+                System.out.println(" - 2d posY: " + mySub.getRelative2DPosY());
             } else if (myComponent instanceof IMessageExchange ime) {
                 System.out.println(" MessageExchange: " + ime.getModelComponentID());
+                System.out.println("  - Exchange Type: " + ime.getMessageExchangeType());
 
             } else if (myComponent instanceof IMessageExchangeList imel) {
                 System.out.println(" MessageExchangeList: " + imel.getModelComponentID());
                 System.out.println(" - Number of Pathpoints: " + imel.getSimple2DPathPoints().size());
                 System.out.println(" - Number of Messages on here: " + imel.getMessageExchanges().size());
+            } else if (myComponent instanceof ICommunicationChannel ame) {
+                System.out.println(" Channel: " + ame.getModelComponentID());
+                System.out.println(" - Number of Pathpoints: " + ame.getSimple2DPathPoints().size());
+            } else {
+                System.out.println(" #other component: " + myComponent.getModelComponentID());
             }
-
         }
         return result;
     }
 
+    private static void lookForChoiceSegementStuffIn(ISubjectBehavior someBehavior) {
+        System.out.println("States of Behavior: " + someBehavior.getModelComponentID());
+        for (Map.Entry<String, IBehaviorDescribingComponent> kvp : someBehavior.getBehaviorDescribingComponents().entrySet()) {
+            IPASSProcessModelElement myComponent = kvp.getValue();
+            if (myComponent instanceof IState myState) {
+                System.out.println(" state: " + myState.getModelComponentID());
+                if (myState instanceof IChoiceSegment mcs) {
+                    System.out.println(" Number of CS-Paths: " + mcs.getChoiceSegmentPaths().size());
+                    /**if (mcs.getChoiceSegmentPaths().size() >= 1) {
+                     IChoiceSegmentPath mcsp = mcs.getChoiceSegmentPaths().ElementAt(0).Value;
+                     System.out.println(" - first path ID: " + mcsp.getModelComponentID());
+                     System.out.println(" - fist element of first path: " + mcsp.getInitialState().getModelComponentID());
+                     System.out.println(" - mandatory - start: " + mcsp.getIsOptionalToStartChoiceSegmentPath() + " - end: " + mcsp.getIsOptionalToEndChoiceSegmentPath());
+                     }*/
+                }
+            }
+        }
+    }
 
     private static void iterateStates(ISubjectBehavior someBehavior) {
-
         System.out.println("States of Behavior: " + someBehavior.getModelComponentID());
-
-
         for (Map.Entry<String, IBehaviorDescribingComponent> kvp : someBehavior.getBehaviorDescribingComponents().entrySet()) {
-
             IPASSProcessModelElement myComponent = kvp.getValue();
-
             if (myComponent instanceof IState) {
                 System.out.println("state: " + myComponent.getModelComponentID());
                 IState myIstate = (IState) myComponent;
                 System.out.println(" - start: " + myIstate.isStateType(IState.StateType.InitialStateOfBehavior));
                 System.out.println(" - end: " + myIstate.isStateType(IState.StateType.EndState));
-
                 if (myIstate instanceof IDoState myDo) {
                     iterateThroughStateAttributes(myDo);
 
@@ -208,57 +222,61 @@ public class Main {
                     System.out.println(" - receive billed waiting time: " + myR.getSisiBilledWaitingTime());
                 }
             }
-
         }
-
     }
 
     private static void iterateTransitions(ISubjectBehavior someBehavior) {
-
         System.out.println("Transitions: ###########################");
         for (Map.Entry<String, IBehaviorDescribingComponent> kvp : someBehavior.getBehaviorDescribingComponents().entrySet()) {
             IPASSProcessModelElement myComponent = kvp.getValue();
-            if (myComponent instanceof ITransition mytrans) {
-                System.out.println("transition: " + mytrans.getModelComponentID());
-                System.out.println(" - start: " + mytrans.getSourceState().getModelComponentID());
-                System.out.println(" - end: " + mytrans.getTargetState().getModelComponentID());
+            if (myComponent instanceof ITransition myTrans) {
+                System.out.println("transition: " + myTrans.getModelComponentID());
+                System.out.println(" - start: " + myTrans.getSourceState().getModelComponentID());
+                System.out.println(" - end: " + myTrans.getTargetState().getModelComponentID());
+                System.out.println(" - type: " + myTrans.getTransitionType());
+                System.out.println(" - Number of Pathpoints: " + myTrans.getSimple2DPathPoints().size());
 
-                System.out.println(" - Number of Pathpoints: " + mytrans.getSimple2DPathPoints().size());
-
-                if (mytrans instanceof ISendTransition myST) {
+                if (myTrans instanceof ISendTransition myST) {
+                    System.out.println(" - Send Transition: ");
                     ISendTransitionCondition mySTC = myST.getTransitionCondition();
                     System.out.println("  - tranition condition - message " + mySTC.getRequiresSendingOfMessage().getModelComponentID());
                     System.out.println("  - receiver: " + mySTC.getRequiresMessageSentTo().getModelComponentID());
-                } else if (mytrans instanceof IReceiveTransition myRT) {
+                } else if (myTrans instanceof IReceiveTransition myRT) {
+                    System.out.println(" - Receive Transition: ");
                     System.out.println(" - priority number of ReceiveTransition " + myRT.getPriorityNumber());
 
-                } else if (mytrans instanceof IDoTransition myDT) {
+                } else if (myTrans instanceof IDoTransition myDT) {
+                    System.out.println(" - Do Transition: ");
                     System.out.println(" - priority number of Do Transition " + myDT.getPriorityNumber());
-
+                } else if (myTrans instanceof IUserCancelTransition) {
+                    System.out.println(" - IUserCancelTransition Transition: ");
+                } else {
+                    System.out.println(" - some other type");
                 }
-             /*
-             mytrans.get2DPageRatio();
-             Console.Write(" - Visualization - page ratio: " + mytrans.get2DPageRatio());
-             Console.Write(" - hight: " + mytrans.get);
-             Console.Write(" - width: " + mytrans.getRelative2DWidth());
-             Console.WriteLine(" - Pos: (" + mytrans.getRelative2DPosX() + "," + mytrans.getRelative2DPosY() + ")");
-             */
+
+                    /*
+                    Transition mytt = (Transition)mytrans;
+                    foreach (Triple myTrip in mytt.getTriples())
+                    {
+                        Console.WriteLine("     - Triple: " + myTrip);
+                        //Console.WriteLine("     - tool specific def: " + myFunc.Value.getToolSpecificDefinition());
+                    }*/
+                    /*
+                    mytrans.get2DPageRatio();
+                    Console.Write(" - Visualization - page ratio: " + mytrans.get2DPageRatio());
+                    Console.Write(" - hight: " + mytrans.get);
+                    Console.Write(" - width: " + mytrans.getRelative2DWidth());
+                    Console.WriteLine(" - Pos: (" + mytrans.getRelative2DPosX() + "," + mytrans.getRelative2DPosY() + ")");
+                    */
             }
         }
     }
 
-
     private static void findMappingFunctionIn(Map<String, IPASSProcessModelElement> allElements) {
-
-
         System.out.println("Data Mapping Functions: ");
-
         for (Map.Entry<String, IPASSProcessModelElement> kvp : allElements.entrySet()) {
-
             IPASSProcessModelElement myComponent = kvp.getValue();
-
             if (myComponent instanceof IDataMappingFunction) {
-
                 IDataMappingFunction myDataMapping = (IDataMappingFunction) myComponent;
                 System.out.println(" Found a Data Mapping Function: " + myDataMapping.getModelComponentID());
                 System.out.println(" - typename: " + myDataMapping.getClass().getName());
@@ -268,17 +286,15 @@ public class Main {
         System.out.println("");
     }
 
-
     private static void iterateThroughStateAttributes(IState someState) {
 
         System.out.println("  Attribute Details for State: " + someState.getModelComponentLabels().get(0));
-
         if (someState instanceof IDoState) {
             DoState myDo = (DoState) someState;
             Map<String, IDataMappingFunction> myMapDic = myDo.getDataMappingFunctions();
             System.out.println("   - number of comments: " + myDo.getComments().size());
             System.out.println("   - number of incomplete Triples: " + myDo.getIncompleteTriples().size());
-            System.out.println("   - number of unmatched Triples: " + myDo.getIncompleteTriples().size()); //getTriples().Count());
+            System.out.println("   - number of Triples: " + myDo.getTriples().size());
             System.out.println("   - SiSiAttributes: ");
             if (!(myDo.getSisiExecutionDuration() == null)) {
                 System.out.println("     - Times: " + myDo.getSisiExecutionDuration().toString()); //getTriples().Count());
@@ -286,29 +302,18 @@ public class Main {
             System.out.println("     - cost: " + myDo.getSisiCostPerExecution()); //getTriples().Count());
             //Console.WriteLine("     - end stay chance: " + myDo.); //getTriples().Count());
             System.out.println("     - VSM time category chance: " + myDo.getSisiVSMTimeCategory()); //getTriples().Count());
-
             System.out.println("     - Visualization - page ratio: " + myDo.get2DPageRatio());
             System.out.println(" - hight: " + myDo.getRelative2DHeight());
             System.out.println(" - width: " + myDo.getRelative2DWidth());
             System.out.println(" - Pos: (" + myDo.getRelative2DPosX() + "," + myDo.getRelative2DPosY() + ")");
 
-
             System.out.println("   - number of data mappings: " + myMapDic.size());
             System.out.println("   - number of unspecific Relations : " + myDo.getElementsWithUnspecifiedRelation().size());
             for (Map.Entry<String, IPASSProcessModelElement> myFunc : myDo.getElementsWithUnspecifiedRelation().entrySet()) {
-                System.out.println("     - element: " + myFunc.getValue().getModelComponentID());
+                System.out.println("     - unspecific element: " + myFunc.getValue().getModelComponentID());
                 //Console.WriteLine("     - tool specific def: " + myFunc.Value.getToolSpecificDefinition());
-
             }
-            for (Map.Entry<String, IDataMappingFunction> myFunc : myMapDic.entrySet()) {
-                System.out.println("     - element: " + myFunc.getValue().getModelComponentID());
-                //Console.WriteLine("     - tool specific def: " + myFunc.Value.getToolSpecificDefinition());
-
-            }
-
         }
-
-
         if (someState instanceof IMacroState) {
             IMacroState myMacroState = ((IMacroState) someState);
             if (myMacroState.getReferencedMacroBehavior() != null) {
@@ -316,9 +321,7 @@ public class Main {
                 IMacroBehavior myMB = myMacroState.getReferencedMacroBehavior();
             }
         }
-
         Map<String, IPASSProcessModelElement> myDic = someState.getElementsWithUnspecifiedRelation();
-
         for (Map.Entry<String, IPASSProcessModelElement> att : myDic.entrySet()) {
             System.out.println("   - unspecific special: " + att.getKey() + " value: " + att.getValue());
 
