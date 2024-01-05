@@ -294,10 +294,13 @@ public class ModelLayer extends ALPSModelElement implements IModelLayer {
     public IFullySpecifiedSubject getFullySpecifiedSubject(int numberOfElement) {
         List<IFullySpecifiedSubject> fullySpecifiedSubjects = elements.values().stream()
                 .filter(element -> element instanceof IFullySpecifiedSubject)
-                .map(element -> (IFullySpecifiedSubject) element)
-                .collect(Collectors.toList());
-
-        return fullySpecifiedSubjects.get(numberOfElement);
+                .map(element -> (IFullySpecifiedSubject) element).toList();
+        if(fullySpecifiedSubjects.size() > 0) {
+            return fullySpecifiedSubjects.get(numberOfElement);
+        }else{
+            System.out.println("No FullySpecifiedSubject found");
+            return null;
+        }
     }
 
 

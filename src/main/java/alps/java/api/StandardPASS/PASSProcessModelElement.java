@@ -559,6 +559,7 @@ public class PASSProcessModelElement implements ICapsuleCallback {
             dataType = parts[parts.length - 1];
         }
         String lang = NodeHelper.getLangIfContained(triple.getObject());
+        //To split the STring of the objecContent to get the possibleID
         if (lang == null) {
             lang = "";
         }
@@ -566,7 +567,6 @@ public class PASSProcessModelElement implements ICapsuleCallback {
             dataType = "";
         }
         String possibleID = objectContent;
-        //To split the STring of the objecContent to get the possibleID
         if (possibleID.split(":").length > 1)
             possibleID = possibleID.split(":")[possibleID.split(":").length - 1];
         if (possibleID.split("@").length > 1) {
