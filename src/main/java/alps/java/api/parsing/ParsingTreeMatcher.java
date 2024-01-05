@@ -463,7 +463,6 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
                 addToParsingDict(parsingDict, ontClass, possibleMappedClassPair.getLeft(), depth);
             }
         }
-        //TODO: for each Schleife anpassen!!!
         for (OntClass childOntClass : ontClass.listSubClasses(true).toList()) {
             if (!parsingDict.containsKey(removeUri(childOntClass.getURI()))&& !(unmappableDict.containsKey(childOntClass))) {
                 mapRestWithParentNode(parsingDict, childOntClass, parentNodeKey, depth + 1, unmappableDict);

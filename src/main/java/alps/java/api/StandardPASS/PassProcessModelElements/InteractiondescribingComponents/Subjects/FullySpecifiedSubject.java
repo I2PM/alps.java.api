@@ -173,7 +173,7 @@ public class FullySpecifiedSubject extends Subject implements IFullySpecifiedSub
         if (behavior == null) {
             return false;
         }
-        if (subjectBehaviors.getOrDefault(behavior.getModelComponentID(), behavior) != null) {
+        if (subjectBehaviors.put(behavior.getModelComponentID(), behavior) == null) {
             publishElementAdded(behavior);
             behavior.register(this);
             behavior.setSubject(this);

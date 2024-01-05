@@ -71,7 +71,7 @@ public class Main {
         // IList<IPASSProcessModel> models = io.loadModels(new List<string> { "C:\\Data\\ExportImportTest1.owl" });
 
         List<String> modelPaths = new ArrayList<>();
-        modelPaths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\Hiwi\\Testing\\TestForSubjectBehavior.owl");
+        modelPaths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\Hiwi\\Testing\\ExportImportTest1.owl");
         List<IPASSProcessModel> models = io.loadModels(modelPaths);
 //Bis hierhin funktiniert es ohne Fehlermeldungen!!!!!
 
@@ -115,7 +115,7 @@ public class Main {
 
         if (mySubject != null) {
 
-//TODO: mySubjectBehaviours.size() ist viel größer als 0!!
+//TODO: mySubjectBehaviours.size() muss 1 sein
             Map<String, ISubjectBehavior> mySubjectBehaviors = mySubject.getBehaviors();
 
             System.out.println();
@@ -138,38 +138,11 @@ public class Main {
                 System.out.println("Initial State of Behavior: " + firstState.getModelComponentID());
 
             }
-
-
             iterateStates(firstBehavior);
-
-
             System.out.println();
-
-
-            findMappingFunctionIn(allElements);
-
+            iterateTransitions(firstBehavior);
+            System.out.println();
         }
-
-
-        IStandaloneMacroSubject mySMS = getStandaloneMacroSubjectFrom(firstLayer);
-
-        if (mySMS != null) {
-
-
-            IMacroBehavior myMB = mySMS.getBehavior();
-
-            System.out.println();
-
-            System.out.println("found macro behavior: " + (myMB != null));
-
-            System.out.println("States of Macro Behavior: ");
-
-            iterateStates(myMB);
-
-            System.out.println();
-
-        }
-
     }
 
 
@@ -327,6 +300,12 @@ public class Main {
                 //Console.WriteLine("     - tool specific def: " + myFunc.Value.getToolSpecificDefinition());
 
             }
+            for (Map.Entry<String, IDataMappingFunction> myFunc : myMapDic.entrySet()) {
+                System.out.println("     - element: " + myFunc.getValue().getModelComponentID());
+                //Console.WriteLine("     - tool specific def: " + myFunc.Value.getToolSpecificDefinition());
+
+            }
+
         }
 
 
