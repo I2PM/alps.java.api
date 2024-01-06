@@ -1,6 +1,7 @@
 package alps.java.api.StandardPASS.PassProcessModelElements.BehaviorDescribingComponents;
 
 import alps.java.api.ALPS.ALPSModelElements.Simple2DVisualizationPoints.ISimple2DVisualizationPathPoint;
+import alps.java.api.ALPS.ALPSModelElements.Simple2DVisualizationPoints.Simple2DVisualizationPathPoint;
 import alps.java.api.FunctionalityCapsules.IImplementsFunctionalityCapsule;
 import alps.java.api.FunctionalityCapsules.ImplementsFunctionalityCapsule;
 import alps.java.api.StandardPASS.IPASSProcessModelElement;
@@ -21,7 +22,7 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
     protected IState sourceState;
     protected IState targetState;
     protected ITransitionCondition transitionCondition;
-    private ITransition.TransitionType transitionType;
+    private ITransition.TransitionType transitionType = TransitionType.Standard;
     protected final IImplementsFunctionalityCapsule<ITransition> implCapsule;
     protected boolean isAbstractType = false;
 
@@ -31,11 +32,11 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
      * Name of the class, needed for parsing
      */
     private final String className = "Transition";
-    private double has2DPageRatio=-1;
-    private double hasRelative2D_BeginX=-1;
-    private double hasRelative2D_BeginY=-1;
-    private double hasRelative2D_EndX=-1;
-    private double hasRelative2D_EndY=-1;
+    private double has2DPageRatio = -1;
+    private double hasRelative2D_BeginX = -1;
+    private double hasRelative2D_BeginY = -1;
+    private double hasRelative2D_EndX = -1;
+    private double hasRelative2D_EndY = -1;
     private List<ISimple2DVisualizationPathPoint> pathPoints = new ArrayList<ISimple2DVisualizationPathPoint>();
 
 
@@ -312,9 +313,9 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
 
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
-        if (implCapsule != null && implCapsule.parseAttribute(predicate, objectContent, lang, dataType, element))
+        if (implCapsule != null && implCapsule.parseAttribute(predicate, objectContent, lang, dataType, element)) {
             return true;
-        else if (element != null) {
+        } else if (element != null) {
             if (predicate.contains(OWLTags.belongsTo) && element instanceof IAction action) {
                 setBelongsToAction(action);
                 return true;
@@ -330,13 +331,12 @@ public class Transition extends BehaviorDescribingComponent implements ITransiti
                 } else if (predicate.contains(OWLTags.hasTargetState)) {
                     setTargetState(state);
                     return true;
-                } else if (element instanceof ISimple2DVisualizationPathPoint point) {
-                    //Console.WriteLine(this.getModelComponentID() + ": PathPoint:" + point.getModelComponentID());
-                    if (this.pathPoints == null) this.pathPoints = new ArrayList<ISimple2DVisualizationPathPoint>();
-
-                    this.pathPoints.add(point);
                 }
+            } else if (element instanceof ISimple2DVisualizationPathPoint point) {
+                //Console.WriteLine(this.getModelComponentID() + ": PathPoint:" + point.getModelComponentID());
+                if (this.pathPoints == null) this.pathPoints = new ArrayList<ISimple2DVisualizationPathPoint>();
 
+                this.pathPoints.add(point);
             }
 
         } else {

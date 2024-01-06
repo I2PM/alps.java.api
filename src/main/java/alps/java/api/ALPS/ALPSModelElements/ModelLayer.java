@@ -133,7 +133,11 @@ public class ModelLayer extends ALPSModelElement implements IModelLayer {
         setLayerType(LayerType.STANDARD);
     }
 
-
+    /**
+     * Method that sets the layertype of the Modellayer
+     * When the layertype of a modellayer is GUARD it cannot be changed back to EXTENSION.
+     * @param layerType
+     */
     public void setLayerType(LayerType layerType) {
         switch (layerType) {
             case GUARD:
@@ -143,6 +147,10 @@ public class ModelLayer extends ALPSModelElement implements IModelLayer {
                 addTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
                 break;
             case EXTENSION:
+                //To fix problem with Guard layer
+                if(this.layerType==LayerType.GUARD){
+                    break;
+                }
                 removeTriple(new IncompleteTriple(OWLTags.rdfType, getExportTag() + getClassName()));
                 this.layerType = layerType;
                 exportClassname = "Extension" + className;

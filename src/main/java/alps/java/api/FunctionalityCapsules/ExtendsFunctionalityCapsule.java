@@ -26,7 +26,7 @@ public class ExtendsFunctionalityCapsule<T extends IPASSProcessModelElement> imp
     }
 
     public ExtendsFunctionalityCapsule() {
-        this.callback=null;
+        this.callback = null;
     }
 
     public String getExtendedElementID() {
@@ -42,9 +42,14 @@ public class ExtendsFunctionalityCapsule<T extends IPASSProcessModelElement> imp
 
     public boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
         if (predicate.contains(OWLTags.eextends)) {
-            if (elementClass.isInstance(element)) {
-                setExtendedElement((T) element);
-                return true;
+            if (elementClass != null) {
+                if (elementClass.isInstance(element)) {
+                    setExtendedElement((T) element);
+                    return true;
+                } else {
+                    setExtendedElementID(objectContent);
+                    return true;
+                }
             } else {
                 setExtendedElementID(objectContent);
                 return true;

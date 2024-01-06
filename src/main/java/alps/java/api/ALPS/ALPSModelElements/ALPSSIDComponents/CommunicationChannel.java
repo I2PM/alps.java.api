@@ -37,11 +37,11 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
 
     // Used for internal methods
     private boolean oldIsUniDirectionalValue = false;
-    private double has2DPageRatio=-1;
-    private double hasRelative2D_BeginX=-1;
-    private double hasRelative2D_BeginY=-1;
-    private double hasRelative2D_EndX=-1;
-    private double hasRelative2D_EndY=-1;
+    private double has2DPageRatio = -1;
+    private double hasRelative2D_BeginX = -1;
+    private double hasRelative2D_BeginY = -1;
+    private double hasRelative2D_EndX = -1;
+    private double hasRelative2D_EndY = -1;
     private List<ISimple2DVisualizationPathPoint> pathPoints = new ArrayList<ISimple2DVisualizationPathPoint>();
 
     @Override
@@ -162,7 +162,7 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
         }
         if (!(correspondentA == null)) {
             // Only if the correspondet is new, it must be registered
-            if (!oldCorrespondentA.equals(correspondentA) || (oldCorrespondentA == null)) {
+            if ((oldCorrespondentA == null) || (!oldCorrespondentA.equals(correspondentA))) {
                 publishElementAdded(correspondentA);
                 correspondentA.register(this);
             }
@@ -222,7 +222,7 @@ public class CommunicationChannel extends ALPSSIDComponent implements ICommunica
         }
         if (!(correspondentB == null)) {
             // Only if the correspondet is new, it must be registered
-            if (!oldCorrespondentB.equals(correspondentB) || (oldCorrespondentB == null)) {
+            if ((oldCorrespondentB == null) || (!oldCorrespondentB.equals(correspondentB))) {
                 publishElementAdded(correspondentB);
                 correspondentB.register(this);
             }

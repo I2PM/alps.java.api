@@ -286,9 +286,6 @@ public class DoState extends StandardPASSState implements IDoState {
 
     @Override
     protected boolean parseAttribute(String predicate, String objectContent, String lang, String dataType, IParseablePASSProcessModelElement element) {
-        if(this.sisiVSMTimeCategory==null){
-            setSisiVSMTimeCategory(IHasSiSiDistribution.SimpleSimTimeCategory.Standard);
-        }
         if (element != null) {
             if (predicate.contains(OWLTags.hasDataMappingFunction) && element instanceof IDataMappingIncomingToLocal
                     incomingMapping) {

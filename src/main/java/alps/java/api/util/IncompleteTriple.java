@@ -70,6 +70,15 @@ public class IncompleteTriple implements IIncompleteTriple {
                 extraString = new LanguageSpecificString(literal.getLiteralValue().toString(), literal.getLiteralLanguage());
             } else if (literal.getLiteralDatatype() != null && !literal.getLiteralDatatype().toString().equals("")) {
                 extraString = new DataTypeString(literal.getLiteralValue().toString(), literal.getLiteralDatatype().toString());
+                if (literal.getLiteralValue().toString().contains("org.apache.jena.datatypes.BaseDatatype$TypedValue")) {
+                    String extractedString = "";
+                    int firstQuoteIndex = literal.toString().indexOf("\"");
+                    int secondQuoteIndex = literal.toString().indexOf("\"", firstQuoteIndex + 1);
+                    if (firstQuoteIndex != -1 && secondQuoteIndex != -1) {
+                        extractedString = literal.toString().substring(firstQuoteIndex + 1, secondQuoteIndex);
+                    }
+                    extraString = new DataTypeString(extractedString, literal.getLiteralDatatype().toString());
+                }
             } else {
                 String content = baseUriToReplace == null ? realTriple.getObject().toString() : StaticFunctions.replaceBaseUriWithGeneric(realTriple.getObject().toString(), baseUriToReplace);
                 extraString = new StringWithoutExtra(content);

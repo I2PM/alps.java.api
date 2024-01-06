@@ -35,55 +35,31 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-
-
         // Needs to be called once
 
         // Now the reflective enumerator searches for classes in the library assembly as well as in the current.
         Class<?> executingClass = Main.class;
-
         ReflectiveEnumerator.addClassToCheckForTypes(executingClass);
-
-
         IPASSReaderWriter io = PASSReaderWriter.getInstance();
-
-
         // Set own factory as parsing factory to parse ontology classes to the right instances
-
         io.setModelElementFactory(new AdditionalFunctionalityClassFactory());
-
-
         List<String> paths = new ArrayList<String>();
         paths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\alps.java.api\\src\\main\\java\\alps\\java\\LibraryExample\\standard_PASS_ont_v_1.1.0.owl");
         paths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\alps.java.api\\src\\main\\java\\alps\\java\\LibraryExample\\ALPS_ont_v_0.8.0.owl");
-
-
         // Load these files once (no future calls needed)
-
         // This call creates both parsing trees and the parsing dictionary
-
         io.loadOWLParsingStructure(paths);
-
-
         // This loads models from the specified owl.
-
         // Every owl instance of a FullySpecifiedSubject is parsed to an AdditionalFunctionalityFullySpecifiedSubject
-
         // IList<IPASSProcessModel> models = io.loadModels(new List<string> { "C:\\Data\\ExportImportTest1.owl" });
-
         List<String> modelPaths = new ArrayList<>();
-        modelPaths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\Hiwi\\Testing\\ExportImportTest1.owl");
+        modelPaths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\Hiwi\\Testing\\ExportImportTest1Advanced.owl");
         List<IPASSProcessModel> models = io.loadModels(modelPaths);
 //Bis hierhin funktiniert es ohne Fehlermeldungen!!!!!
-
         // IDictionary of all elements
-
         Map<String, IPASSProcessModelElement> allElements = models.get(0).getAllElements();
-
         // Drop the keys, keep values
-
         Collection<IPASSProcessModelElement> onlyElements = models.get(0).getAllElements().values();
-
         // Filter for a specific interface (Enumerable, not so easy to use -> convert to list)
         //TODO: FullySpecifiedSubjects werden nicht als AdditionalFunctionalityElements geladen
         List<IAdditionalFunctionalityElement> onlyAdditionalFunctionalityElements = new ArrayList<IAdditionalFunctionalityElement>();
@@ -91,14 +67,9 @@ public class Main {
             if (element instanceof IAdditionalFunctionalityElement)
                 onlyAdditionalFunctionalityElements.add((IAdditionalFunctionalityElement) element);
         }
-
         //some output examples for a parsed model
-
         System.out.println("Number of Models loaded: " + models.size());
-
-
         System.out.println("Found " + onlyAdditionalFunctionalityElements.size() +
-
                 " AdditionalFunctionalityElements in First model!");
 
 
@@ -108,7 +79,7 @@ public class Main {
         for (Map.Entry<String, IModelLayer> kvp : layers.entrySet()) {
             System.out.println(" - Layer ID: " + kvp.getValue().getModelComponentID() + " type: " + kvp.getValue().getLayerType());
         }
-        IModelLayer firstLayer = layers.get(0);
+        IModelLayer firstLayer = layers.values().iterator().next();
         IStandaloneMacroSubject sams = iterateTrhoughSIDandGetStandaloneMacroSubjectFromA(firstLayer);
         if (sams != null) {
             ISubjectBehavior samsB = sams.getBehavior();
@@ -124,19 +95,19 @@ public class Main {
             System.out.println();
             System.out.println("Found a subject: " + mySubject.getModelComponentID());
             System.out.println("Numbers of behaviors in subject: " + mySubjectBehaviors.size());
-            ISubjectBehavior firstBehavior = mySubjectBehaviors.get(0);
-            System.out.println("Numbers of Elements in Behavior: " + firstBehavior.getBehaviorDescribingComponents().size());
-            System.out.println("First Element: " + firstBehavior.getBehaviorDescribingComponents().get(0).getModelComponentID());
-            IState firstState = firstBehavior.getInitialStateOfBehavior();
-            if (firstState != null) {
-                System.out.println("Initial State of Behavior: " + firstState.getModelComponentID());
+            for (ISubjectBehavior Behavior : mySubjectBehaviors.values()) {
+                System.out.println("Numbers of Elements in Behavior : "  + Behavior.getBehaviorDescribingComponents().size());
+                System.out.println("First Element: "  + Behavior.getBehaviorDescribingComponents().values().iterator().next().getModelComponentID());
+                IState firstState = Behavior.getInitialStateOfBehavior();
+                if (firstState != null) {
+                    System.out.println("Initial State of Behavior: " + firstState.getModelComponentID());
+                }
+
+                iterateStates(Behavior);
+                System.out.println();
+                iterateTransitions(Behavior);
+                System.out.println();
             }
-
-            iterateStates(firstBehavior);
-            System.out.println();
-            iterateTransitions(firstBehavior);
-            System.out.println();
-
         }
     }
 
@@ -195,12 +166,12 @@ public class Main {
                 System.out.println(" state: " + myState.getModelComponentID());
                 if (myState instanceof IChoiceSegment mcs) {
                     System.out.println(" Number of CS-Paths: " + mcs.getChoiceSegmentPaths().size());
-                    /**if (mcs.getChoiceSegmentPaths().size() >= 1) {
-                     IChoiceSegmentPath mcsp = mcs.getChoiceSegmentPaths().ElementAt(0).Value;
-                     System.out.println(" - first path ID: " + mcsp.getModelComponentID());
-                     System.out.println(" - fist element of first path: " + mcsp.getInitialState().getModelComponentID());
-                     System.out.println(" - mandatory - start: " + mcsp.getIsOptionalToStartChoiceSegmentPath() + " - end: " + mcsp.getIsOptionalToEndChoiceSegmentPath());
-                     }*/
+                    if (mcs.getChoiceSegmentPaths().size() >= 1) {
+                        IChoiceSegmentPath mcsp = mcs.getChoiceSegmentPaths().values().iterator().next();
+                        System.out.println(" - first path ID: " + mcsp.getModelComponentID());
+                        System.out.println(" - fist element of first path: " + mcsp.getInitialState().getModelComponentID());
+                        System.out.println(" - mandatory - start: " + mcsp.getIsOptionalToStartChoiceSegmentPath() + " - end: " + mcsp.getIsOptionalToEndChoiceSegmentPath());
+                    }
                 }
             }
         }
@@ -254,20 +225,20 @@ public class Main {
                     System.out.println(" - some other type");
                 }
 
-                    /*
-                    Transition mytt = (Transition)mytrans;
-                    foreach (Triple myTrip in mytt.getTriples())
-                    {
-                        Console.WriteLine("     - Triple: " + myTrip);
-                        //Console.WriteLine("     - tool specific def: " + myFunc.Value.getToolSpecificDefinition());
-                    }*/
-                    /*
-                    mytrans.get2DPageRatio();
-                    Console.Write(" - Visualization - page ratio: " + mytrans.get2DPageRatio());
-                    Console.Write(" - hight: " + mytrans.get);
-                    Console.Write(" - width: " + mytrans.getRelative2DWidth());
-                    Console.WriteLine(" - Pos: (" + mytrans.getRelative2DPosX() + "," + mytrans.getRelative2DPosY() + ")");
-                    */
+/*
+                Transition mytt = (Transition) mytrans;
+                foreach(Triple myTrip in mytt.getTriples())
+                {
+                    Console.WriteLine("     - Triple: " + myTrip);
+                    //Console.WriteLine("     - tool specific def: " + myFunc.Value.getToolSpecificDefinition());
+                }
+
+                mytrans.get2DPageRatio();
+                Console.Write(" - Visualization - page ratio: " + mytrans.get2DPageRatio());
+                Console.Write(" - hight: " + mytrans.get);
+                Console.Write(" - width: " + mytrans.getRelative2DWidth());
+                Console.WriteLine(" - Pos: (" + mytrans.getRelative2DPosX() + "," + mytrans.getRelative2DPosY() + ")");
+*/
             }
         }
     }
@@ -324,8 +295,6 @@ public class Main {
         Map<String, IPASSProcessModelElement> myDic = someState.getElementsWithUnspecifiedRelation();
         for (Map.Entry<String, IPASSProcessModelElement> att : myDic.entrySet()) {
             System.out.println("   - unspecific special: " + att.getKey() + " value: " + att.getValue());
-
         }
     }
 }
-
