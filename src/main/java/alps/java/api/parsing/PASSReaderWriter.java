@@ -310,6 +310,7 @@ public class PASSReaderWriter implements IPASSReaderWriter {
         Map<String, List<String>> namedIndividualsDict = new HashMap<>();
 
         // Iterate over triples in the graph
+        //TODO: hier kommt die Liste durcheinander
         for (Statement triple : graph.listStatements().toList()) {
 
             // Add named individuals
@@ -339,7 +340,6 @@ public class PASSReaderWriter implements IPASSReaderWriter {
                 }
             }
         }
-
         return namedIndividualsDict;
     }
 
@@ -417,7 +417,6 @@ public class PASSReaderWriter implements IPASSReaderWriter {
                         Statement stmt = iter.nextStatement();
                         modelBaseGraph.addTriple(stmt.asTriple());
                     }
-
 
 
                 } else {
