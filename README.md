@@ -6,9 +6,9 @@ The library currently supports the [Standard PASS](https://github.com/I2PM/Stand
 //add where to get the library and which Frameworks it supports
 
 # Supported Functionality
-- Subject oriented in-memory modeling in C#
+- Subject oriented in-memory modeling in Java
 - Import models from OWL/RDF formatted files
   - Dynamic import supporting own OntologyClass definitions
-  - Dynamic import supporting own C# class extensions
+  - Dynamic import supporting own Java class extensions
 - Model modification by editing underlying triple store graph
 - Export models to OWL/RDF formatted files
