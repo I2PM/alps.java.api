@@ -121,9 +121,7 @@ public class InterfaceSubject extends Subject implements IInterfaceSubject {
                 setReferencedSubject(subject);
                 return true;
             }
-        }
-        else if (predicate.contains(OWLTags.abstrHasSimpleSimInterfaceSubjectResponseDefinition))
-        {
+        } else if (predicate.contains(OWLTags.abstrHasSimpleSimInterfaceSubjectResponseDefinition)) {
             this.setSimpleSimInterfaceSubjectResponseDefinition(objectContent);
             return true;
         }
@@ -156,34 +154,20 @@ public class InterfaceSubject extends Subject implements IInterfaceSubject {
                 setReferencedSubject(null, 0);
         }
     }
-    protected Node simpleSimInterfaceSubjectResponseDefinition;
+
+    protected String simpleSimInterfaceSubjectResponseDefinition;
+
     public void setSimpleSimInterfaceSubjectResponseDefinition(String simpleSimInterfaceSubjectResponseDefinitionString) {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
 
-            // Laden Sie XML aus einer Zeichenfolge
-            InputSource inputSource = new InputSource(new StringReader(simpleSimInterfaceSubjectResponseDefinitionString));
-            Document xmlDoc = builder.parse(inputSource);
-
-            // Annahme: Der Eingabe-String stellt ein einzelnes XML-Element dar,
-            // und wir erhalten das erste Kind des Wurzelelements.
-            Element rootElement = xmlDoc.getDocumentElement();
-            Node node = rootElement.getFirstChild();
-            this.simpleSimInterfaceSubjectResponseDefinition = node;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.simpleSimInterfaceSubjectResponseDefinition = simpleSimInterfaceSubjectResponseDefinitionString;
     }
 
 
-    public void setSimpleSimInterfaceSubjectResponseDefinition(Node simpleSimInterfaceSubjectResponseDefinition)
-    {
-        this.simpleSimInterfaceSubjectResponseDefinition = simpleSimInterfaceSubjectResponseDefinition;
+    public void setSimpleSimInterfaceSubjectResponseDefinition(Node simpleSimInterfaceSubjectResponseDefinition) {
+        this.simpleSimInterfaceSubjectResponseDefinition = simpleSimInterfaceSubjectResponseDefinition.toString();
     }
 
-    public Node getSimpleSimInterfaceSubjectResponseDefinition()
-    {
+    public String getSimpleSimInterfaceSubjectResponseDefinition() {
         return simpleSimInterfaceSubjectResponseDefinition;
     }
 }

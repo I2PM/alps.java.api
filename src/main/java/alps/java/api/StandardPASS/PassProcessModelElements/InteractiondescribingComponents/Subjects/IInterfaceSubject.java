@@ -36,6 +36,6 @@ public interface IInterfaceSubject extends ISubject {
     IFullySpecifiedSubject getReferencedSubject();
     void setSimpleSimInterfaceSubjectResponseDefinition(String simpleSimInterfaceSubjectResponseDefinitionString);
     void setSimpleSimInterfaceSubjectResponseDefinition(Node simpleSimInterfaceSubjectResponseDefinition);
-    Node getSimpleSimInterfaceSubjectResponseDefinition();
+    String getSimpleSimInterfaceSubjectResponseDefinition();
 }
 
