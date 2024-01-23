@@ -38,8 +38,8 @@ public class Main {
         // Needs to be called once
 
         // Now the reflective enumerator searches for classes in the library assembly as well as in the current.
-        Class<?> executingClass = Main.class;
-        ReflectiveEnumerator.addClassToCheckForTypes(executingClass);
+        //Class<?> executingClass = Main.class;
+        //ReflectiveEnumerator.addClassToCheckForTypes(executingClass);
         IPASSReaderWriter io = PASSReaderWriter.getInstance();
         // Set own factory as parsing factory to parse ontology classes to the right instances
         io.setModelElementFactory(new AdditionalFunctionalityClassFactory());

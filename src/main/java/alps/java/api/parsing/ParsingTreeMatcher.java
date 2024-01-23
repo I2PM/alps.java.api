@@ -176,9 +176,6 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
         Class<?> superclass = node.getContent().getClass();
         subclasses = findSubclasses(superclass);
 
-        // Subklassen werden gefunden, sind aber vom Datentyp Class<?>, die Methode addChild, erwartet aber als Eingabeparameter ein Objekt vom Datentyp IParseablePASSProcessModelElement
-        // jede Klasse instanziieren, dazu musste ich den Standardkonstruktor von jeder klasse public machen
-        //Problem bei TimeTransitionCondition
         for (Class<?> subclass : subclasses) {
             try {
                 IParseablePASSProcessModelElement instance = (IParseablePASSProcessModelElement) subclass.newInstance();
