@@ -1,9 +1,7 @@
 # alps.java.api
 This Java library provides the functionality to create and modify in-memory PASS process models. These models might either be imported from an ontology (given in the owl/rdf format) or created from scratch.
 
-The library currently supports the [Standard PASS](https://github.com/I2PM/Standard-PASS-Ontology) as well as the Abstract Layered PASS created by Matthes Elstermann. For more information have a look at the [wiki pages](https://github.com/sanjasm/alps.java.api/wiki) or at the JavaDoc inside the classes.
-
-The JavaDoc of this project is hosted on dochoster. [Click here](https://docshoster.org/p/i2pm/alps.java.api/latest/introduction.html) to get to the JavaDoc
+The library currently supports the [Standard PASS](https://github.com/I2PM/Standard-PASS-Ontology) as well as the Abstract Layered PASS created by Matthes Elstermann. For more information have a look at the [wiki pages](https://github.com/sanjasm/alps.java.api/wiki), or at the [JavaDoc](https://docshoster.org/p/i2pm/alps.java.api/latest/introduction.html) hosted on dochoster or at the JavaDoc inside the classes (reason why the project mostly consists of html code).
 
 # Supported Functionality
 - Subject oriented in-memory modeling in Java
