@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 
 /**
  * Method that represents an abstract communication channel.
- * Instances of this class are by default BiDirectional channels, but can be changed to UniDirectional channels using {@link "setIsUniDirectional(bool)"}
+ * Instances of this class are by default BiDirectional channels, but can be changed to UniDirectional channels using {@link #setIsUniDirectional(boolean)}
  * From abstract pass ont:
  * It defines a possible message exchange between two subjects. (a recommendation for a message). It states that there IS communication between the two but not what exactly.
  * Usually, comunication channels are bi-directional, however the can be limited to one direction.

@@ -72,12 +72,6 @@ public class Action extends BehaviorDescribingComponent implements IAction {
 
     /**
      * Constructor that creates a new fully specified instance of the action class
-     *
-     * @param state
-     * @param labelForID
-     * @param comment
-     * @param additionalLabel
-     * @param additionalAttribute
      */
     ISubjectBehavior behavior = null;
 

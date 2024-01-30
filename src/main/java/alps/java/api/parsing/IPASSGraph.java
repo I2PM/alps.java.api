@@ -60,7 +60,7 @@ public interface IPASSGraph {
     /**
      * Creates a new Uri node from a string name
      * This name should not be an uri/url (start with http: ...)
-     * For this use {@link "CreateUriNode(Uri)"}.
+     * For this use {@link #createUriNode(String)}.
      *
      * @param name The name
      * @return The new Uri node
@@ -84,7 +84,7 @@ public interface IPASSGraph {
     void register(IGraphCallback element);
 
     /**
-     * Deregisteres a component previously registered via {@link "register(IParseablePASSProcessModelelement)"}
+     * Deregisteres a component previously registered via {@link #register(IGraphCallback)}
      *
      * @param element the element that is de-registered
      */

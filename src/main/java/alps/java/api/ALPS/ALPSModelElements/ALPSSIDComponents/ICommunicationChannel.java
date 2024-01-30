@@ -8,7 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * An interface for abstract communication channels.
  * This also represents Uni- and BiDirectionalCommunicationChannels
- * The direction can be set using the {@link "setIsUniDirectional(bool)"} Method.
+ * The direction can be set using the {@link #setIsUniDirectional(boolean)} Method.
  */
 public interface ICommunicationChannel extends IALPSSIDComponent, IHasSimple2DVisualizationLine {
 
@@ -36,7 +36,7 @@ public interface ICommunicationChannel extends IALPSSIDComponent, IHasSimple2DVi
      * In case of a UniDirectional, the CorrespondentA should be assumed as the Sender,
      * and Correspondent should be assumed as the Receiver.
      *
-     * @param isUniDirectional If true, this channel acts as UniDirectionalCommunicationChannel.<br></br>
+     * @param isUniDirectional If true, this channel acts as UniDirectionalCommunicationChannel.
      *                         If false, this channel acts as BiDirectionalCommunicationChannel.
      */
     void setIsUniDirectional(boolean isUniDirectional);

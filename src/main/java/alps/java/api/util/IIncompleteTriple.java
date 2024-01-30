@@ -11,7 +11,7 @@ import org.apache.jena.rdf.model.*;
  * or as quick mock for a real triple.
  * An incomplete triple is only valid when bound to a class that acts as subject,
  * because the incomplete triple does not parse subject information (only object and predicate).
- * An IncompleteTriple might either contain information about the object, or about "objectWithExtra" ({@link "getObjectWithExtra"})
+ * An IncompleteTriple might either contain information about the object, or about "objectWithExtra" ({@link #getObjectWithExtra})
  * Not both at the same time.
  */
 public interface IIncompleteTriple {

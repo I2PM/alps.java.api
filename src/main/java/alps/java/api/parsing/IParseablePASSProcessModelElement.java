@@ -16,9 +16,9 @@ public interface IParseablePASSProcessModelElement extends IPASSProcessModelElem
 
     /**
      * This method verifies whether a class can parse an ontology class, given by the string name of the ontology class.
-     * Example: The class PASSProcessModel should not return {@link "CANNOT_PARSE"} for the string "PASSProcessModel".
+     * Example: The class PASSProcessModel should not return CANNOT_PARSE for the string "PASSProcessModel".
      * A high return value indicates that this class can parse the ontology class better than another class with a lower return value.
-     * Every value !={@link "CANNOT PARSE"} indicates that the class can parse the ontology class.
+     * Every value != CANNOT PARSE indicates that the class can parse the ontology class.
      *
      * @param className
      * @return

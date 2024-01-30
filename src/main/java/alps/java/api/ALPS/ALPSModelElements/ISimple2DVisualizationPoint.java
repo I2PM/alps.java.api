@@ -16,7 +16,7 @@ public interface ISimple2DVisualizationPoint extends IALPSModelElement {
     /**
      * Gets the relative y coordinate of the point
      *
-     * @return the relative y coordinate<
+     * @return the relative y coordinate
      */
     double getRelative2DPosY();
 

@@ -45,7 +45,7 @@ public interface IPASSProcessModelElement extends IValueChangedPublisher<IPASSPr
      * Sets the id to the exact passed value.
      * The user must assure that the id is unique inside the current model,
      * otherwise exceptions might be thrown while using the model.
-     * To safely create a component with a unique id, use {@link "createUniqueModelComponentID(string)"}
+     * To safely create a component with a unique id, use {@link #createUniqueModelComponentID(String, boolean)}
      *
      * @param id the id that will be set as modelComponentID
      */
@@ -54,7 +54,7 @@ public interface IPASSProcessModelElement extends IValueChangedPublisher<IPASSPr
 
     /**
      * Creates a unique id for the element using a specified label.
-     * For this, a {@link "Guid"} is used.
+     * For this, a Guid is used.
      * The specified label is only used to provide simpler reading.
      * Leaving the label blank or not passing anything causes the element to use guid-only as id.
      *
@@ -67,7 +67,7 @@ public interface IPASSProcessModelElement extends IValueChangedPublisher<IPASSPr
 
     /**
      * Creates a unique id for the element using a specified label.
-     * For this, a {@link "Guid"} is used.
+     * For this, a Guid is used.
      * The specified label is only used to provide simpler reading.
      * Leaving the label blank or not passing anything causes the element to use guid-only as id.
      *
@@ -79,7 +79,7 @@ public interface IPASSProcessModelElement extends IValueChangedPublisher<IPASSPr
 
     /**
      * Creates a unique id for the element using a specified label.
-     * For this, a {@link "Guid"} is used.
+     * For this, a Guid is used.
      * The specified label is only used to provide simpler reading.
      * Leaving the label blank or not passing anything causes the element to use guid-only as id.
      * the default value of addLabel will be set to true

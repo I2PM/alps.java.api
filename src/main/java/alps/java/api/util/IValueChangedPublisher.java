@@ -2,7 +2,7 @@ package alps.java.api.util;
 
 /**
  * Interface that represents a publisher that informs {@link IValueChangedObserver} about components being added or removed.
- * Once an element gets added to / removed from another component, this component can call the notify methods ({@link "updateAdded"}, {@link "updateRemoved"})
+ * Once an element gets added to / removed from another component, this component can call the notify methods updateAdded and updateRemoved
  * on its observers.
  *
  * @param <T>

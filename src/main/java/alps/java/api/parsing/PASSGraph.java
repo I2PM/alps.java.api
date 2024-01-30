@@ -132,7 +132,7 @@ public class PASSGraph implements IPASSGraph {
     //not sure if I need it
 
     /**
-     * @Override public Property createUriNodeProp(URI uri) {
+     * public Property createUriNodeProp(URI uri) {
      * return baseGraph.createProperty(uri.toString());
      * }
      */

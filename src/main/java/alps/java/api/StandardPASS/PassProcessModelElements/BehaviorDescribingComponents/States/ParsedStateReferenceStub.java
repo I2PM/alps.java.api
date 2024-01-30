@@ -17,9 +17,9 @@ import java.util.Map;
 /**
  * Class that represents a StateReference
  * Because a StateReference acts the same as the class of the state it references,
- * it s not possible to use the StateReference as standalone C#-class.<br></br>
+ * it s not possible to use the StateReference as standalone C#-class.
  * Example: SendTransition from a StateReference would not work, because the Transition needs a SendState as Origin.
- * One solution would be creating a new class for each possible State, implementing the IStateReference interface end extending the state -> many new classes.<br></br>
+ * One solution would be creating a new class for each possible State, implementing the IStateReference interface end extending the state -> many new classes.
  * The current approach is to move the functionality into the State class. Every state the extends the standard State class can reference other states,
  * to use the functionality the state must be casted to IStateReference.
  * This class is only for parsing reasons (loads references and converts them to states) and should not be used to model!

@@ -279,7 +279,7 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
      * using the last instance class where the trees did not differ.
      *
      * @param ontClass
-     * @para, rootNode
+     * @param rootNode
      */
     private void createParsingStructureFromTrees(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass ontClass, ITreeNode<IParseablePASSProcessModelElement> rootNode) {
         // Start with mapping the roots, they are both PASSProcessModelElement
@@ -447,7 +447,7 @@ public class ParsingTreeMatcher implements IParsingTreeMatcher {
 
     /**
      * Do not use this directly, use:
-     * {@link #mapRestWithParentNode(Map, OntClass, String, int, ICompatibilityDictionary<OntClass, String>)} )"}
+     * {@link #mapRestWithParentNode(Map, OntClass, String, ICompatibilityDictionary)}
      * instead
      */
     private void mapRestWithParentNode(Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> parsingDict, OntClass ontClass, String parentNodeKey, int depth, ICompatibilityDictionary<OntClass, String> unmappableDict) {

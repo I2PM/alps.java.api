@@ -77,7 +77,7 @@ public class ReflectiveEnumerator {
         }
         return objects;
     }
-    /**public static <T> List<T> getEnumerableOfType(T element) {
+    /*public static <T> List<T> getEnumerableOfType(T element) {
         Class<?> typeOfBase = element.getClass();
         if (!elementType.isInstance(element)) {
             return null;

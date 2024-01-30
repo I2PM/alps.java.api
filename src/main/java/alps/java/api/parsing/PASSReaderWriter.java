@@ -247,7 +247,7 @@ public class PASSReaderWriter implements IPASSReaderWriter {
 
     /**
      * The .NetRDF library has a few problems with input files that are basically stupid
-     * E.g. an <rdf:RDF xmlns="" at the beginning of an RDF dokument  may cause an
+     * E.g. an rdf:RDF xmlns="" at the beginning of an RDF document  may cause an
      * Invalid URI exception. Sadly some tools like Protegée generate exactly stuff like that
      * This method simple tries to clean known problems
      *

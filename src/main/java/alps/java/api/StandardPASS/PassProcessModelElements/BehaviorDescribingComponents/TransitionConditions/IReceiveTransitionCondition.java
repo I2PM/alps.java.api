@@ -56,7 +56,7 @@ public interface IReceiveTransitionCondition extends IMessageExchangeCondition {
     /**
      * Method that returns the receive type attribute of the instance
      *
-     * @return The receive type attribute of the instance<
+     * @return The receive type attribute of the instance
      */
     ReceiveTypes getReceiveType();
 

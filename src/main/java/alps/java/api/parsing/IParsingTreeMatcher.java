@@ -15,7 +15,7 @@ public interface IParsingTreeMatcher {
      * The owl classes are extracted from given class-defining owl files (i.e. the standard-pass-ont, abstract-pass-ont).
      * The c# classes are evaluated dynamically at runtime from all classes known to this assembly.
      *
-     * @param
+     * @param owlStructureGraphs
      */
     public Map<String, List<Pair<ITreeNode<IParseablePASSProcessModelElement>, Integer>>> loadOWLParsingStructure(List<OntModel> owlStructureGraphs);
 
