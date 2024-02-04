@@ -1,0 +1,6 @@
+Jan. 24, 2024 4:22:44 PM alps.java.api.parsing.PASSReaderWriter loadOWLParsingStructure
+INFORMATION: Beginnig to create parsing structure matching...
+Jan. 24, 2024 4:22:45 PM alps.java.api.parsing.PASSReaderWriter loadOWLParsingStructure
+INFORMATION: Read all structure defining ontology graphs.
+Jan. 24, 2024 4:22:55 PM alps.java.api.parsing.PASSReaderWriter loadModels
+INFORMATION: Done reading the new File: C:\Users\sanja\OneDrive\Desktop\Hiwi\Testing\ExportImportTest1Advanced.owl
