@@ -53,7 +53,7 @@ public class Main {
         // Every owl instance of a FullySpecifiedSubject is parsed to an AdditionalFunctionalityFullySpecifiedSubject
         // IList<IPASSProcessModel> models = io.loadModels(new List<string> { "C:\\Data\\ExportImportTest1.owl" });
         List<String> modelPaths = new ArrayList<>();
-        modelPaths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\Hiwi\\Testing\\ExportImportTest1Advanced.owl");
+        modelPaths.add("C:\\Users\\sanja\\OneDrive\\Desktop\\Hiwi\\alps.java.api_zeugs\\Testing\\ExportImportTest1Advanced.owl");
         List<IPASSProcessModel> models = io.loadModels(modelPaths);
 //Bis hierhin funktiniert es ohne Fehlermeldungen!!!!!
         // IDictionary of all elements
